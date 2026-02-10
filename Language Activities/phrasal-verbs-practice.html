@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phrasal Verbs Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .sentence-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #5e72e4;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sentence-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sentence-number {
+            display: inline-block;
+            background: #5e72e4;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .sentence-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .context {
+            color: #6c757d;
+            font-style: italic;
+            margin-left: 10px;
+            font-size: 0.95em;
+        }
+
+        select {
+            background: white;
+            border: 2px solid #5e72e4;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 1em;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 5px;
+        }
+
+        select:hover {
+            border-color: #825ee4;
+            box-shadow: 0 0 5px rgba(94, 114, 228, 0.3);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #825ee4;
+            box-shadow: 0 0 10px rgba(94, 114, 228, 0.4);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        button {
+            background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(94, 114, 228, 0.3);
+            font-weight: 600;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(94, 114, 228, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #resetBtn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .result-icon {
+            display: none;
+            margin-left: 10px;
+            font-size: 1.3em;
+            vertical-align: middle;
+        }
+
+        .correct {
+            color: #28a745;
+        }
+
+        .incorrect {
+            color: #dc3545;
+        }
+
+        .score-display {
+            display: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.3em;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-display.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        select.correct-answer {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+
+        select.incorrect-answer {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+
+        .correct-text {
+            color: #28a745;
+            font-weight: bold;
+            margin-left: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Phrasal Verbs Practice</h1>
+            <p>Choose the correct preposition to complete each phrasal verb</p>
+        </div>
+        
+        <div class="content">
+            <div class="sentence-item">
+                <span class="sentence-number">1</span>
+                <span class="sentence-text">
+                    I have to look 
+                    <select class="preposition-select" data-correct="after">
+                        <option value="">--choose--</option>
+                        <option value="for">for</option>
+                        <option value="up">up</option>
+                        <option value="after">after</option>
+                        <option value="on">on</option>
+                        <option value="into">into</option>
+                    </select>
+                    my little sister
+                    <span class="context">(take care of)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">after</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">2</span>
+                <span class="sentence-text">
+                    Let's hear what you have come 
+                    <select class="preposition-select" data-correct="up">
+                        <option value="">--choose--</option>
+                        <option value="across">across</option>
+                        <option value="out">out</option>
+                        <option value="through">through</option>
+                        <option value="up">up</option>
+                        <option value="by">by</option>
+                    </select>
+                    with
+                    <span class="context">(found out)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">up</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">3</span>
+                <span class="sentence-text">
+                    We need to take 
+                    <select class="preposition-select" data-correct="on">
+                        <option value="">--choose--</option>
+                        <option value="in">in</option>
+                        <option value="up">up</option>
+                        <option value="over">over</option>
+                        <option value="on">on</option>
+                        <option value="off">off</option>
+                    </select>
+                    new staff
+                    <span class="context">(employ)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">on</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">4</span>
+                <span class="sentence-text">
+                    I am looking 
+                    <select class="preposition-select" data-correct="for">
+                        <option value="">--choose--</option>
+                        <option value="at">at</option>
+                        <option value="for">for</option>
+                        <option value="after">after</option>
+                        <option value="up">up</option>
+                        <option value="into">into</option>
+                    </select>
+                    my keys
+                    <span class="context">(seek, search for)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">for</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">5</span>
+                <span class="sentence-text">
+                    How did you come 
+                    <select class="preposition-select" data-correct="by">
+                        <option value="">--choose--</option>
+                        <option value="across">across</option>
+                        <option value="with">with</option>
+                        <option value="by">by</option>
+                        <option value="through">through</option>
+                        <option value="about">about</option>
+                    </select>
+                    that scar?
+                    <span class="context">(get)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">by</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">6</span>
+                <span class="sentence-text">
+                    I have to look it 
+                    <select class="preposition-select" data-correct="up">
+                        <option value="">--choose--</option>
+                        <option value="for">for</option>
+                        <option value="into">into</option>
+                        <option value="up">up</option>
+                        <option value="through">through</option>
+                        <option value="over">over</option>
+                    </select>
+                    in a dictionary
+                    <span class="context">(check, find)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">up</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">7</span>
+                <span class="sentence-text">
+                    Please go 
+                    <select class="preposition-select" data-correct="on">
+                        <option value="">--choose--</option>
+                        <option value="ahead">ahead</option>
+                        <option value="through">through</option>
+                        <option value="on">on</option>
+                        <option value="with">with</option>
+                        <option value="over">over</option>
+                    </select>
+                    reading
+                    <span class="context">(continue)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">on</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">8</span>
+                <span class="sentence-text">
+                    Look 
+                    <select class="preposition-select" data-correct="out">
+                        <option value="">--choose--</option>
+                        <option value="after">after</option>
+                        <option value="for">for</option>
+                        <option value="up">up</option>
+                        <option value="over">over</option>
+                        <option value="out">out</option>
+                    </select>
+                    for the crossing children
+                    <span class="context">(pay attention, take care)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">out</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">9</span>
+                <span class="sentence-text">
+                    Don't let me 
+                    <select class="preposition-select" data-correct="down">
+                        <option value="">--choose--</option>
+                        <option value="off">off</option>
+                        <option value="down">down</option>
+                        <option value="out">out</option>
+                        <option value="up">up</option>
+                        <option value="in">in</option>
+                    </select>
+                    this time
+                    <span class="context">(disappoint)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">down</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">10</span>
+                <span class="sentence-text">
+                    She went to see him 
+                    <select class="preposition-select" data-correct="off">
+                        <option value="">--choose--</option>
+                        <option value="out">out</option>
+                        <option value="away">away</option>
+                        <option value="off">off</option>
+                        <option value="up">up</option>
+                        <option value="through">through</option>
+                    </select>
+                    at the airport
+                    <span class="context">(say goodbye)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">off</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">11</span>
+                <span class="sentence-text">
+                    I came 
+                    <select class="preposition-select" data-correct="across">
+                        <option value="">--choose--</option>
+                        <option value="by">by</option>
+                        <option value="through">through</option>
+                        <option value="across">across</option>
+                        <option value="upon">upon</option>
+                        <option value="over">over</option>
+                    </select>
+                    an old chest in the attic
+                    <span class="context">(found by chance)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">across</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">12</span>
+                <span class="sentence-text">
+                    We can't put it 
+                    <select class="preposition-select" data-correct="off">
+                        <option value="">--choose--</option>
+                        <option value="away">away</option>
+                        <option value="down">down</option>
+                        <option value="off">off</option>
+                        <option value="out">out</option>
+                        <option value="back">back</option>
+                    </select>
+                    any longer
+                    <span class="context">(postpone)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">off</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">13</span>
+                <span class="sentence-text">
+                    I can't put 
+                    <select class="preposition-select" data-correct="up">
+                        <option value="">--choose--</option>
+                        <option value="down">down</option>
+                        <option value="off">off</option>
+                        <option value="out">out</option>
+                        <option value="through">through</option>
+                        <option value="up">up</option>
+                    </select>
+                    with his rude behaviour
+                    <span class="context">(tolerate)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">up</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">14</span>
+                <span class="sentence-text">
+                    It's a secret. Don't let 
+                    <select class="preposition-select" data-correct="on">
+                        <option value="">--choose--</option>
+                        <option value="out">out</option>
+                        <option value="on">on</option>
+                        <option value="off">off</option>
+                        <option value="up">up</option>
+                        <option value="down">down</option>
+                    </select>
+                    that you know
+                    <span class="context">(reveal)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">on</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">15</span>
+                <span class="sentence-text">
+                    There's not enough food to go 
+                    <select class="preposition-select" data-correct="around">
+                        <option value="">--choose--</option>
+                        <option value="about">about</option>
+                        <option value="through">through</option>
+                        <option value="around">around</option>
+                        <option value="over">over</option>
+                        <option value="by">by</option>
+                    </select>
+                    <span class="context">(not enough for all)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">around</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">16</span>
+                <span class="sentence-text">
+                    She came 
+                    <select class="preposition-select" data-correct="to">
+                        <option value="">--choose--</option>
+                        <option value="around">around</option>
+                        <option value="to">to</option>
+                        <option value="through">through</option>
+                        <option value="over">over</option>
+                        <option value="back">back</option>
+                    </select>
+                    after an hour
+                    <span class="context">(regained consciousness)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">to</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">17</span>
+                <span class="sentence-text">
+                    My application was turned 
+                    <select class="preposition-select" data-correct="down">
+                        <option value="">--choose--</option>
+                        <option value="off">off</option>
+                        <option value="away">away</option>
+                        <option value="down">down</option>
+                        <option value="out">out</option>
+                        <option value="back">back</option>
+                    </select>
+                    <span class="context">(rejected, declined)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">down</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">18</span>
+                <span class="sentence-text">
+                    They made 
+                    <select class="preposition-select" data-correct="for">
+                        <option value="">--choose--</option>
+                        <option value="towards">towards</option>
+                        <option value="to">to</option>
+                        <option value="for">for</option>
+                        <option value="off">off</option>
+                        <option value="out">out</option>
+                    </select>
+                    the city
+                    <span class="context">(went in the direction of)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">for</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">19</span>
+                <span class="sentence-text">
+                    After the fight they decided to make 
+                    <select class="preposition-select" data-correct="up">
+                        <option value="">--choose--</option>
+                        <option value="out">out</option>
+                        <option value="over">over</option>
+                        <option value="up">up</option>
+                        <option value="through">through</option>
+                        <option value="for">for</option>
+                    </select>
+                    again
+                    <span class="context">(be friends)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">up</span>
+                </span>
+            </div>
+
+            <div class="sentence-item">
+                <span class="sentence-number">20</span>
+                <span class="sentence-text">
+                    I can't make 
+                    <select class="preposition-select" data-correct="out">
+                        <option value="">--choose--</option>
+                        <option value="up">up</option>
+                        <option value="through">through</option>
+                        <option value="out">out</option>
+                        <option value="over">over</option>
+                        <option value="sense">sense</option>
+                    </select>
+                    what you are saying
+                    <span class="context">(understand)</span>
+                    <span class="result-icon">✓</span>
+                    <span class="correct-text">out</span>
+                </span>
+            </div>
+
+            <div class="buttons">
+                <button id="checkBtn" onclick="checkAnswers()">Check Answers</button>
+                <button id="resetBtn" onclick="resetQuiz()">Reset</button>
+            </div>
+
+            <div id="scoreDisplay" class="score-display"></div>
+        </div>
+    </div>
+
+    <script>
+        function checkAnswers() {
+            const selects = document.querySelectorAll('.preposition-select');
+            let correct = 0;
+            let total = selects.length;
+
+            selects.forEach(select => {
+                const correctAnswer = select.getAttribute('data-correct');
+                const userAnswer = select.value;
+                const resultIcon = select.parentElement.querySelector('.result-icon');
+                const correctText = select.parentElement.querySelector('.correct-text');
+
+                if (userAnswer === correctAnswer) {
+                    correct++;
+                    select.classList.add('correct-answer');
+                    select.classList.remove('incorrect-answer');
+                    resultIcon.style.display = 'inline';
+                    resultIcon.innerHTML = '✓';
+                    resultIcon.className = 'result-icon correct';
+                } else {
+                    select.classList.add('incorrect-answer');
+                    select.classList.remove('correct-answer');
+                    resultIcon.style.display = 'inline';
+                    resultIcon.innerHTML = '✗';
+                    resultIcon.className = 'result-icon incorrect';
+                    
+                    // Show correct answer
+                    correctText.style.display = 'inline';
+                }
+
+                // Disable the select after checking
+                select.disabled = true;
+            });
+
+            // Display score
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const percentage = Math.round((correct / total) * 100);
+            let message = '';
+            
+            if (percentage === 100) {
+                message = 'Perfect! Excellent work! 🎉';
+            } else if (percentage >= 80) {
+                message = 'Great job! Well done! 👏';
+            } else if (percentage >= 60) {
+                message = 'Good effort! Keep practicing! 💪';
+            } else {
+                message = 'Keep trying! You can do it! 📚';
+            }
+
+            scoreDisplay.innerHTML = `
+                <strong>Score: ${correct} / ${total} (${percentage}%)</strong><br>
+                ${message}
+            `;
+            scoreDisplay.classList.add('show');
+
+            // Disable check button after checking
+            document.getElementById('checkBtn').disabled = true;
+        }
+
+        function resetQuiz() {
+            // Reset all selects
+            const selects = document.querySelectorAll('.preposition-select');
+            selects.forEach(select => {
+                select.value = '';
+                select.disabled = false;
+                select.classList.remove('correct-answer', 'incorrect-answer');
+            });
+
+            // Hide result icons and correct answers
+            const resultIcons = document.querySelectorAll('.result-icon');
+            resultIcons.forEach(icon => {
+                icon.style.display = 'none';
+            });
+
+            const correctTexts = document.querySelectorAll('.correct-text');
+            correctTexts.forEach(text => {
+                text.style.display = 'none';
+            });
+
+            // Hide score display
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            scoreDisplay.classList.remove('show');
+
+            // Enable check button
+            document.getElementById('checkBtn').disabled = false;
+        }
+    </script>
+</body>
+</html>
