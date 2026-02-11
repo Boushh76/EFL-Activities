@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kapittel 7 – Reindrift</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --snow: #f0eff4;
+    --tundra: #2c3e50;
+    --lichen: #7a9e7e;
+    --lichen-dark: #5a7e5e;
+    --aurora: #5bb5a2;
+    --aurora-glow: #3d9b87;
+    --berry: #c0392b;
+    --bark: #8b6914;
+    --frost: rgba(255,255,255,0.85);
+    --shadow: rgba(44,62,80,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--snow);
+    color: var(--tundra);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(160deg, #1a2a3a 0%, #2c4a5a 40%, #3d6b6e 70%, #5bb5a2 100%);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .snowfall {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .snowflake {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    0% { opacity: 0; transform: translateY(-10px) translateX(0); }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.5; }
+    100% { opacity: 0; transform: translateY(70vh) translateX(30px); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+  }
+
+  .hero-content h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    color: white;
+    text-shadow: 0 4px 30px rgba(0,0,0,0.3);
+    margin-bottom: 0.3em;
+    letter-spacing: -0.02em;
+    animation: fadeUp 1s ease-out;
+  }
+
+  .hero-content p {
+    font-size: 1.25rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 300;
+    max-width: 500px;
+    margin: 0 auto;
+    animation: fadeUp 1s ease-out 0.2s both;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 0.4em 1.2em;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: fadeUp 1s ease-out 0.1s both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* NAV TABS */
+  .nav-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--frost);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(44,62,80,0.08);
+    padding: 0 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-bar button {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 1rem 1.2rem;
+    border: none;
+    background: none;
+    color: var(--tundra);
+    opacity: 0.5;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: all 0.25s;
+  }
+
+  .nav-bar button:hover { opacity: 0.8; }
+  .nav-bar button.active {
+    opacity: 1;
+    border-bottom-color: var(--aurora);
+    color: var(--aurora-glow);
+  }
+
+  /* SECTIONS */
+  .section {
+    display: none;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    margin-bottom: 0.3em;
+    color: var(--tundra);
+  }
+
+  .section h2 .emoji { margin-right: 0.3em; }
+
+  .section-intro {
+    font-size: 1.05rem;
+    color: #5a6a7a;
+    margin-bottom: 2rem;
+    max-width: 700px;
+    font-weight: 300;
+  }
+
+  /* QUIZ CARDS */
+  .quiz-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 12px var(--shadow);
+    border: 1px solid rgba(44,62,80,0.05);
+    transition: transform 0.2s;
+  }
+
+  .quiz-card:hover { transform: translateY(-2px); }
+
+  .quiz-card .q-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--aurora);
+    margin-bottom: 0.5rem;
+  }
+
+  .quiz-card .q-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+  }
+
+  .quiz-options {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.9rem 1.2rem;
+    border: 2px solid #e8ecf0;
+    border-radius: 10px;
+    background: #fafbfc;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1.5;
+  }
+
+  .quiz-option:hover {
+    border-color: var(--aurora);
+    background: #f0faf8;
+  }
+
+  .quiz-option.correct {
+    border-color: var(--lichen);
+    background: #eaf5eb;
+    color: var(--lichen-dark);
+    font-weight: 600;
+  }
+
+  .quiz-option.wrong {
+    border-color: var(--berry);
+    background: #fdecea;
+    color: var(--berry);
+    opacity: 0.7;
+  }
+
+  .quiz-option:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 1rem;
+    padding: 1rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    display: none;
+    line-height: 1.6;
+  }
+
+  .feedback.show { display: block; animation: fadeIn 0.3s ease; }
+  .feedback.correct-fb { background: #eaf5eb; color: #2d5a30; }
+  .feedback.wrong-fb { background: #fdecea; color: #8b2020; }
+
+  /* DRAG & DROP – Årshjul */
+  .wheel-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .season-wheel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .month-slot {
+    background: white;
+    border: 2px dashed #d0d8e0;
+    border-radius: 12px;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .month-slot.drag-over {
+    border-color: var(--aurora);
+    background: #f0faf8;
+    transform: scale(1.03);
+  }
+
+  .month-slot.filled-correct {
+    border: 2px solid var(--lichen);
+    background: #eaf5eb;
+  }
+
+  .month-slot.filled-wrong {
+    border: 2px solid var(--berry);
+    background: #fdecea;
+  }
+
+  .month-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8a9ab0;
+    margin-bottom: 0.3rem;
+  }
+
+  .month-slot .season-tag {
+    font-size: 0.6rem;
+    padding: 0.15em 0.5em;
+    border-radius: 99px;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+  }
+
+  .season-vinter { background: #dbeafe; color: #1e40af; }
+  .season-vaar { background: #d1fae5; color: #065f46; }
+  .season-sommer { background: #fef3c7; color: #92400e; }
+  .season-host { background: #fde8e8; color: #991b1b; }
+
+  .drag-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px var(--shadow);
+    max-width: 500px;
+    width: 100%;
+  }
+
+  .drag-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.6rem 1rem;
+    background: linear-gradient(135deg, #f8f9fa, #e8ecf0);
+    border: 1px solid #d0d8e0;
+    border-radius: 8px;
+    cursor: grab;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .drag-item:active { cursor: grabbing; transform: scale(1.05); }
+  .drag-item:hover { border-color: var(--aurora); }
+  .drag-item.placed { opacity: 0.3; pointer-events: none; }
+
+  .dropped-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--tundra);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  /* OPEN QUESTIONS */
+  .open-q {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 12px var(--shadow);
+    border-left: 4px solid var(--aurora);
+  }
+
+  .open-q .q-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--aurora);
+    margin-bottom: 0.5rem;
+  }
+
+  .open-q .q-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .open-q .hint {
+    font-size: 0.85rem;
+    color: #8a9ab0;
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+
+  .open-q textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 1rem;
+    border: 2px solid #e8ecf0;
+    border-radius: 10px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    resize: vertical;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+
+  .open-q textarea:focus {
+    outline: none;
+    border-color: var(--aurora);
+  }
+
+  .stikkord-btn {
+    margin-top: 0.8rem;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--aurora);
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .stikkord-btn:hover { background: var(--aurora-glow); }
+
+  .stikkord-box {
+    margin-top: 0.8rem;
+    padding: 1rem;
+    background: #f0faf8;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    color: #2d5a50;
+    display: none;
+    line-height: 1.6;
+  }
+
+  .stikkord-box.show { display: block; animation: fadeIn 0.3s ease; }
+
+  /* MATCHING */
+  .match-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 600px) {
+    .match-container { grid-template-columns: 1fr; }
+  }
+
+  .match-col h3 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8a9ab0;
+    margin-bottom: 0.8rem;
+  }
+
+  .match-item {
+    padding: 0.9rem 1.2rem;
+    background: white;
+    border: 2px solid #e8ecf0;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .match-item:hover { border-color: var(--aurora); }
+  .match-item.selected { border-color: var(--aurora); background: #f0faf8; box-shadow: 0 0 0 3px rgba(91,181,162,0.2); }
+  .match-item.matched { border-color: var(--lichen); background: #eaf5eb; opacity: 0.7; pointer-events: none; }
+  .match-item.wrong-match { border-color: var(--berry); background: #fdecea; animation: shake 0.4s; }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* SCORE */
+  .score-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--frost);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(44,62,80,0.08);
+    padding: 0.8rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    z-index: 100;
+    font-size: 0.9rem;
+  }
+
+  .score-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    font-weight: 600;
+  }
+
+  .score-item .score-icon { font-size: 1.2rem; }
+
+  .reset-btn {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.4rem 1rem;
+    border: 2px solid #d0d8e0;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover { border-color: var(--berry); color: var(--berry); }
+
+  /* UTILITY */
+  .spacer { height: 60px; }
+
+  .check-all-btn {
+    display: block;
+    margin: 2rem auto 0;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.9rem 2.5rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--aurora), var(--aurora-glow));
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(91,181,162,0.3);
+  }
+
+  .check-all-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(91,181,162,0.4); }
+
+  .info-box {
+    background: linear-gradient(135deg, #f0faf8, #e8f4f0);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(91,181,162,0.2);
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+
+  .info-box strong { color: var(--aurora-glow); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="snowfall" id="snowfall"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Kapittel 7 · Naturbruk</div>
+    <h1>Reindrift</h1>
+    <p>Interaktive oppgaver om samisk reindrift, dyra, beitene og driftsformene</p>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-bar" id="nav">
+  <button class="active" data-tab="quiz">Flervalg</button>
+  <button data-tab="arshjul">Årshjul</button>
+  <button data-tab="matching">Kobling</button>
+  <button data-tab="open">Skriveoppgaver</button>
+</nav>
+
+<!-- ===================== FLERVALG ===================== -->
+<section class="section active" id="quiz">
+  <h2><span class="emoji">🦌</span>Flervalgsoppgaver</h2>
+  <p class="section-intro">Test kunnskapen din om reindrift. Velg riktig svar for hvert spørsmål.</p>
+
+  <div class="quiz-card" data-correct="1">
+    <div class="q-number">Oppgave 1</div>
+    <div class="q-text">Hvor er det samiske beiteområdet?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" data-idx="0">Fra Trøndelag til Nordland</button>
+      <button class="quiz-option" data-idx="1">Fra Hedmark i sør til Finnmark i nord</button>
+      <button class="quiz-option" data-idx="2">Bare i Finnmark fylke</button>
+      <button class="quiz-option" data-idx="3">Fra Rogaland til Troms</button>
+    </div>
+    <div class="feedback correct-fb">✅ Riktig! Det samiske beiteområdet strekker seg fra Finnmark i nord til Hedmark i sør. Ikke-samisk reindrift utøves også i Hedmark, Nord-Gudbrandsdalen og Valdres.</div>
+    <div class="feedback wrong-fb">❌ Ikke helt. Det samiske beiteområdet strekker seg fra Finnmark i nord til Hedmark i sør.</div>
+  </div>
+
+  <div class="quiz-card" data-correct="2">
+    <div class="q-number">Oppgave 2</div>
+    <div class="q-text">Hva er en siida?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" data-idx="0">Et samisk ord for reinmerke</button>
+      <button class="quiz-option" data-idx="1">En type reinfôr brukt om vinteren</button>
+      <button class="quiz-option" data-idx="2">En gruppe reineiere som samler reinen sin i felles flokker og samarbeider om driften</button>
+      <button class="quiz-option" data-idx="3">Et gjerdeanlegg for skilling av rein</button>
+    </div>
+    <div class="feedback correct-fb">✅ Riktig! En siida er den tradisjonelle organisasjonsformen i samisk reindrift – en gruppe reineiere som samler reinen i felles flokker på bestemte landområder og samarbeider om driften.</div>
+    <div class="feedback wrong-fb">❌ Ikke riktig. En siida er en gruppe reineiere som samler reinen i felles flokker og samarbeider om driften.</div>
+  </div>
+
+  <div class="quiz-card" data-correct="0">
+    <div class="q-number">Oppgave 3</div>
+    <div class="q-text">Når er paringstiden for reinsdyr?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" data-idx="0">Fra midten av september til midten av oktober</button>
+      <button class="quiz-option" data-idx="1">I november og desember</button>
+      <button class="quiz-option" data-idx="2">Om våren, i april og mai</button>
+      <button class="quiz-option" data-idx="3">I juli og august</button>
+    </div>
+    <div class="feedback correct-fb">✅ Riktig! Brunsttiden starter på høsten, og paringen skjer fra midten av september til midten av oktober.</div>
+    <div class="feedback wrong-fb">❌ Nei, paringen skjer fra midten av september til midten av oktober.</div>
+  </div>
+
+  <div class="quiz-card" data-correct="1">
+    <div class="q-number">Oppgave 4</div>
+    <div class="q-text">Hva spiser reinen hovedsakelig om vinteren?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" data-idx="0">Grønne planter i spirefasen</button>
+      <button class="quiz-option" data-idx="1">Lav, spesielt gulskinn og kvitkrull</button>
+      <button class="quiz-option" data-idx="2">Sopp og mose</button>
+      <button class="quiz-option" data-idx="3">Løv fra trær</button>
+    </div>
+    <div class="feedback correct-fb">✅ Riktig! Om vinteren foretrekker reinen lavarten gulskinn og kvitkrull. Lav inneholder mye lettfordøyelige karbohydrater og egner seg som vedlikeholdsfôr.</div>
+    <div class="feedback wrong-fb">❌ Ikke helt. Om vinteren foretrekker reinen lav, spesielt gulskinn og kvitkrull, som inneholder lettfordøyelige karbohydrater.</div>
+  </div>
+
+  <div class="quiz-card" data-correct="2">
+    <div class="q-number">Oppgave 5</div>
+    <div class="q-text">Hvor stor andel av landarealet i Norge drives det reindrift på?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" data-idx="0">Ca. 10 prosent</button>
+      <button class="quiz-option" data-idx="1">Ca. 25 prosent</button>
+      <button class="quiz-option" data-idx="2">Ca. 40 prosent</button>
+      <button class="quiz-option" data-idx="3">Ca. 60 prosent</button>
+    </div>
+    <div class="feedback correct-fb">✅ Riktig! I dag drives det reindrift på rundt 40 prosent av landarealet i Norge.</div>
+    <div class="feedback wrong-fb">❌ Feil. Det drives reindrift på rundt 40 prosent av landarealet i Norge.</div>
+  </div>
+
+  <div class="quiz-card" data-correct="3">
+    <div class="q-number">Oppgave 6</div>
+    <div class="q-text">Hva er et reinmerke?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" data-idx="0">Et elektronisk chip som festes på reinens hals</button>
+      <button class="quiz-option" data-idx="1">Et fargemerke som males på reinens side</button>
+      <button class="quiz-option" data-idx="2">Et DNA-register over alle reinsdyr</button>
+      <button class="quiz-option" data-idx="3">Et unikt snitt som skjæres i øret på reinen</button>
+    </div>
+    <div class="feedback correct-fb">✅ Riktig! Et reinmerke er et unikt snitt som skjæres i øret på reinen. Bare personer av samisk ætt har i utgangspunktet rett til reinmerke.</div>
+    <div class="feedback wrong-fb">❌ Nei, et reinmerke er et unikt snitt som skjæres i øret på reinen.</div>
+  </div>
+
+  <div class="quiz-card" data-correct="0">
+    <div class="q-number">Oppgave 7</div>
+    <div class="q-text">Hva er drektighetsperioden for en simle?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" data-idx="0">228 dager</button>
+      <button class="quiz-option" data-idx="1">150 dager</button>
+      <button class="quiz-option" data-idx="2">300 dager</button>
+      <button class="quiz-option" data-idx="3">180 dager</button>
+    </div>
+    <div class="feedback correct-fb">✅ Riktig! Simla går drektig i 228 dager og kalver i mai–juni.</div>
+    <div class="feedback wrong-fb">❌ Nei, drektighetsperioden er 228 dager.</div>
+  </div>
+
+  <div class="quiz-card" data-correct="1">
+    <div class="q-number">Oppgave 8</div>
+    <div class="q-text">Hvordan har driftsformen endret seg de senere årene?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" data-idx="0">Alle reineiere følger fortsatt tradisjonell nomadisk drift</button>
+      <button class="quiz-option" data-idx="1">Mange har gått over til en driftsform som ligner sauehold, med slakting av kalver om høsten</button>
+      <button class="quiz-option" data-idx="2">Reindriften er avviklet i Sør-Norge</button>
+      <button class="quiz-option" data-idx="3">All rein holdes nå innendørs om vinteren</button>
+    </div>
+    <div class="feedback correct-fb">✅ Riktig! Mange reineiere har gått over til driftsformer som ligner sauehold – flokken består mest av hunndyr og et lite antall hanner, og mesteparten av kalvene slaktes om høsten.</div>
+    <div class="feedback wrong-fb">❌ Feil. Mange reineiere har gått over til en driftsform som ligner sauehold, med slakting av kalver om høsten.</div>
+  </div>
+</section>
+
+<!-- ===================== ÅRSHJUL ===================== -->
+<section class="section" id="arshjul">
+  <h2><span class="emoji">📅</span>Reinens årshjul</h2>
+  <p class="section-intro">Dra aktivitetene til riktig måned. Hva skjer når i reindriftsåret?</p>
+
+  <div class="info-box">
+    <strong>Tips:</strong> Tenk på årstidene – reinen vandrer mellom <strong>vinterbeiter</strong> på vidda og <strong>sommerbeiter</strong> ved kysten. Kalvinga skjer om våren, paringen om høsten, og slaktinga når frosten kommer.
+  </div>
+
+  <div class="wheel-container">
+    <div class="season-wheel" id="seasonWheel">
+      <!-- Filled by JS -->
+    </div>
+    <div class="drag-bank" id="dragBank">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <button class="check-all-btn" onclick="checkWheel()">Sjekk svarene</button>
+</section>
+
+<!-- ===================== KOBLING ===================== -->
+<section class="section" id="matching">
+  <h2><span class="emoji">🔗</span>Koblingsoppgave</h2>
+  <p class="section-intro">Klikk på et begrep til venstre, deretter klikk på riktig forklaring til høyre.</p>
+
+  <div class="match-container">
+    <div class="match-col" id="matchTerms">
+      <h3>Begrep</h3>
+    </div>
+    <div class="match-col" id="matchDefs">
+      <h3>Forklaring</h3>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SKRIVEOPPGAVER ===================== -->
+<section class="section" id="open">
+  <h2><span class="emoji">✍️</span>Skriveoppgaver</h2>
+  <p class="section-intro">Svar med egne ord. Bruk teksten fra kapittel 7 som grunnlag. Klikk «Vis stikkord» for hjelp.</p>
+
+  <div class="open-q">
+    <div class="q-number">Oppgave 1</div>
+    <div class="q-text">På hvilken måte er reindriften knyttet til den samiske kulturen?</div>
+    <div class="hint">Tenk på historie, organisering, reinmerke og tradisjonell kunnskap.</div>
+    <textarea placeholder="Skriv svaret ditt her..."></textarea>
+    <button class="stikkord-btn" onclick="toggleStikkord(this)">Vis stikkord</button>
+    <div class="stikkord-box">Opphav hos den samiske befolkningen · siida-systemet · reinmerke knyttet til samisk ætt · kunnskap og tradisjoner overført fra generasjon til generasjon · barna får tidlig ansvar for egen rein · reindriftsloven krever særskilt tillatelse for ikke-samisk reindrift</div>
+  </div>
+
+  <div class="open-q">
+    <div class="q-number">Oppgave 4</div>
+    <div class="q-text">På hvilken måte vil du si at reindriften er økologisk?</div>
+    <div class="hint">Tenk på beiteressurser, dyras naturlige miljø og bærekraft.</div>
+    <textarea placeholder="Skriv svaret ditt her..."></textarea>
+    <button class="stikkord-btn" onclick="toggleStikkord(this)">Vis stikkord</button>
+    <div class="stikkord-box">Dyra lever i sitt naturlige miljø · utnytter skrinne beiteressurser · vandring mellom vinter- og sommerbeiter · reineieren griper bare inn når nødvendig · dyras kunnskap, erfaringer og instinkter danner grunnlaget · økologisk produksjon · bærekraftig utnyttelse av naturen</div>
+  </div>
+
+  <div class="open-q">
+    <div class="q-number">Oppgave 5</div>
+    <div class="q-text">Hvordan overføres ansvaret for reinflokken fra generasjon til generasjon?</div>
+    <div class="hint">Tenk på reinmerke, dåpsgave, barnas rolle og valget ungdommene tar.</div>
+    <textarea placeholder="Skriv svaret ditt her..."></textarea>
+    <button class="stikkord-btn" onclick="toggleStikkord(this)">Vis stikkord</button>
+    <div class="stikkord-box">Barn får tidlig eget reinmerke · første rein som dåpsgave · foreldrene har ansvar for barnas rein · barna bygger opp egen lille flokk · ungdommene velger om de vil satse på reindrift · de som velger annet har et par rein i familiens flokk · bidrar som ekstra arbeidskraft i travle perioder</div>
+  </div>
+
+  <div class="open-q">
+    <div class="q-number">Oppgave 6</div>
+    <div class="q-text">Gjør rede for hvordan og hvorfor reineierne forflytter flokken sin.</div>
+    <div class="hint">Tenk på årstider, beiteområder, fôrtilgang og reinens naturlige bevegelser.</div>
+    <textarea placeholder="Skriv svaret ditt her..."></textarea>
+    <button class="stikkord-btn" onclick="toggleStikkord(this)">Vis stikkord</button>
+    <div class="stikkord-box">Vandring mellom vinterbeite (vidda) og sommerbeite (kysten) · reinen følger snøsmeltingen oppover fjellet om våren · ferskeste plantene gir protein til vekst · lav som vedlikeholdsfôr om vinteren · reineieren gjeter og vokter · samles i gjerdeanlegg når frosten kommer · tradisjonell vs. moderne driftsform</div>
+  </div>
+
+  <div class="open-q">
+    <div class="q-number">Oppgave 10</div>
+    <div class="q-text">Hva slags endringer i driftsform ser vi i dag, og hva er årsaken til dette?</div>
+    <div class="hint">Tenk på myndighetenes press, sauehold-modellen og slaktevekt.</div>
+    <textarea placeholder="Skriv svaret ditt her..."></textarea>
+    <button class="stikkord-btn" onclick="toggleStikkord(this)">Vis stikkord</button>
+    <div class="stikkord-box">Myndigheter presser på for lønnsomhet og bærekraft · driftsform som ligner sauehold · flokken mest hunndyr og lite antall hanner · kalvene slaktes om høsten · slaktevekt 18–20 kilo · mobile slakterier · gjenspeiler storsamfunnets politikk og økonomi · kastrerte hanndyr hadde tidligere stor nytte i flokken</div>
+  </div>
+</section>
+
+<div class="spacer"></div>
+
+<!-- SCORE BAR -->
+<div class="score-bar">
+  <div class="score-item">
+    <span class="score-icon">✅</span>
+    <span id="correctCount">0</span> riktige
+  </div>
+  <div class="score-item">
+    <span class="score-icon">❌</span>
+    <span id="wrongCount">0</span> feil
+  </div>
+  <button class="reset-btn" onclick="resetAll()">↻ Nullstill</button>
+</div>
+
+<script>
+// ==================== STATE ====================
+let correct = 0, wrong = 0;
+const correctEl = document.getElementById('correctCount');
+const wrongEl = document.getElementById('wrongCount');
+
+function updateScore() {
+  correctEl.textContent = correct;
+  wrongEl.textContent = wrong;
+}
+
+// ==================== SNOW ====================
+(function makeSnow() {
+  const sf = document.getElementById('snowfall');
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('div');
+    s.className = 'snowflake';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.animationDuration = (4 + Math.random() * 6) + 's';
+    s.style.animationDelay = Math.random() * 8 + 's';
+    s.style.width = s.style.height = (2 + Math.random() * 3) + 'px';
+    sf.appendChild(s);
+  }
+})();
+
+// ==================== TABS ====================
+document.querySelectorAll('.nav-bar button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-bar button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ==================== QUIZ ====================
+document.querySelectorAll('.quiz-card').forEach(card => {
+  const correctIdx = parseInt(card.dataset.correct);
+  const options = card.querySelectorAll('.quiz-option');
+  const feedbacks = card.querySelectorAll('.feedback');
+
+  options.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (opt.disabled) return;
+      options.forEach(o => { o.disabled = true; o.classList.remove('correct','wrong'); });
+      feedbacks.forEach(f => f.classList.remove('show'));
+
+      const idx = parseInt(opt.dataset.idx);
+      if (idx === correctIdx) {
+        opt.classList.add('correct');
+        feedbacks[0].classList.add('show');
+        correct++;
+      } else {
+        opt.classList.add('wrong');
+        options[correctIdx].classList.add('correct');
+        feedbacks[1].classList.add('show');
+        wrong++;
+      }
+      updateScore();
+    });
+  });
+});
+
+// ==================== ÅRSHJUL ====================
+const months = ['Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
+const seasonClass = ['season-vinter','season-vinter','season-vaar','season-vaar','season-vaar','season-sommer','season-sommer','season-sommer','season-host','season-host','season-host','season-vinter'];
+const seasonLabel = ['Vinter','Vinter','Vår','Vår','Vår','Sommer','Sommer','Sommer','Høst','Høst','Høst','Vinter'];
+
+const activities = [
+  { text: '🐣 Kalving', months: [4,5] },        // Mai-Juni
+  { text: '🌿 Sommerbeite (kyst)', months: [5,6,7] }, // Jun-Aug
+  { text: '💚 Grønne spirer gir protein', months: [3,4] }, // Apr-Mai
+  { text: '🍄 Sopp gir viktig næring', months: [8,9] }, // Sep-Okt
+  { text: '❤️ Paringstid (brunst)', months: [8,9] }, // Sep-Okt
+  { text: '🔪 Slakting / skilling', months: [9,10] }, // Okt-Nov
+  { text: '❄️ Vinterbeite (vidda)', months: [11,0,1,2] }, // Des-Mar
+  { text: '🦎 Lav som vinterfôr', months: [11,0,1,2] }, // Des-Mar
+];
+
+const wheel = document.getElementById('seasonWheel');
+const bank = document.getElementById('dragBank');
+
+months.forEach((m, i) => {
+  const slot = document.createElement('div');
+  slot.className = 'month-slot';
+  slot.dataset.month = i;
+  slot.innerHTML = `<span class="season-tag ${seasonClass[i]}">${seasonLabel[i]}</span><span class="month-label">${m}</span><div class="drop-zone" style="min-height:20px;width:100%;"></div>`;
+  
+  slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('drag-over'); });
+  slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+  slot.addEventListener('drop', e => {
+    e.preventDefault();
+    slot.classList.remove('drag-over');
+    const actIdx = e.dataTransfer.getData('text/plain');
+    const item = document.querySelector(`.drag-item[data-idx="${actIdx}"]`);
+    if (!item) return;
+    
+    const dropZone = slot.querySelector('.drop-zone');
+    const dropped = document.createElement('div');
+    dropped.className = 'dropped-text';
+    dropped.textContent = activities[actIdx].text;
+    dropped.dataset.actIdx = actIdx;
+    dropZone.appendChild(dropped);
+    item.classList.add('placed');
+  });
+  
+  wheel.appendChild(slot);
+});
+
+// Shuffle activities for drag bank
+const shuffled = activities.map((a, i) => ({ ...a, idx: i })).sort(() => Math.random() - 0.5);
+shuffled.forEach(a => {
+  const item = document.createElement('div');
+  item.className = 'drag-item';
+  item.draggable = true;
+  item.dataset.idx = a.idx;
+  item.textContent = a.text;
+  item.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', a.idx);
+  });
+  bank.appendChild(item);
+});
+
+function checkWheel() {
+  document.querySelectorAll('.month-slot').forEach(slot => {
+    const monthIdx = parseInt(slot.dataset.month);
+    const dropped = slot.querySelectorAll('.dropped-text');
+    slot.classList.remove('filled-correct','filled-wrong');
+    
+    dropped.forEach(d => {
+      const actIdx = parseInt(d.dataset.actIdx);
+      const act = activities[actIdx];
+      if (act.months.includes(monthIdx)) {
+        d.style.color = 'var(--lichen-dark)';
+        if (!d.dataset.scored) { correct++; d.dataset.scored = '1'; }
+      } else {
+        d.style.color = 'var(--berry)';
+        if (!d.dataset.scored) { wrong++; d.dataset.scored = '1'; }
+      }
+    });
+  });
+  updateScore();
+}
+
+// ==================== MATCHING ====================
+const matchData = [
+  { term: 'Reinbukk', def: 'Hanndyret' },
+  { term: 'Simle', def: 'Hunndyret' },
+  { term: 'Siida', def: 'Driftsfellesskap – gruppe reineiere som samarbeider' },
+  { term: 'Reinmerke', def: 'Unikt snitt i øret som viser hvem som eier reinen' },
+  { term: 'Brunst', def: 'Paringstid om høsten (sept–okt)' },
+  { term: 'Gulskinn', def: 'Lavart som er viktig vinterfôr' },
+  { term: 'Kalving', def: 'Når simla føder, i mai–juni' },
+];
+
+const termsCol = document.getElementById('matchTerms');
+const defsCol = document.getElementById('matchDefs');
+let selectedTerm = null;
+
+const shuffledTerms = [...matchData].sort(() => Math.random() - 0.5);
+const shuffledDefs = [...matchData].sort(() => Math.random() - 0.5);
+
+shuffledTerms.forEach((m, i) => {
+  const el = document.createElement('div');
+  el.className = 'match-item';
+  el.textContent = m.term;
+  el.dataset.term = m.term;
+  el.addEventListener('click', () => {
+    if (el.classList.contains('matched')) return;
+    document.querySelectorAll('#matchTerms .match-item').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTerm = m.term;
+  });
+  termsCol.appendChild(el);
+});
+
+shuffledDefs.forEach((m, i) => {
+  const el = document.createElement('div');
+  el.className = 'match-item';
+  el.textContent = m.def;
+  el.dataset.term = m.term;
+  el.addEventListener('click', () => {
+    if (!selectedTerm || el.classList.contains('matched')) return;
+    
+    if (selectedTerm === m.term) {
+      el.classList.add('matched');
+      document.querySelector(`#matchTerms .match-item[data-term="${selectedTerm}"]`).classList.add('matched');
+      correct++;
+    } else {
+      el.classList.add('wrong-match');
+      setTimeout(() => el.classList.remove('wrong-match'), 500);
+      wrong++;
+    }
+    
+    document.querySelectorAll('#matchTerms .match-item').forEach(e => e.classList.remove('selected'));
+    selectedTerm = null;
+    updateScore();
+  });
+  defsCol.appendChild(el);
+});
+
+// ==================== STIKKORD ====================
+function toggleStikkord(btn) {
+  const box = btn.nextElementSibling;
+  box.classList.toggle('show');
+  btn.textContent = box.classList.contains('show') ? 'Skjul stikkord' : 'Vis stikkord';
+}
+
+// ==================== RESET ====================
+function resetAll() {
+  correct = 0; wrong = 0; updateScore();
+  
+  // Reset quiz
+  document.querySelectorAll('.quiz-option').forEach(o => {
+    o.disabled = false; o.classList.remove('correct','wrong');
+  });
+  document.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+  
+  // Reset wheel
+  document.querySelectorAll('.drop-zone').forEach(z => z.innerHTML = '');
+  document.querySelectorAll('.drag-item').forEach(i => i.classList.remove('placed'));
+  document.querySelectorAll('.month-slot').forEach(s => s.classList.remove('filled-correct','filled-wrong'));
+  
+  // Reset matching
+  document.querySelectorAll('.match-item').forEach(m => {
+    m.classList.remove('matched','selected','wrong-match');
+  });
+  selectedTerm = null;
+  
+  // Reset textareas
+  document.querySelectorAll('textarea').forEach(t => t.value = '');
+  document.querySelectorAll('.stikkord-box').forEach(s => s.classList.remove('show'));
+  document.querySelectorAll('.stikkord-btn').forEach(b => b.textContent = 'Vis stikkord');
+}
+</script>
+</body>
+</html>
