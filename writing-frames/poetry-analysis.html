@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poetry Analysis Essay Writing Frame</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .assignment-prompt {
+            background: rgba(255,255,255,0.95);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid #5a67d8;
+        }
+
+        .assignment-prompt h3 {
+            color: #5a67d8;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            color: #5a67d8;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #4a5568;
+            margin: 20px 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #5a67d8;
+            box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .large-textarea {
+            min-height: 200px;
+        }
+
+        .tips {
+            background: #f0f8ff;
+            border: 1px solid #4299e1;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .tips h4 {
+            color: #2b6cb0;
+            margin-bottom: 8px;
+        }
+
+        .tips ul {
+            margin-left: 20px;
+        }
+
+        .tips li {
+            margin-bottom: 5px;
+            color: #4a5568;
+        }
+
+        .quote-example {
+            background: #f7fafc;
+            border-left: 4px solid #4299e1;
+            padding: 10px 15px;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #5a67d8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4c51bf;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .final-essay {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Times New Roman', serif;
+            white-space: pre-wrap;
+            max-height: 600px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .copy-btn {
+            background: #48bb78;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #38a169;
+        }
+
+        .progress-indicator {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .step-nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            margin: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        .word-count {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .section.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Poetry Analysis Essay Writing Frame</h1>
+            <p>Transform Your Analysis Into a Structured Academic Essay</p>
+        </div>
+
+        <div class="assignment-prompt">
+            <h3>Assignment Prompt:</h3>
+            <p><strong>"Read your chosen poem. Write a text in which you analyse and interpret the poem. Justify your analysis with examples from the text."</strong></p>
+            <p style="margin-top: 10px; font-size: 14px; color: #666;">This frame will help you organize your analysis into a coherent essay with proper academic structure and textual evidence.</p>
+        </div>
+
+        <div class="step-nav">
+            <div class="step-dot active" onclick="showSection(1)"></div>
+            <div class="step-dot" onclick="showSection(2)"></div>
+            <div class="step-dot" onclick="showSection(3)"></div>
+            <div class="step-dot" onclick="showSection(4)"></div>
+            <div class="step-dot" onclick="showSection(5)"></div>
+            <div class="step-dot" onclick="showSection(6)"></div>
+        </div>
+
+        <div class="progress-indicator" id="progressText">
+            Step 1 of 6: Planning Your Essay
+        </div>
+
+        <!-- Section 1: Essay Planning -->
+        <div class="section" id="section1">
+            <h2>Essay Planning</h2>
+            
+            <div class="form-group">
+                <label for="poemInfo">Poem Title and Author:</label>
+                <input type="text" id="poemInfo" placeholder="e.g., 'The Lake Isle of Innisfree' by William Butler Yeats">
+            </div>
+
+            <div class="form-group">
+                <label for="mainThesis">What is your main interpretation of this poem? (This will become your thesis statement)</label>
+                <textarea id="mainThesis" placeholder="In one or two sentences, state what you believe the poem is really about and what it means..."></textarea>
+                <div class="tips">
+                    <h4>Thesis Tips:</h4>
+                    <ul>
+                        <li>Go beyond plot summary - what deeper meaning does the poem convey?</li>
+                        <li>Make a specific, arguable claim about the poem's meaning or effect</li>
+                        <li>This should be something you can support with evidence from the text</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="keyEvidence">List 3-5 key pieces of evidence (quotes, images, literary devices) that support your interpretation:</label>
+                <textarea id="keyEvidence" placeholder="List specific lines, phrases, or literary techniques you'll analyze..."></textarea>
+            </div>
+        </div>
+
+        <!-- Section 2: Introduction -->
+        <div class="section hidden" id="section2">
+            <h2>Introduction Paragraph</h2>
+            
+            <div class="form-group">
+                <label for="hookSentence">Opening Hook (grab the reader's attention):</label>
+                <textarea id="hookSentence" placeholder="Start with an interesting observation about the poem, a question, or a striking quote..."></textarea>
+                <div class="tips">
+                    <h4>Hook Ideas:</h4>
+                    <ul>
+                        <li>A compelling quote from the poem</li>
+                        <li>A thought-provoking question the poem raises</li>
+                        <li>An observation about the poem's universal appeal or relevance</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="contextInfo">Brief Context (author, title, basic information about the poem):</label>
+                <textarea id="contextInfo" placeholder="Introduce the poem and provide necessary background information..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="thesisStatement">Refined Thesis Statement:</label>
+                <textarea id="thesisStatement" placeholder="State your main argument about the poem's meaning clearly and specifically..."></textarea>
+                <div class="quote-example">
+                    Example: "Through vivid imagery and biblical allusion, Yeats' 'The Lake Isle of Innisfree' explores the universal human longing to escape the dehumanizing effects of modern urban life and return to a more authentic, natural existence."
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Body Paragraph 1 -->
+        <div class="section hidden" id="section3">
+            <h2>Body Paragraph 1: Literary Techniques & Form</h2>
+            
+            <div class="form-group">
+                <label for="topicSentence1">Topic Sentence (what aspect of the poem will this paragraph analyze?):</label>
+                <textarea id="topicSentence1" placeholder="Introduce the main focus of this paragraph..."></textarea>
+                <div class="tips">
+                    <h4>Focus Areas:</h4>
+                    <ul>
+                        <li>Imagery and sensory details</li>
+                        <li>Figurative language (metaphors, similes)</li>
+                        <li>Sound devices (rhyme, rhythm, alliteration)</li>
+                        <li>Structure and form</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="evidence1">Textual Evidence (specific quotes with line numbers if available):</label>
+                <textarea id="evidence1" placeholder="Include specific quotes from the poem that support your point..."></textarea>
+                <div class="quote-example">
+                    Example format: The speaker declares "I will arise and go now, and go to Innisfree" (line 1), establishing...
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="analysis1">Analysis (explain HOW this evidence supports your interpretation):</label>
+                <textarea id="analysis1" class="large-textarea" placeholder="Explain what this evidence means and how it supports your thesis..."></textarea>
+                <div class="tips">
+                    <h4>Strong Analysis:</h4>
+                    <ul>
+                        <li>Explain the effect of specific word choices</li>
+                        <li>Connect literary devices to meaning</li>
+                        <li>Show how evidence supports your thesis</li>
+                        <li>Avoid just summarizing - interpret and explain significance</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="connection1">Connection to Thesis (link this analysis back to your main argument):</label>
+                <textarea id="connection1" placeholder="Explain how this paragraph supports your overall interpretation..."></textarea>
+            </div>
+        </div>
+
+        <!-- Section 4: Body Paragraph 2 -->
+        <div class="section hidden" id="section4">
+            <h2>Body Paragraph 2: Themes & Deeper Meaning</h2>
+            
+            <div class="form-group">
+                <label for="topicSentence2">Topic Sentence:</label>
+                <textarea id="topicSentence2" placeholder="Introduce the second major aspect of your analysis..."></textarea>
+                <div class="tips">
+                    <h4>Focus Areas:</h4>
+                    <ul>
+                        <li>Major themes and their development</li>
+                        <li>Symbolism and deeper meanings</li>
+                        <li>Setting and its significance</li>
+                        <li>Character or speaker analysis</li>
+                        <li>Cultural or historical context</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="evidence2">Textual Evidence:</label>
+                <textarea id="evidence2" placeholder="Provide specific quotes that develop this aspect of your argument..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="analysis2">Analysis:</label>
+                <textarea id="analysis2" class="large-textarea" placeholder="Analyze this evidence in detail, explaining its significance..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="connection2">Connection to Thesis:</label>
+                <textarea id="connection2" placeholder="Show how this analysis further supports your main argument..."></textarea>
+            </div>
+        </div>
+
+        <!-- Section 5: Body Paragraph 3 (Optional) -->
+        <div class="section hidden" id="section5">
+            <h2>Body Paragraph 3: Broader Significance (Optional)</h2>
+            
+            <div class="form-group">
+                <label for="topicSentence3">Topic Sentence:</label>
+                <textarea id="topicSentence3" placeholder="Introduce any additional analysis or the poem's broader significance..."></textarea>
+                <div class="tips">
+                    <h4>Optional Focus Areas:</h4>
+                    <ul>
+                        <li>Historical or cultural context</li>
+                        <li>Universal themes and relevance</li>
+                        <li>Comparison to other works</li>
+                        <li>The poem's effect on readers</li>
+                        <li>Additional literary techniques</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="evidence3">Textual Evidence:</label>
+                <textarea id="evidence3" placeholder="Optional: Additional evidence if you have a third major point..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="analysis3">Analysis:</label>
+                <textarea id="analysis3" class="large-textarea" placeholder="Optional: Analysis of additional evidence..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="connection3">Connection to Thesis:</label>
+                <textarea id="connection3" placeholder="Optional: How this connects to your overall argument..."></textarea>
+            </div>
+        </div>
+
+        <!-- Section 6: Conclusion -->
+        <div class="section hidden" id="section6">
+            <h2>Conclusion Paragraph</h2>
+            
+            <div class="form-group">
+                <label for="restatement">Restate Thesis (in different words):</label>
+                <textarea id="restatement" placeholder="Restate your main argument using different wording..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="synthesis">Synthesis (bring together your main points):</label>
+                <textarea id="synthesis" placeholder="Summarize how your analysis supports your interpretation..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="significance">Broader Significance (why does this interpretation matter?):</label>
+                <textarea id="significance" placeholder="Explain the broader significance of your interpretation or what readers can learn..."></textarea>
+                <div class="tips">
+                    <h4>Significance Ideas:</h4>
+                    <ul>
+                        <li>Why this poem remains relevant today</li>
+                        <li>What universal human experiences it captures</li>
+                        <li>How it contributes to our understanding of literature/life</li>
+                        <li>What makes this poem powerful or memorable</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button class="btn btn-primary" onclick="generateEssay()">Generate Complete Essay</button>
+            </div>
+
+            <div id="finalEssay" class="final-essay" style="display: none;"></div>
+            <div class="word-count" id="wordCount" style="display: none;"></div>
+            <button class="btn copy-btn" id="copyEssayBtn" style="display: none;" onclick="copyEssayToClipboard()">Copy Essay to Clipboard</button>
+        </div>
+
+        <div class="navigation">
+            <button class="btn btn-secondary" id="prevBtn" onclick="previousSection()" style="display: none;">Previous</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextSection()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 6;
+        const sectionTitles = [
+            "Planning Your Essay",
+            "Introduction Paragraph", 
+            "Body Paragraph 1: Literary Techniques",
+            "Body Paragraph 2: Themes & Meaning",
+            "Body Paragraph 3: Broader Significance",
+            "Conclusion Paragraph"
+        ];
+
+        function showSection(section) {
+            // Hide all sections
+            for (let i = 1; i <= totalSections; i++) {
+                document.getElementById('section' + i).classList.add('hidden');
+                document.querySelectorAll('.step-dot')[i-1].classList.remove('active');
+            }
+            
+            // Show current section
+            document.getElementById('section' + section).classList.remove('hidden');
+            document.querySelectorAll('.step-dot')[section-1].classList.add('active');
+            
+            currentSection = section;
+            updateNavigation();
+            updateProgress();
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.style.display = currentSection > 1 ? 'block' : 'none';
+            nextBtn.style.display = currentSection < totalSections ? 'block' : 'none';
+        }
+
+        function updateProgress() {
+            document.getElementById('progressText').textContent = 
+                `Step ${currentSection} of ${totalSections}: ${sectionTitles[currentSection - 1]}`;
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections) {
+                showSection(currentSection + 1);
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 1) {
+                showSection(currentSection - 1);
+            }
+        }
+
+        function getValue(id) {
+            const element = document.getElementById(id);
+            return element ? element.value.trim() : '';
+        }
+
+        function generateEssay() {
+            const essay = createEssayText();
+            const essayDiv = document.getElementById('finalEssay');
+            const wordCountDiv = document.getElementById('wordCount');
+            const copyBtn = document.getElementById('copyEssayBtn');
+            
+            essayDiv.textContent = essay;
+            essayDiv.style.display = 'block';
+            
+            // Calculate word count
+            const wordCount = essay.split(/\s+/).filter(word => word.length > 0).length;
+            wordCountDiv.textContent = `Word count: ${wordCount}`;
+            wordCountDiv.style.display = 'block';
+            
+            copyBtn.style.display = 'block';
+        }
+
+        function createEssayText() {
+            const poemInfo = getValue('poemInfo');
+            const hook = getValue('hookSentence');
+            const context = getValue('contextInfo');
+            const thesis = getValue('thesisStatement');
+            
+            const topic1 = getValue('topicSentence1');
+            const evidence1 = getValue('evidence1');
+            const analysis1 = getValue('analysis1');
+            const connection1 = getValue('connection1');
+            
+            const topic2 = getValue('topicSentence2');
+            const evidence2 = getValue('evidence2');
+            const analysis2 = getValue('analysis2');
+            const connection2 = getValue('connection2');
+            
+            const topic3 = getValue('topicSentence3');
+            const evidence3 = getValue('evidence3');
+            const analysis3 = getValue('analysis3');
+            const connection3 = getValue('connection3');
+            
+            const restatement = getValue('restatement');
+            const synthesis = getValue('synthesis');
+            const significance = getValue('significance');
+
+            let essay = '';
+            
+            // Title
+            if (poemInfo) {
+                essay += `Analysis of ${poemInfo}\n\n`;
+            }
+            
+            // Introduction
+            essay += `${hook} ${context} ${thesis}\n\n`;
+            
+            // Body Paragraph 1
+            if (topic1) {
+                essay += `${topic1} ${evidence1} ${analysis1} ${connection1}\n\n`;
+            }
+            
+            // Body Paragraph 2
+            if (topic2) {
+                essay += `${topic2} ${evidence2} ${analysis2} ${connection2}\n\n`;
+            }
+            
+            // Body Paragraph 3 (if filled out)
+            if (topic3 && evidence3) {
+                essay += `${topic3} ${evidence3} ${analysis3} ${connection3}\n\n`;
+            }
+            
+            // Conclusion
+            essay += `${restatement} ${synthesis} ${significance}`;
+            
+            return essay;
+        }
+
+        function copyEssayToClipboard() {
+            const text = document.getElementById('finalEssay').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyEssayBtn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#38a169';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#48bb78';
+                }, 2000);
+            });
+        }
+
+        // Initialize
+        updateNavigation();
+        updateProgress();
+    </script>
+</body>
+</html>
