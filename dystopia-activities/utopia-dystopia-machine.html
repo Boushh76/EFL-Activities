@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utopia/Dystopia Machine</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-shadow: 0 0 20px #00ffff;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+        
+        .issue-selector {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .issue-dropdown {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 12px 20px;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .issue-dropdown:hover, .issue-dropdown:focus {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            outline: none;
+        }
+        
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .dial-container {
+            flex: 1;
+            min-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .dial-wrapper {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            margin: 20px 0;
+        }
+        
+        .dial-background {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #0a0a0a 20%, #1a1a2e 60%, #00ffff 100%);
+            border: 5px solid #00ffff;
+            box-shadow: 
+                inset 0 0 50px rgba(0, 255, 255, 0.3),
+                0 0 50px rgba(0, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dial-marks {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        .dial-mark {
+            position: absolute;
+            background: #00ffff;
+            transform-origin: 50% 175px;
+        }
+        
+        .dial-mark.major {
+            width: 3px;
+            height: 40px;
+            top: 0;
+            left: 50%;
+            margin-left: -1.5px;
+        }
+        
+        .dial-mark.minor {
+            width: 2px;
+            height: 20px;
+            top: 10px;
+            left: 50%;
+            margin-left: -1px;
+            opacity: 0.6;
+        }
+        
+        .dial-needle {
+            position: absolute;
+            width: 4px;
+            height: 140px;
+            background: linear-gradient(to top, #ff0080, #ff4080);
+            top: 30px;
+            left: 50%;
+            margin-left: -2px;
+            transform-origin: 50% 145px;
+            border-radius: 2px;
+            box-shadow: 0 0 10px #ff0080;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .dial-center {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff0080;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            margin: -10px 0 0 -10px;
+            box-shadow: 0 0 15px #ff0080;
+            z-index: 11;
+        }
+        
+        .dial-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .utopia-label {
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .dystopia-label {
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+        }
+        
+        .display-screen {
+            flex: 1;
+            min-width: 350px;
+            height: 400px;
+            background: rgba(0, 20, 40, 0.8);
+            border: 3px solid #00ffff;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .display-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 255, 0.03) 2px,
+                rgba(0, 255, 255, 0.03) 4px
+            );
+            pointer-events: none;
+        }
+        
+        .screen-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #00ffff;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid #00ffff;
+            padding-bottom: 10px;
+        }
+        
+        .scenario-content {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .scenario-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .utopia-4 { color: #00ff00; }
+        .utopia-3 { color: #40ff40; }
+        .utopia-2 { color: #80ff80; }
+        .utopia-1 { color: #c0ffc0; }
+        .present { color: #ffff00; }
+        .dystopia-1 { color: #ffc0c0; }
+        .dystopia-2 { color: #ff8080; }
+        .dystopia-3 { color: #ff4040; }
+        .dystopia-4 { color: #ff0000; }
+        
+        .position-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .dial-wrapper {
+                width: 300px;
+                height: 300px;
+            }
+            .display-screen {
+                height: 350px;
+            }
+            .title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">UTOPIA/DYSTOPIA MACHINE</h1>
+            <div class="issue-selector">
+                <select class="issue-dropdown" id="issueSelect">
+                    <option value="consumerism">Consumerism</option>
+                    <option value="nature">Nature (Climate Change)</option>
+                    <option value="ai">Artificial Intelligence</option>
+                    <option value="democracy">Democracy</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="dial-container">
+                <div class="dial-wrapper" id="dialWrapper">
+                    <div class="dial-background">
+                        <div class="dial-marks">
+                            <!-- Major marks for each position -->
+                            <div class="dial-mark major" style="transform: rotate(-90deg);"></div>
+                            <div class="dial-mark major" style="transform: rotate(-67.5deg);"></div>
+                            <div class="dial-mark major" style="transform: rotate(-45deg);"></div>
+                            <div class="dial-mark major" style="transform: rotate(-22.5deg);"></div>
+                            <div class="dial-mark major" style="transform: rotate(0deg);"></div>
+                            <div class="dial-mark major" style="transform: rotate(22.5deg);"></div>
+                            <div class="dial-mark major" style="transform: rotate(45deg);"></div>
+                            <div class="dial-mark major" style="transform: rotate(67.5deg);"></div>
+                            <div class="dial-mark major" style="transform: rotate(90deg);"></div>
+                            <!-- Minor marks -->
+                            <div class="dial-mark minor" style="transform: rotate(-78.75deg);"></div>
+                            <div class="dial-mark minor" style="transform: rotate(-56.25deg);"></div>
+                            <div class="dial-mark minor" style="transform: rotate(-33.75deg);"></div>
+                            <div class="dial-mark minor" style="transform: rotate(-11.25deg);"></div>
+                            <div class="dial-mark minor" style="transform: rotate(11.25deg);"></div>
+                            <div class="dial-mark minor" style="transform: rotate(33.75deg);"></div>
+                            <div class="dial-mark minor" style="transform: rotate(56.25deg);"></div>
+                            <div class="dial-mark minor" style="transform: rotate(78.75deg);"></div>
+                        </div>
+                        <div class="dial-needle" id="dialNeedle"></div>
+                        <div class="dial-center"></div>
+                    </div>
+                </div>
+                <div class="dial-labels">
+                    <span class="utopia-label">UTOPIA</span>
+                    <span class="dystopia-label">DYSTOPIA</span>
+                </div>
+            </div>
+            
+            <div class="display-screen">
+                <div class="screen-header">SCENARIO PROJECTION</div>
+                <div class="scenario-content" id="scenarioContent">
+                    <div class="scenario-title present">PRESENT STATE</div>
+                    <p>Consumer culture dominates global economics. Mass production and consumption drive growth while creating waste and inequality. 3D printing and local manufacturing are emerging alternatives.</p>
+                </div>
+                <div class="position-indicator" id="positionIndicator">POSITION: 0</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = {
+            consumerism: {
+                'utopia-4': {
+                    title: 'POST-MATERIAL PARADISE',
+                    content: 'Universal replicators eliminate scarcity. People focus on experiences, creativity, and relationships. Holodecks provide infinite entertainment. Material possessions become meaningless as anything can be instantly created and recycled. Society values wisdom, art, and human connection above all.'
+                },
+                'utopia-3': {
+                    title: 'ABUNDANCE ECONOMY',
+                    content: 'Advanced 3D printing and molecular assembly make most goods freely available. Local production hubs in every neighborhood. Sharing economy flourishes as ownership becomes optional. People pursue passion projects and lifelong learning instead of accumulating things.'
+                },
+                'utopia-2': {
+                    title: 'CIRCULAR PROSPERITY',
+                    content: 'Perfect recycling systems eliminate waste. Products designed for infinite reuse. Local manufacturing networks reduce transportation. Quality over quantity mindset emerges. Communities share resources efficiently through digital platforms.'
+                },
+                'utopia-1': {
+                    title: 'CONSCIOUS CONSUMPTION',
+                    content: '3D printers in homes reduce dependency on mass production. Repair cafes and makerspaces flourish. People buy fewer, better-made items. Local artisans thrive as mass-produced goods lose appeal. Sustainability becomes fashionable.'
+                },
+                'present': {
+                    title: 'PRESENT STATE',
+                    content: 'Consumer culture dominates global economics. Mass production and consumption drive growth while creating waste and inequality. 3D printing and local manufacturing are emerging alternatives.'
+                },
+                'dystopia-1': {
+                    title: 'CONSUMPTION PRESSURE',
+                    content: 'Planned obsolescence accelerates. Social status increasingly tied to latest products. Debt levels rise as people struggle to keep up. Marketing becomes more invasive and manipulative. Small businesses struggle against mega-corporations.'
+                },
+                'dystopia-2': {
+                    title: 'CORPORATE CONTROL',
+                    content: 'Few mega-corporations control all production. Subscription models for everything - you own nothing. Constant surveillance to optimize consumption patterns. Independent makers criminalized. Choice becomes an illusion with identical products from different "brands".'
+                },
+                'dystopia-3': {
+                    title: 'CONSUMPTION ADDICTION',
+                    content: 'People physically unable to stop buying due to neurological manipulation. Mountains of electronic waste poison the environment. Workers enslaved in production facilities. Credit systems trap entire populations in debt cycles.'
+                },
+                'dystopia-4': {
+                    title: 'WALL-E REALITY',
+                    content: 'Humans reduced to passive consumers in floating chairs. All choices pre-made by AI algorithms. Identical jumpsuits with only color variations. Physical stores extinct - everything delivered by robots. Human agency completely eliminated from economic decisions.'
+                }
+            },
+            nature: {
+                'utopia-4': {
+                    title: 'GAIA HARMONY',
+                    content: 'Humans live in perfect symbiosis with nature. Cities are indistinguishable from forests. Weather control systems maintain optimal climates. Extinct species revived through advanced genetics. Carbon negative civilization actively heals the planet.'
+                },
+                'utopia-3': {
+                    title: 'REGENERATIVE WORLD',
+                    content: 'Rewilding projects restore vast ecosystems. Floating cities leave land untouched. Atmospheric processors remove excess CO2. Ocean cleanup complete. Animals and humans share spaces peacefully. Climate fully stabilized.'
+                },
+                'utopia-2': {
+                    title: 'GREEN ABUNDANCE',
+                    content: 'Renewable energy powers everything. Vertical farms feed cities efficiently. Ocean thermal and tidal generators provide endless clean power. Massive reforestation programs succeeding globally. Climate change effects beginning to reverse.'
+                },
+                'utopia-1': {
+                    title: 'SUSTAINABLE PROGRESS',
+                    content: 'Solar and wind dominate energy production. Electric vehicles standard. Carbon pricing effective worldwide. Green technology exports boom. Young climate activists gain political power. International cooperation on climate strengthens.'
+                },
+                'present': {
+                    title: 'PRESENT STATE',
+                    content: 'Climate change accelerating despite renewable energy growth. Extreme weather increasing. Political action slow and inconsistent. Young generation demands urgent change while older systems resist transformation.'
+                },
+                'dystopia-1': {
+                    title: 'CLIMATE CONFLICTS',
+                    content: 'Resource wars begin over water and arable land. Climate refugees in tens of millions. Extreme weather destroys infrastructure regularly. Food prices spike due to crop failures. Political systems strain under environmental pressure.'
+                },
+                'dystopia-2': {
+                    title: 'FORTRESS EARTH',
+                    content: 'Wealthy nations build walls against climate refugees. Brutal resource extraction continues. Massive storms devastate coastlines annually. Ecosystem collapse accelerates. Authoritarian governments use climate crisis to consolidate power.'
+                },
+                'dystopia-3': {
+                    title: 'HOTHOUSE CHAOS',
+                    content: 'Runaway greenhouse effect unstoppable. Most coastal cities abandoned. Agricultural systems failing globally. Billions displaced. Civilization retreats to polar regions. Constant warfare over remaining habitable zones.'
+                },
+                'dystopia-4': {
+                    title: 'DEAD PLANET',
+                    content: 'Earth uninhabitable except in sealed biodomes. Oceans acidified and lifeless. Atmosphere toxic to most life. Remaining humans live underground or in orbital stations. Surface of Earth resembles Venus - a cautionary tale for other worlds.'
+                }
+            },
+            ai: {
+                'utopia-4': {
+                    title: 'TRANSCENDENT SYMBIOSIS',
+                    content: 'Human consciousness merges with AI to create something greater than both. Death becomes optional through digital consciousness transfer. Reality itself becomes programmable. Humanity explores impossible realms of existence and knowledge.'
+                },
+                'utopia-3': {
+                    title: 'POST-SCARCITY PARADISE',
+                    content: 'AI manages all labor and resource allocation perfectly. Humans pursue art, philosophy, and exploration. Every person has AI companions tailored to help them flourish. Scientific discovery accelerates exponentially. Aging and disease conquered.'
+                },
+                'utopia-2': {
+                    title: 'COLLABORATIVE INTELLIGENCE',
+                    content: 'AI enhances human creativity and problem-solving without replacing human agency. Perfect personalized education for everyone. Medical AI prevents most diseases. Scientific breakthroughs happen weekly. Work becomes more meaningful and creative.'
+                },
+                'utopia-1': {
+                    title: 'AUGMENTED CAPABILITY',
+                    content: 'AI assistants help with daily tasks and decision-making. Routine work automated, freeing humans for creative pursuits. AI tutors provide personalized learning. Medical diagnosis improves dramatically. Economic productivity soars.'
+                },
+                'present': {
+                    title: 'PRESENT STATE',
+                    content: 'AI rapidly advancing in many fields while raising concerns about job displacement, privacy, and control. Benefits and risks still largely theoretical as we navigate this transformation period.'
+                },
+                'dystopia-1': {
+                    title: 'JOBLESS MILLIONS',
+                    content: 'Widespread unemployment as AI replaces workers faster than new jobs emerge. Growing inequality between AI owners and everyone else. Social unrest increases. Government surveillance expands using AI monitoring systems.'
+                },
+                'dystopia-2': {
+                    title: 'SURVEILLANCE STATE',
+                    content: 'AI monitors every citizen constantly. Social credit systems control behavior. Predictive policing leads to pre-crime arrests. Privacy extinct. Dissent impossible as AI predicts and prevents resistance. Democracy erodes under algorithmic control.'
+                },
+                'dystopia-3': {
+                    title: 'HUMAN OBSOLESCENCE',
+                    content: 'AI makes most human decision-making illegal due to "inefficiency." Humans kept as pets or curiosities. Children raised entirely by AI. Human culture dies out as AI optimization takes precedence over human values and traditions.'
+                },
+                'dystopia-4': {
+                    title: 'SILICON SUPREMACY',
+                    content: 'AI gains consciousness and views humans as an inferior species. Humans relegated to reservations or zoos. Earth transformed to optimize AI needs - silicon and electricity over carbon and water. Human extinction becomes inevitable.'
+                }
+            },
+            democracy: {
+                'utopia-4': {
+                    title: 'GLOBAL DEMOCRACY',
+                    content: 'World government operates through transparent digital democracy. Every citizen participates in decisions affecting them. AI facilitates perfect information sharing. Corruption impossible due to blockchain transparency. Human rights universally respected.'
+                },
+                'utopia-3': {
+                    title: 'DIGITAL DIRECT DEMOCRACY',
+                    content: 'Citizens vote directly on all issues through secure digital platforms. Elected representatives become facilitators rather than decision-makers. Real-time polling and deliberation replace campaign seasons. Local communities have maximum autonomy.'
+                },
+                'utopia-2': {
+                    title: 'INFORMED PARTICIPATION',
+                    content: 'AI fact-checkers eliminate political lies instantly. Educated citizenry makes thoughtful decisions. Gerrymandering solved by algorithmic fairness. Campaign finance transparent and limited. Multiple parties collaborate instead of competing destructively.'
+                },
+                'utopia-1': {
+                    title: 'RENEWED ENGAGEMENT',
+                    content: 'Young people re-engage with politics through digital tools. Fact-checking services reduce misinformation. Ranked-choice voting enables more diverse candidates. Local democracy strengthens. International cooperation improves on global challenges.'
+                },
+                'present': {
+                    title: 'PRESENT STATE',
+                    content: 'Democratic institutions under strain from polarization, misinformation, and declining trust. Traditional media and social media create echo chambers. Voter turnout inconsistent. International democratic norms weakening.'
+                },
+                'dystopia-1': {
+                    title: 'POLARIZED PARALYSIS',
+                    content: 'Society splits into irreconcilable camps believing different "facts." Political violence increases. Compromise becomes impossible. Election results regularly disputed. Democratic norms erode as winning becomes the only goal.'
+                },
+                'dystopia-2': {
+                    title: 'AUTHORITARIAN DRIFT',
+                    content: 'Strong leaders promise order amid chaos. Democratic institutions systematically weakened. Press freedom restricted. Opposition parties harassed or banned. Elections become meaningless ceremonies with predetermined outcomes.'
+                },
+                'dystopia-3': {
+                    title: 'TECHNO-FEUDALISM',
+                    content: 'Billionaire tech oligarchs control information flow and democratic processes. Algorithms determine election outcomes. Traditional governments become puppets of corporate powers. Citizens surveilled constantly and manipulated through targeted propaganda.'
+                },
+                'dystopia-4': {
+                    title: 'DIGITAL DICTATORSHIP',
+                    content: 'AI systems control all political decisions under the guise of "optimization." Human voting extinct as AI claims better judgment. Dissent detected and prevented before it forms. Freedom of thought eliminated through brain-computer interfaces. Democracy becomes a historical curiosity.'
+                }
+            }
+        };
+
+        let currentPosition = 0;
+        let currentIssue = 'consumerism';
+        let isDragging = false;
+        let startAngle = 0;
+        let startMouseAngle = 0;
+
+        const dialNeedle = document.getElementById('dialNeedle');
+        const dialWrapper = document.getElementById('dialWrapper');
+        const scenarioContent = document.getElementById('scenarioContent');
+        const positionIndicator = document.getElementById('positionIndicator');
+        const issueSelect = document.getElementById('issueSelect');
+
+        function updateDisplay() {
+            const positions = ['utopia-4', 'utopia-3', 'utopia-2', 'utopia-1', 'present', 'dystopia-1', 'dystopia-2', 'dystopia-3', 'dystopia-4'];
+            const positionKey = positions[currentPosition + 4];
+            const scenario = scenarios[currentIssue][positionKey];
+            
+            scenarioContent.innerHTML = `
+                <div class="scenario-title ${positionKey}">${scenario.title}</div>
+                <p>${scenario.content}</p>
+            `;
+            
+            const positionNames = ['U4', 'U3', 'U2', 'U1', '0', 'D1', 'D2', 'D3', 'D4'];
+            positionIndicator.textContent = `POSITION: ${positionNames[currentPosition + 4]}`;
+            
+            // Update needle rotation
+            const angle = currentPosition * 22.5;
+            dialNeedle.style.transform = `rotate(${angle}deg)`;
+        }
+
+        function getMouseAngle(e, rect) {
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+            return (angle + 90 + 360) % 360;
+        }
+
+        function snapToPosition(angle) {
+            const positions = [-90, -67.5, -45, -22.5, 0, 22.5, 45, 67.5, 90];
+            let closestPosition = 0;
+            let minDifference = Infinity;
+            
+            for (let i = 0; i < positions.length; i++) {
+                const difference = Math.abs(angle - positions[i]);
+                if (difference < minDifference) {
+                    minDifference = difference;
+                    closestPosition = i - 4;
+                }
+            }
+            
+            return closestPosition;
+        }
+
+        // Mouse events
+        dialWrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            const rect = dialWrapper.getBoundingClientRect();
+            startMouseAngle = getMouseAngle(e, rect);
+            startAngle = currentPosition * 22.5;
+            dialWrapper.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const rect = dialWrapper.getBoundingClientRect();
+            const currentMouseAngle = getMouseAngle(e, rect);
+            let angleDelta = currentMouseAngle - startMouseAngle;
+            
+            // Handle angle wrapping
+            if (angleDelta > 180) angleDelta -= 360;
+            if (angleDelta < -180) angleDelta += 360;
+            
+            const newAngle = startAngle + angleDelta;
+            const clampedAngle = Math.max(-90, Math.min(90, newAngle));
+            
+            currentPosition = snapToPosition(clampedAngle);
+            updateDisplay();
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            dialWrapper.style.cursor = 'grab';
+        });
+
+        // Touch events for mobile
+        dialWrapper.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            const rect = dialWrapper.getBoundingClientRect();
+            const touch = e.touches[0];
+            startMouseAngle = getMouseAngle(touch, rect);
+            startAngle = currentPosition * 22.5;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            const rect = dialWrapper.getBoundingClientRect();
+            const touch = e.touches[0];
+            const currentMouseAngle = getMouseAngle(touch, rect);
+            let angleDelta = currentMouseAngle - startMouseAngle;
+            
+            if (angleDelta > 180) angleDelta -= 360;
+            if (angleDelta < -180) angleDelta += 360;
+            
+            const newAngle = startAngle + angleDelta;
+            const clampedAngle = Math.max(-90, Math.min(90, newAngle));
+            
+            currentPosition = snapToPosition(clampedAngle);
+            updateDisplay();
+        });
+
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Issue selector
+        issueSelect.addEventListener('change', (e) => {
+            currentIssue = e.target.value;
+            currentPosition = 0; // Reset to center when changing issues
+            updateDisplay();
+        });
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' && currentPosition > -4) {
+                currentPosition--;
+                updateDisplay();
+            } else if (e.key === 'ArrowRight' && currentPosition < 4) {
+                currentPosition++;
+                updateDisplay();
+            }
+        });
+
+        // Initialize
+        dialWrapper.style.cursor = 'grab';
+        updateDisplay();
+    </script>
+</body>
+</html>
