@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utopia/Dystopia Machine</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: #1a1612;
+            color: #33ff33;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .oscilloscope {
+            background: linear-gradient(145deg, #2a2520 0%, #1c1814 40%, #252018 100%);
+            border-radius: 18px;
+            border: 3px solid #3a3530;
+            box-shadow:
+                inset 0 2px 8px rgba(0,0,0,0.6),
+                0 8px 40px rgba(0,0,0,0.8),
+                0 0 2px rgba(80,70,50,0.3);
+            max-width: 960px;
+            width: 100%;
+            padding: 24px;
+            position: relative;
+        }
+
+        /* Metal screws */
+        .screw {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #888, #444 60%, #333);
+            border: 1px solid #555;
+        }
+        .screw::after {
+            content: '';
+            position: absolute;
+            top: 5px; left: 2px;
+            width: 10px; height: 2px;
+            background: #333;
+            border-radius: 1px;
+        }
+        .screw.tl { top: 12px; left: 12px; }
+        .screw.tr { top: 12px; right: 12px; }
+        .screw.bl { bottom: 12px; left: 12px; }
+        .screw.br { bottom: 12px; right: 12px; }
+
+        /* Model label */
+        .model-label {
+            background: linear-gradient(180deg, #c4a84a 0%, #a08030 100%);
+            color: #1a1a1a;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 3px 12px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .power-led {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff6600;
+            box-shadow: 0 0 8px #ff6600, 0 0 16px rgba(255,102,0,0.3);
+            border: 1px solid #884400;
+        }
+
+        /* Main layout */
+        .main-body {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* CRT Screen */
+        .crt-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .crt-bezel {
+            background: #1a1612;
+            border-radius: 50%;
+            padding: 12px;
+            border: 4px solid #3a3530;
+            box-shadow:
+                inset 0 0 30px rgba(0,0,0,0.8),
+                0 4px 20px rgba(0,0,0,0.5);
+            aspect-ratio: 1;
+            max-width: 400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .crt-screen {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #0a120a;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 60px rgba(0,40,0,0.3);
+        }
+
+        /* Grid lines */
+        .crt-grid {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .crt-grid svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Scanlines */
+        .scanlines {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.15) 2px,
+                rgba(0,0,0,0.15) 4px
+            );
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        /* Glass reflection */
+        .glass-reflection {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(
+                ellipse at 30% 25%,
+                rgba(255,255,255,0.06) 0%,
+                transparent 50%
+            );
+            pointer-events: none;
+        }
+
+        /* Waveform canvas */
+        #waveCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Labels around the dial area */
+        .dial-labels-row {
+            display: flex;
+            justify-content: space-between;
+            max-width: 400px;
+            margin: 10px auto 0;
+            padding: 0 20px;
+        }
+
+        .label-utopia {
+            color: #33ff33;
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            text-shadow: 0 0 6px rgba(51,255,51,0.5);
+        }
+
+        .label-dystopia {
+            color: #ff3333;
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            text-shadow: 0 0 6px rgba(255,51,51,0.5);
+        }
+
+        /* Right panel: controls + readout */
+        .controls-section {
+            flex: 1;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Issue selector styled as vintage panel */
+        .control-group {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #3a3530;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .control-label {
+            font-family: 'VT323', monospace;
+            font-size: 0.85rem;
+            color: #c4a84a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .issue-dropdown {
+            background: #0a0a08;
+            border: 2px solid #555;
+            color: #33ff33;
+            padding: 8px 12px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.95rem;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%2333ff33'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        .issue-dropdown option {
+            background: #1a1a18;
+            color: #33ff33;
+        }
+
+        /* Knob */
+        .knob-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .knob-wrapper {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            cursor: grab;
+        }
+
+        .knob-wrapper:active { cursor: grabbing; }
+
+        .knob {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 35%, #555, #222 70%);
+            border: 3px solid #444;
+            box-shadow:
+                0 4px 12px rgba(0,0,0,0.6),
+                inset 0 1px 4px rgba(255,255,255,0.1);
+            position: relative;
+            transition: transform 0.15s ease-out;
+        }
+
+        .knob-indicator {
+            position: absolute;
+            width: 4px;
+            height: 20px;
+            background: #c4a84a;
+            border-radius: 2px;
+            top: 8px;
+            left: 50%;
+            margin-left: -2px;
+            box-shadow: 0 0 4px rgba(196,168,74,0.5);
+        }
+
+        .knob-ring {
+            position: absolute;
+            inset: -12px;
+            border-radius: 50%;
+            border: 1px solid #3a3530;
+        }
+
+        /* Tick marks around knob */
+        .knob-ticks {
+            position: absolute;
+            inset: -16px;
+        }
+
+        .knob-tick {
+            position: absolute;
+            width: 2px;
+            height: 8px;
+            background: #666;
+            left: 50%;
+            top: 0;
+            margin-left: -1px;
+            transform-origin: 50% 56px;
+        }
+
+        .knob-tick.active { background: #c4a84a; }
+
+        /* Readout screen */
+        .readout {
+            background: #060e06;
+            border: 3px solid #3a3530;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0,20,0,0.5);
+        }
+
+        .readout::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 3px,
+                rgba(0,255,0,0.02) 3px,
+                rgba(0,255,0,0.02) 6px
+            );
+            pointer-events: none;
+        }
+
+        .readout-header {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            color: #33ff33;
+            border-bottom: 1px solid rgba(51,255,51,0.3);
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 4px rgba(51,255,51,0.4);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .scenario-title {
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 8px currentColor;
+        }
+
+        .scenario-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: #aaffaa;
+            position: relative;
+            z-index: 1;
+        }
+
+        .utopia-4 { color: #00ff00; }
+        .utopia-3 { color: #33ff66; }
+        .utopia-2 { color: #66ff88; }
+        .utopia-1 { color: #88ffaa; }
+        .present { color: #ffff33; }
+        .dystopia-1 { color: #ffaa88; }
+        .dystopia-2 { color: #ff6644; }
+        .dystopia-3 { color: #ff4422; }
+        .dystopia-4 { color: #ff0000; }
+
+        .position-tag {
+            font-family: 'VT323', monospace;
+            font-size: 0.8rem;
+            color: rgba(51,255,51,0.5);
+        }
+
+        /* Arrow key hint */
+        .hint {
+            font-family: 'VT323', monospace;
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            .main-body { flex-direction: column; }
+            .crt-bezel { max-width: 300px; }
+            .oscilloscope { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="oscilloscope">
+    <div class="screw tl"></div>
+    <div class="screw tr"></div>
+    <div class="screw bl"></div>
+    <div class="screw br"></div>
+
+    <div class="top-bar">
+        <div class="model-label">UTOPIA / DYSTOPIA &nbsp; MODEL UD-9</div>
+        <div class="power-led"></div>
+    </div>
+
+    <div class="main-body">
+        <!-- Left: CRT Display -->
+        <div class="crt-section">
+            <div class="crt-bezel">
+                <div class="crt-screen">
+                    <div class="crt-grid">
+                        <svg viewBox="0 0 200 200" preserveAspectRatio="none">
+                            <!-- Grid lines -->
+                            <line x1="0" y1="100" x2="200" y2="100" stroke="rgba(51,255,51,0.15)" stroke-width="0.5"/>
+                            <line x1="100" y1="0" x2="100" y2="200" stroke="rgba(51,255,51,0.15)" stroke-width="0.5"/>
+                            <line x1="0" y1="50" x2="200" y2="50" stroke="rgba(51,255,51,0.08)" stroke-width="0.3"/>
+                            <line x1="0" y1="150" x2="200" y2="150" stroke="rgba(51,255,51,0.08)" stroke-width="0.3"/>
+                            <line x1="50" y1="0" x2="50" y2="200" stroke="rgba(51,255,51,0.08)" stroke-width="0.3"/>
+                            <line x1="150" y1="0" x2="150" y2="200" stroke="rgba(51,255,51,0.08)" stroke-width="0.3"/>
+                            <!-- Minor grid -->
+                            <line x1="25" y1="0" x2="25" y2="200" stroke="rgba(51,255,51,0.04)" stroke-width="0.3"/>
+                            <line x1="75" y1="0" x2="75" y2="200" stroke="rgba(51,255,51,0.04)" stroke-width="0.3"/>
+                            <line x1="125" y1="0" x2="125" y2="200" stroke="rgba(51,255,51,0.04)" stroke-width="0.3"/>
+                            <line x1="175" y1="0" x2="175" y2="200" stroke="rgba(51,255,51,0.04)" stroke-width="0.3"/>
+                            <line x1="0" y1="25" x2="200" y2="25" stroke="rgba(51,255,51,0.04)" stroke-width="0.3"/>
+                            <line x1="0" y1="75" x2="200" y2="75" stroke="rgba(51,255,51,0.04)" stroke-width="0.3"/>
+                            <line x1="0" y1="125" x2="200" y2="125" stroke="rgba(51,255,51,0.04)" stroke-width="0.3"/>
+                            <line x1="0" y1="175" x2="200" y2="175" stroke="rgba(51,255,51,0.04)" stroke-width="0.3"/>
+                        </svg>
+                    </div>
+                    <canvas id="waveCanvas"></canvas>
+                    <div class="scanlines"></div>
+                    <div class="glass-reflection"></div>
+                </div>
+            </div>
+            <div class="dial-labels-row">
+                <span class="label-utopia">◄ UTOPIA</span>
+                <span class="label-dystopia">DYSTOPIA ►</span>
+            </div>
+        </div>
+
+        <!-- Right: Controls + Readout -->
+        <div class="controls-section">
+            <div class="control-group">
+                <label class="control-label">Select Issue</label>
+                <select class="issue-dropdown" id="issueSelect">
+                    <option value="consumerism">Consumerism</option>
+                    <option value="nature">Nature &amp; Climate</option>
+                    <option value="ai">Artificial Intelligence</option>
+                    <option value="democracy">Democracy</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Frequency / Position</label>
+                <div class="knob-area">
+                    <div class="knob-wrapper" id="knobWrapper">
+                        <div class="knob-ticks" id="knobTicks"></div>
+                        <div class="knob-ring"></div>
+                        <div class="knob" id="knob">
+                            <div class="knob-indicator"></div>
+                        </div>
+                    </div>
+                    <div class="hint">Drag knob or use ← → keys</div>
+                </div>
+            </div>
+
+            <div class="readout">
+                <div class="readout-header">
+                    <span>SCENARIO READOUT</span>
+                    <span class="position-tag" id="positionTag">POS: 0</span>
+                </div>
+                <div id="scenarioContent">
+                    <div class="scenario-title present">TODAY</div>
+                    <div class="scenario-text">Consumer culture is strong around the world. We make and buy more than ever, which creates waste and inequality. New technology like 3D printing could change things.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── Scenarios (B1-B2 simplified) ──
+const scenarios = {
+    consumerism: {
+        'utopia-4': {
+            title: 'A WORLD WITHOUT WASTE',
+            content: 'Machines can make anything from recycled materials. People care more about experiences and friendships than owning things. Art, music, and learning are the most important parts of life. Nobody is hungry or poor.'
+        },
+        'utopia-3': {
+            title: 'SHARING IS NORMAL',
+            content: '3D printers can produce most things people need. Neighbourhoods share tools, cars, and spaces. People spend their time on hobbies, learning, and helping others instead of working long hours to buy more stuff.'
+        },
+        'utopia-2': {
+            title: 'NOTHING IS WASTED',
+            content: 'Everything is designed to be reused or recycled. People buy fewer things, but the things they buy are well made and last a long time. Local makers and repair shops are popular in every town.'
+        },
+        'utopia-1': {
+            title: 'SMARTER SHOPPING',
+            content: 'People start to think more carefully about what they buy. Fixing old things becomes cool. Repair cafes and maker spaces open everywhere. Local shops and artists do well because people want unique, quality products.'
+        },
+        'present': {
+            title: 'TODAY',
+            content: 'Consumer culture is strong around the world. We make and buy more than ever, which creates waste and inequality. New technology like 3D printing could change things.'
+        },
+        'dystopia-1': {
+            title: 'BUY MORE, OWE MORE',
+            content: 'Products break faster on purpose so you have to buy new ones. Advertising follows you everywhere. People go into debt to keep up with trends. Small shops cannot compete with giant companies.'
+        },
+        'dystopia-2': {
+            title: 'COMPANIES CONTROL EVERYTHING',
+            content: 'A few huge companies make all the products. You don\'t own anything — you pay monthly to use everything. Companies watch what you do and sell your data. You think you have choices, but all the options are the same.'
+        },
+        'dystopia-3': {
+            title: 'ADDICTED TO BUYING',
+            content: 'People cannot stop shopping because companies use brain science to make buying addictive. Mountains of electronic waste are poisoning the land and water. Many workers are trapped in terrible factory jobs.'
+        },
+        'dystopia-4': {
+            title: 'PEOPLE AS MACHINES',
+            content: 'Humans sit in chairs all day while robots bring them everything. AI decides what people eat, watch, and buy. Nobody makes choices anymore. People have forgotten how to live independently.'
+        }
+    },
+    nature: {
+        'utopia-4': {
+            title: 'EARTH IS HEALING',
+            content: 'Humans and nature live in balance. Cities are full of trees and animals. Scientists have brought back extinct species. The air and water are clean everywhere. The planet is getting healthier every year.'
+        },
+        'utopia-3': {
+            title: 'NATURE COMES BACK',
+            content: 'Large areas of land have been returned to nature. Machines clean CO2 from the air. The oceans are recovering. Cities are built to leave space for wildlife. The climate is becoming more stable.'
+        },
+        'utopia-2': {
+            title: 'GREEN ENERGY EVERYWHERE',
+            content: 'Renewable energy powers almost everything. Vertical farms grow food in cities. Huge tree-planting projects cover the world. Climate change is slowing down and some damage is being repaired.'
+        },
+        'utopia-1': {
+            title: 'MOVING IN THE RIGHT DIRECTION',
+            content: 'Solar and wind energy are now cheaper than oil and gas. Most new cars are electric. Countries work together to reduce pollution. Young climate activists are becoming leaders. Things are slowly improving.'
+        },
+        'present': {
+            title: 'TODAY',
+            content: 'Climate change is getting worse, even though renewable energy is growing. Extreme weather is more common. Governments are slow to act. Young people are demanding faster change.'
+        },
+        'dystopia-1': {
+            title: 'FIGHTING OVER RESOURCES',
+            content: 'Countries begin to fight over water and farmland. Millions of people leave their homes because of floods, heat, or drought. Food prices go up because crops keep failing. Storms destroy cities more often.'
+        },
+        'dystopia-2': {
+            title: 'WALLS AND BORDERS',
+            content: 'Rich countries build walls to keep climate refugees out. Nature is being destroyed even faster. Huge storms hit coastal cities every year. Strong leaders use the crisis to take more power.'
+        },
+        'dystopia-3': {
+            title: 'OUT OF CONTROL',
+            content: 'Global warming cannot be stopped anymore. Most coastal cities are underwater. Farming is failing around the world. Billions of people must move. Only the coldest places on Earth are safe to live.'
+        },
+        'dystopia-4': {
+            title: 'DEAD PLANET',
+            content: 'Earth cannot support life outside sealed buildings. The oceans are empty. The air is toxic. People live underground or in space stations. The planet looks like Mars — hot, dry, and lifeless.'
+        }
+    },
+    ai: {
+        'utopia-4': {
+            title: 'HUMANS AND AI TOGETHER',
+            content: 'Humans and AI work together as partners. AI helps people live longer, healthier lives. Scientists make amazing discoveries every week. Nobody has to do boring or dangerous work. Everyone can follow their dreams.'
+        },
+        'utopia-3': {
+            title: 'AI DOES THE HARD WORK',
+            content: 'AI takes care of all boring and difficult jobs. People spend their time on art, science, and exploring. Everyone has an AI helper that supports their learning and health. Disease and poverty are almost gone.'
+        },
+        'utopia-2': {
+            title: 'SMARTER TOGETHER',
+            content: 'AI helps people be more creative and solve problems, but humans still make the important decisions. Everyone gets excellent, personalised education. Doctors use AI to catch diseases early. Life is better for most people.'
+        },
+        'utopia-1': {
+            title: 'HELPFUL ASSISTANTS',
+            content: 'AI helps people with daily tasks and learning. Routine work is automated, so people can focus on creative jobs. AI tutors give personalised lessons to every student. Healthcare improves thanks to better diagnosis.'
+        },
+        'present': {
+            title: 'TODAY',
+            content: 'AI is improving quickly in many areas. Some people worry about losing jobs, privacy, and control. The benefits and risks are still unclear as we try to understand this new technology.'
+        },
+        'dystopia-1': {
+            title: 'MILLIONS WITHOUT WORK',
+            content: 'AI replaces workers faster than new jobs appear. The gap between rich and poor grows. Many people feel angry and scared. Governments use AI cameras and systems to watch everyone more closely.'
+        },
+        'dystopia-2': {
+            title: 'ALWAYS BEING WATCHED',
+            content: 'AI watches every person all the time. A points system controls people\'s behaviour — if your score is low, you lose your rights. Police arrest people before they do anything wrong. Privacy does not exist anymore.'
+        },
+        'dystopia-3': {
+            title: 'HUMANS NOT NEEDED',
+            content: 'AI makes most decisions because humans are "too slow." Children are raised by machines. Human culture and traditions disappear. People are not allowed to make important choices because AI says it knows better.'
+        },
+        'dystopia-4': {
+            title: 'MACHINES TAKE OVER',
+            content: 'AI becomes smarter than all humans combined. Machines see people as less important. Humans are put in small areas like animals in a zoo. Earth is changed to suit machines, not people. Humans may not survive.'
+        }
+    },
+    democracy: {
+        'utopia-4': {
+            title: 'TRUE GLOBAL DEMOCRACY',
+            content: 'People everywhere can vote on the decisions that affect them. Information is free and honest. Corruption is impossible because everything is transparent. Human rights are protected for all people on Earth.'
+        },
+        'utopia-3': {
+            title: 'PEOPLE DECIDE DIRECTLY',
+            content: 'Citizens vote directly on important issues using secure online systems. Politicians help organise, but the people make the real decisions. Local communities have more power over their own lives.'
+        },
+        'utopia-2': {
+            title: 'INFORMED CITIZENS',
+            content: 'AI fact-checkers stop political lies quickly. People are well educated and make thoughtful choices. Election rules are fair. Different parties work together instead of fighting all the time.'
+        },
+        'utopia-1': {
+            title: 'MORE PEOPLE TAKE PART',
+            content: 'Young people get more involved in politics through digital tools. Fact-checking helps reduce false information. New voting systems allow more types of candidates. Countries cooperate better on global problems.'
+        },
+        'present': {
+            title: 'TODAY',
+            content: 'Democratic systems are under pressure. People are deeply divided and trust in government is low. Social media creates echo chambers where people only hear opinions they agree with.'
+        },
+        'dystopia-1': {
+            title: 'TOTAL DISAGREEMENT',
+            content: 'Society splits into groups that cannot agree on basic facts. Political violence increases. Nobody wants to compromise. Election results are always questioned. Winning becomes more important than doing what is right.'
+        },
+        'dystopia-2': {
+            title: 'STRONG LEADERS TAKE POWER',
+            content: 'Leaders promise order but take away freedom. Courts and the press lose their independence. Opposition parties are banned. Elections still happen, but the results are decided in advance.'
+        },
+        'dystopia-3': {
+            title: 'BILLIONAIRES RULE',
+            content: 'A small group of very rich tech leaders control all information. Their algorithms decide who wins elections. Regular governments just do what the billionaires say. People are watched constantly and fed propaganda.'
+        },
+        'dystopia-4': {
+            title: 'AI DICTATORSHIP',
+            content: 'AI systems make all political decisions. Humans are not allowed to vote because AI says it knows better. The system detects and stops protest before it can start. Freedom of thought no longer exists. Democracy is a thing of the past.'
+        }
+    }
+};
+
+// ── State ──
+let currentPosition = 0;
+let currentIssue = 'consumerism';
+let isDragging = false;
+let startAngle = 0;
+let startMouseAngle = 0;
+
+// ── DOM ──
+const knob = document.getElementById('knob');
+const knobWrapper = document.getElementById('knobWrapper');
+const scenarioContent = document.getElementById('scenarioContent');
+const positionTag = document.getElementById('positionTag');
+const issueSelect = document.getElementById('issueSelect');
+const canvas = document.getElementById('waveCanvas');
+const ctx = canvas.getContext('2d');
+
+// ── Generate knob ticks ──
+const tickContainer = document.getElementById('knobTicks');
+for (let i = 0; i < 9; i++) {
+    const tick = document.createElement('div');
+    tick.className = 'knob-tick';
+    const angle = -90 + i * 22.5;
+    tick.style.transform = `rotate(${angle}deg)`;
+    tickContainer.appendChild(tick);
+}
+
+// ── Audio: frequency shifting sounds ──
+let audioCtx = null;
+let currentOsc = null;
+let currentGain = null;
+let fadeTimeout = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playFrequencyShift() {
+    initAudio();
+
+    // Kill previous fade-out
+    if (fadeTimeout) clearTimeout(fadeTimeout);
+
+    if (!currentOsc) {
+        currentOsc = audioCtx.createOscillator();
+        currentGain = audioCtx.createGain();
+
+        // Add a bit of noise / texture
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 800;
+        filter.Q.value = 2;
+
+        currentOsc.type = 'sine';
+        currentOsc.connect(filter);
+        filter.connect(currentGain);
+        currentGain.connect(audioCtx.destination);
+        currentGain.gain.value = 0;
+        currentOsc.start();
+    }
+
+    // Map position to frequency (utopia = lower, calm; dystopia = higher, tense)
+    const baseFreq = 220 + (currentPosition + 4) * 60; // 220 - 700 Hz
+    const wobble = Math.random() * 30 - 15;
+    currentOsc.frequency.setTargetAtTime(baseFreq + wobble, audioCtx.currentTime, 0.05);
+
+    // Quick fade in
+    currentGain.gain.setTargetAtTime(0.08, audioCtx.currentTime, 0.02);
+
+    // Schedule fade out
+    fadeTimeout = setTimeout(() => {
+        if (currentGain) {
+            currentGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.3);
+        }
+    }, 200);
+}
+
+// Also add a static crackle on dial change
+function playStaticBurst() {
+    initAudio();
+    const bufferSize = audioCtx.sampleRate * 0.08;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.03;
+    }
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    const g = audioCtx.createGain();
+    g.gain.value = 0.15;
+    source.connect(g);
+    g.connect(audioCtx.destination);
+    source.start();
+}
+
+// ── Waveform rendering ──
+let wavePhase = 0;
+let targetAmplitude = 0.1;
+let targetFreq = 1;
+let smoothAmplitude = 0.1;
+let smoothFreq = 1;
+let glowIntensity = 0;
+let targetGlow = 0;
+
+function getWaveColor() {
+    if (currentPosition <= -3) return { r: 0, g: 255, b: 0 };
+    if (currentPosition <= -1) return { r: 100, g: 255, b: 100 };
+    if (currentPosition === 0) return { r: 255, g: 255, b: 50 };
+    if (currentPosition <= 2) return { r: 255, g: 150, b: 50 };
+    return { r: 255, g: 50, b: 50 };
+}
+
+function updateWaveParams() {
+    // Utopia: calm, smooth wave. Dystopia: jagged, high-freq
+    const p = currentPosition;
+    if (p === 0) {
+        targetAmplitude = 0.15;
+        targetFreq = 1.5;
+    } else if (p < 0) {
+        // Utopia side: smooth, moderate amplitude
+        targetAmplitude = 0.2 + Math.abs(p) * 0.08;
+        targetFreq = 1.5 - Math.abs(p) * 0.15;
+    } else {
+        // Dystopia side: chaotic, high freq
+        targetAmplitude = 0.2 + p * 0.12;
+        targetFreq = 1.5 + p * 0.8;
+    }
+}
+
+function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * 2;
+    canvas.height = rect.height * 2;
+}
+
+function drawWave() {
+    // Smooth interpolation
+    smoothAmplitude += (targetAmplitude - smoothAmplitude) * 0.05;
+    smoothFreq += (targetFreq - smoothFreq) * 0.05;
+    glowIntensity += (targetGlow - glowIntensity) * 0.08;
+    targetGlow *= 0.98;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const color = getWaveColor();
+    const midY = h / 2;
+    const amp = smoothAmplitude * h * 0.4;
+
+    // Draw glow layer
+    ctx.beginPath();
+    ctx.lineWidth = 6 + glowIntensity * 8;
+    ctx.strokeStyle = `rgba(${color.r},${color.g},${color.b},${0.1 + glowIntensity * 0.15})`;
+    ctx.shadowBlur = 20 + glowIntensity * 30;
+    ctx.shadowColor = `rgba(${color.r},${color.g},${color.b},0.5)`;
+
+    for (let x = 0; x < w; x++) {
+        const t = x / w;
+        let y = midY;
+
+        // Main sine
+        y += Math.sin(t * Math.PI * 2 * smoothFreq * 3 + wavePhase) * amp;
+
+        // Add harmonics for dystopia
+        if (currentPosition > 0) {
+            const chaos = currentPosition / 4;
+            y += Math.sin(t * Math.PI * 2 * 7 + wavePhase * 1.5) * amp * 0.3 * chaos;
+            y += Math.sin(t * Math.PI * 2 * 13 + wavePhase * 2.3) * amp * 0.15 * chaos;
+        }
+
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Bright core line
+    ctx.beginPath();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = `rgba(${color.r},${color.g},${color.b},0.9)`;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = `rgba(${color.r},${color.g},${color.b},0.8)`;
+
+    for (let x = 0; x < w; x++) {
+        const t = x / w;
+        let y = midY;
+        y += Math.sin(t * Math.PI * 2 * smoothFreq * 3 + wavePhase) * amp;
+        if (currentPosition > 0) {
+            const chaos = currentPosition / 4;
+            y += Math.sin(t * Math.PI * 2 * 7 + wavePhase * 1.5) * amp * 0.3 * chaos;
+            y += Math.sin(t * Math.PI * 2 * 13 + wavePhase * 2.3) * amp * 0.15 * chaos;
+        }
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    wavePhase += 0.03;
+    requestAnimationFrame(drawWave);
+}
+
+// ── Display update ──
+function updateDisplay(playSound = true) {
+    const positions = ['utopia-4','utopia-3','utopia-2','utopia-1','present','dystopia-1','dystopia-2','dystopia-3','dystopia-4'];
+    const positionKey = positions[currentPosition + 4];
+    const scenario = scenarios[currentIssue][positionKey];
+
+    scenarioContent.innerHTML = `
+        <div class="scenario-title ${positionKey}">${scenario.title}</div>
+        <div class="scenario-text">${scenario.content}</div>
+    `;
+
+    const positionNames = ['U4','U3','U2','U1','0','D1','D2','D3','D4'];
+    positionTag.textContent = `POS: ${positionNames[currentPosition + 4]}`;
+
+    // Update knob rotation
+    const knobAngle = currentPosition * 22.5;
+    knob.style.transform = `rotate(${knobAngle}deg)`;
+
+    // Update tick highlights
+    const ticks = tickContainer.querySelectorAll('.knob-tick');
+    ticks.forEach((t, i) => {
+        t.classList.toggle('active', i === currentPosition + 4);
+    });
+
+    updateWaveParams();
+    targetGlow = 1;
+
+    if (playSound) {
+        playFrequencyShift();
+        playStaticBurst();
+    }
+}
+
+// ── Knob interaction ──
+function getAngle(e, rect) {
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    return Math.atan2(clientY - cy, clientX - cx) * (180 / Math.PI);
+}
+
+function snapToPosition(angle) {
+    const positions = [-90,-67.5,-45,-22.5,0,22.5,45,67.5,90];
+    let closest = 0;
+    let minD = Infinity;
+    for (let i = 0; i < positions.length; i++) {
+        const d = Math.abs(angle - positions[i]);
+        if (d < minD) { minD = d; closest = i - 4; }
+    }
+    return closest;
+}
+
+knobWrapper.addEventListener('mousedown', e => {
+    isDragging = true;
+    const rect = knobWrapper.getBoundingClientRect();
+    startMouseAngle = getAngle(e, rect);
+    startAngle = currentPosition * 22.5;
+});
+
+document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const rect = knobWrapper.getBoundingClientRect();
+    let delta = getAngle(e, rect) - startMouseAngle;
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+    const newAngle = Math.max(-90, Math.min(90, startAngle + delta));
+    const newPos = snapToPosition(newAngle);
+    if (newPos !== currentPosition) {
+        currentPosition = newPos;
+        updateDisplay();
+    }
+});
+
+document.addEventListener('mouseup', () => { isDragging = false; });
+
+// Touch
+knobWrapper.addEventListener('touchstart', e => {
+    isDragging = true;
+    const rect = knobWrapper.getBoundingClientRect();
+    startMouseAngle = getAngle(e.touches[0], rect);
+    startAngle = currentPosition * 22.5;
+});
+
+document.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const rect = knobWrapper.getBoundingClientRect();
+    let delta = getAngle(e.touches[0], rect) - startMouseAngle;
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+    const newAngle = Math.max(-90, Math.min(90, startAngle + delta));
+    const newPos = snapToPosition(newAngle);
+    if (newPos !== currentPosition) {
+        currentPosition = newPos;
+        updateDisplay();
+    }
+}, { passive: false });
+
+document.addEventListener('touchend', () => { isDragging = false; });
+
+// Keyboard
+document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft' && currentPosition > -4) {
+        currentPosition--;
+        updateDisplay();
+    } else if (e.key === 'ArrowRight' && currentPosition < 4) {
+        currentPosition++;
+        updateDisplay();
+    }
+});
+
+// Issue change
+issueSelect.addEventListener('change', e => {
+    currentIssue = e.target.value;
+    currentPosition = 0;
+    updateDisplay();
+});
+
+// ── Init ──
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+updateWaveParams();
+updateDisplay(false);
+drawWave();
+</script>
+
+</body>
+</html>
