@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Language Features — Non-Fiction Toolkit</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --accent: #c0392b;
+    --success: #27ae60;
+    --success-bg: #eafaf1;
+    --warn: #e67e22;
+    --warn-bg: #fef5e7;
+    --error: #c0392b;
+    --error-bg: #fdedec;
+    --col-concept: #2c3e50;
+    --col-def: #8e44ad;
+    --col-example: #2980b9;
+    --card-bg: #fffdf8;
+    --border: #d5cfc3;
+    --tab-inactive: #c8c1b4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'IBM Plex Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; }
+
+  header { background: var(--ink); color: var(--paper); padding: 1.5rem 2rem; text-align: center; position: relative; }
+  header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--col-concept), var(--col-def), var(--col-example), var(--accent)); }
+  header h1 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; letter-spacing: 0.02em; margin-bottom: 0.25rem; }
+  header p { font-size: 0.85rem; opacity: 0.7; }
+
+  .tab-bar { display: flex; justify-content: center; background: var(--ink); padding: 0 2rem; }
+  .tab-btn { font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; font-size: 0.9rem; padding: 0.75rem 2rem; border: none; background: transparent; color: var(--tab-inactive); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.25s; letter-spacing: 0.03em; text-transform: uppercase; }
+  .tab-btn:hover { color: var(--paper); }
+  .tab-btn.active { color: var(--paper); border-bottom-color: var(--accent); }
+
+  .tab-content { display: none; padding: 1.5rem; max-width: 1400px; margin: 0 auto; }
+  .tab-content.active { display: block; }
+
+  .instructions { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 1rem 1.25rem; margin-bottom: 1.5rem; border-radius: 0 6px 6px 0; font-size: 0.9rem; line-height: 1.6; }
+  .instructions strong { color: var(--accent); }
+
+  .btn { font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; font-size: 0.8rem; padding: 0.5rem 1.25rem; border: 2px solid var(--ink); border-radius: 4px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em; }
+  .btn-primary { background: var(--ink); color: var(--paper); }
+  .btn-primary:hover { background: #2d2d4a; }
+  .btn-secondary { background: transparent; color: var(--ink); }
+  .btn-secondary:hover { background: var(--ink); color: var(--paper); }
+
+  /* ─── TAB 1: ROW-ALIGNED TABLE ─── */
+  .match-controls { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+
+  .match-table { width: 100%; border-collapse: collapse; border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; background: var(--card-bg); table-layout: fixed; }
+  .match-table thead th { font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.75rem 1rem; text-align: center; color: #fff; user-select: none; }
+  .match-table thead th:nth-child(1) { background: var(--col-concept); width: 16%; }
+  .match-table thead th:nth-child(2) { background: var(--col-def); width: 42%; }
+  .match-table thead th:nth-child(3) { background: var(--col-example); width: 42%; }
+
+  .match-table td { vertical-align: stretch; padding: 0; border: 1px solid var(--border); }
+  .match-cell { padding: 0.65rem 0.8rem; font-size: 0.82rem; line-height: 1.5; height: 100%; display: flex; align-items: center; transition: background 0.2s, outline-color 0.2s; outline: 2px solid transparent; outline-offset: -2px; }
+
+  td:nth-child(1) .match-cell { background: #ebeef1; font-weight: 600; }
+  td:nth-child(2) .match-cell { background: #f3edf7; cursor: grab; }
+  td:nth-child(3) .match-cell { background: #edf4fa; cursor: grab; font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; }
+
+  .match-cell.dragging { opacity: 0.35; }
+  .match-cell.drag-over { outline: 2px dashed var(--accent) !important; background: var(--error-bg) !important; }
+  .match-cell.correct { background: var(--success-bg) !important; outline: 2px solid var(--success) !important; }
+  .match-cell.incorrect { background: var(--error-bg) !important; outline: 2px solid var(--error) !important; }
+
+  .match-score { margin-top: 1.25rem; padding: 1rem; border-radius: 6px; text-align: center; font-weight: 600; font-size: 0.95rem; display: none; }
+  .match-score.show { display: block; }
+  .match-score.perfect { background: var(--success-bg); color: var(--success); border: 2px solid var(--success); }
+  .match-score.good { background: var(--warn-bg); color: var(--warn); border: 2px solid var(--warn); }
+  .match-score.retry { background: var(--error-bg); color: var(--error); border: 2px solid var(--error); }
+
+  /* ─── TAB 2: TEXT ANALYSIS ─── */
+  .text-nav { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .text-nav-btn { font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; font-size: 0.8rem; padding: 0.5rem 1rem; border: 2px solid var(--border); border-radius: 4px; background: var(--card-bg); cursor: pointer; transition: all 0.2s; }
+  .text-nav-btn:hover { border-color: var(--ink); }
+  .text-nav-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  .text-panel { display: none; }
+  .text-panel.active { display: block; }
+
+  .text-card { background: var(--card-bg); border: 2px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem; }
+  .text-card-header { background: var(--ink); color: var(--paper); padding: 0.75rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+  .text-card-header h3 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; }
+  .genre-tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; background: var(--accent); padding: 0.2rem 0.6rem; border-radius: 3px; font-weight: 600; }
+
+  .text-task-bar { background: #eae5dc; padding: 0.6rem 1.25rem; font-size: 0.82rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+  .features-to-find { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .feature-tag { font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.55rem; border-radius: 3px; background: var(--col-def); color: #fff; text-transform: uppercase; letter-spacing: 0.04em; transition: background 0.3s; }
+  .feature-tag.found { background: var(--success); }
+
+  .text-body { padding: 1.5rem; font-size: 0.95rem; line-height: 1.85; }
+  .text-body p { margin-bottom: 0.8rem; }
+  .text-body p:last-child { margin-bottom: 0; }
+
+  .phrase-unit { cursor: pointer; border-radius: 3px; padding: 1px 3px; transition: background 0.15s, color 0.15s; border-bottom: 2px solid transparent; }
+  .phrase-unit:hover { background: rgba(192,57,43,0.08); border-bottom-color: rgba(192,57,43,0.3); }
+  .phrase-unit.selected { background: var(--accent); color: #fff; border-bottom-color: transparent; }
+  .phrase-unit.correct-phrase { background: var(--success); color: #fff; border-bottom-color: transparent; }
+  .phrase-unit.incorrect-phrase { background: var(--error); color: #fff; border-bottom-color: transparent; text-decoration: line-through; }
+  .phrase-unit.missed-phrase { background: var(--warn); color: #fff; border-bottom-color: transparent; }
+
+  .selection-mode-bar { background: #f9f6f0; border-top: 1px solid var(--border); padding: 0.75rem 1.25rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+  .selection-mode-bar label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-right: 0.25rem; }
+  .feature-select { font-family: 'IBM Plex Sans', sans-serif; font-size: 0.82rem; padding: 0.35rem 0.6rem; border: 2px solid var(--border); border-radius: 4px; background: #fff; cursor: pointer; }
+  .text-controls { display: flex; gap: 0.5rem; margin-left: auto; }
+
+  .text-result { margin-top: 1rem; padding: 1rem; border-radius: 6px; font-size: 0.85rem; display: none; line-height: 1.5; }
+  .text-result.show { display: block; }
+  .text-result.perfect { background: var(--success-bg); border: 2px solid var(--success); color: var(--success); }
+  .text-result.good { background: var(--warn-bg); border: 2px solid var(--warn); color: var(--warn); }
+  .text-result.retry { background: var(--error-bg); border: 2px solid var(--error); color: var(--error); }
+
+  .legend { display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.75rem; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 0.3rem; }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+
+  @media (max-width: 900px) {
+    .match-table { font-size: 0.75rem; }
+    .match-table thead th:nth-child(1) { width: 20%; }
+    .match-table thead th:nth-child(2) { width: 40%; }
+    .match-table thead th:nth-child(3) { width: 40%; }
+    .text-body { font-size: 0.88rem; padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Language Features — Non-Fiction Toolkit</h1>
+  <p>Speeches, articles, opinion pieces &amp; persuasive writing</p>
+</header>
+
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('tab1')">Match the Features</button>
+  <button class="tab-btn" onclick="switchTab('tab2')">Spot in Context</button>
+</nav>
+
+<!-- ═══════════════ TAB 1 ═══════════════ -->
+<div id="tab1" class="tab-content active">
+  <div class="instructions">
+    <strong>Task:</strong> The concepts are fixed on the left. Drag definitions and examples to <strong>swap them between rows</strong> until each row lines up correctly. Click <strong>Check Answers</strong> when done.
+  </div>
+  <div class="match-controls">
+    <button class="btn btn-primary" onclick="checkMatching()">Check Answers</button>
+    <button class="btn btn-secondary" onclick="resetMatching()">Shuffle &amp; Reset</button>
+  </div>
+  <table class="match-table" id="match-table">
+    <thead><tr><th>Concept</th><th>Definition</th><th>Example</th></tr></thead>
+    <tbody id="match-tbody"></tbody>
+  </table>
+  <div class="match-score" id="match-score"></div>
+</div>
+
+<!-- ═══════════════ TAB 2 ═══════════════ -->
+<div id="tab2" class="tab-content">
+  <div class="instructions">
+    <strong>Task:</strong> Read each text. Select which feature you're looking for from the dropdown, then click on the <strong>phrases</strong> in the text that demonstrate it. Click <strong>Check</strong> when done.
+  </div>
+  <div class="text-nav" id="text-nav"></div>
+  <div id="text-panels"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const features = [
+  { id:0,  concept:"Metaphor", definition:"A direct comparison stating one thing IS another, without using 'like' or 'as'.", example:'"Education is the passport to the future."' },
+  { id:1,  concept:"Simile", definition:"A comparison using 'like' or 'as' to highlight a shared quality between two things.", example:'"Her words cut like a knife through the silence."' },
+  { id:2,  concept:"Anaphora", definition:"The deliberate repetition of a word or phrase at the start of successive clauses or sentences.", example:'"We shall fight on the beaches, we shall fight on the landing grounds, we shall fight in the fields."' },
+  { id:3,  concept:"Tricolon", definition:"A series of three parallel words, phrases, or clauses used for rhythmic emphasis.", example:'"Government of the people, by the people, for the people."' },
+  { id:4,  concept:"Rhetorical question", definition:"A question asked for persuasive effect rather than to receive an answer.", example:'"If not us, then who? If not now, then when?"' },
+  { id:5,  concept:"Emotive language", definition:"Word choices deliberately intended to provoke an emotional response in the audience.", example:'"Innocent children are suffering while we sit here doing nothing."' },
+  { id:6,  concept:"Formal register", definition:"A style characterised by complex sentences, impersonal tone, and specialised vocabulary.", example:'"The committee hereby recommends the implementation of revised statutory guidelines."' },
+  { id:7,  concept:"Informal register", definition:"A relaxed style using everyday vocabulary, contractions, and a conversational tone.", example:'"Look, we\'ve gotta sort this out before it gets worse, right?"' },
+  { id:8,  concept:"Connotation", definition:"The emotional associations or implied meanings a word carries beyond its literal definition.", example:'"Calling someone \'thrifty\' vs. \'cheap\' — same behaviour, different judgement."' },
+  { id:9,  concept:"Hyperbole", definition:"Extreme exaggeration used for emphasis or dramatic effect, not meant literally.", example:'"I have told you a million times to stop exaggerating."' },
+  { id:10, concept:"Antithesis", definition:"Placing two contrasting ideas in a balanced, parallel structure to highlight their opposition.", example:'"One small step for man, one giant leap for mankind."' },
+  { id:11, concept:"Imperative", definition:"A command or direct instruction that tells the audience what to do.", example:'"Stand up. Speak out. Make your voice heard."' },
+  { id:12, concept:"Statistics / Evidence", definition:"Numerical data or factual evidence used to support an argument and increase credibility.", example:'"According to the WHO, 1 in 4 people will experience a mental health condition."' },
+  { id:13, concept:"Inclusive pronouns", definition:"Using 'we', 'us', or 'our' to create a sense of shared identity and collective responsibility.", example:'"Together, we can build the future our children deserve."' },
+  { id:14, concept:"Direct address", definition:"Speaking directly to the audience using 'you' or 'your' to create a personal connection.", example:'"You have the power to change this. Your vote matters."' }
+];
+
+// ═══════════════════════════════════════════
+// TAB 1: MATCHING
+// ═══════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+let dragSource = null;
+
+function buildMatchingTable() {
+  const tbody = document.getElementById('match-tbody');
+  tbody.innerHTML = '';
+  const defOrder = shuffle(features.map((_,i) => i));
+  const exOrder = shuffle(features.map((_,i) => i));
+
+  features.forEach((f, row) => {
+    const tr = document.createElement('tr');
+
+    // Concept (fixed)
+    const tdC = document.createElement('td');
+    tdC.innerHTML = `<div class="match-cell">${f.concept}</div>`;
+    tr.appendChild(tdC);
+
+    // Definition (draggable)
+    const tdD = document.createElement('td');
+    const dIdx = defOrder[row];
+    const dDiv = document.createElement('div');
+    dDiv.className = 'match-cell';
+    dDiv.draggable = true;
+    dDiv.dataset.col = 'def';
+    dDiv.dataset.id = features[dIdx].id;
+    dDiv.textContent = features[dIdx].definition;
+    addDragHandlers(dDiv);
+    tdD.appendChild(dDiv);
+    tr.appendChild(tdD);
+
+    // Example (draggable)
+    const tdE = document.createElement('td');
+    const eIdx = exOrder[row];
+    const eDiv = document.createElement('div');
+    eDiv.className = 'match-cell';
+    eDiv.draggable = true;
+    eDiv.dataset.col = 'ex';
+    eDiv.dataset.id = features[eIdx].id;
+    eDiv.textContent = features[eIdx].example;
+    addDragHandlers(eDiv);
+    tdE.appendChild(eDiv);
+    tr.appendChild(tdE);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function addDragHandlers(cell) {
+  cell.addEventListener('dragstart', e => {
+    dragSource = cell;
+    cell.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', '');
+  });
+  cell.addEventListener('dragend', () => {
+    cell.classList.remove('dragging');
+    document.querySelectorAll('.match-cell').forEach(c => c.classList.remove('drag-over'));
+    dragSource = null;
+  });
+  cell.addEventListener('dragover', e => {
+    e.preventDefault();
+    if (!dragSource || dragSource === cell || dragSource.dataset.col !== cell.dataset.col) return;
+    cell.classList.add('drag-over');
+  });
+  cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+  cell.addEventListener('drop', e => {
+    e.preventDefault();
+    cell.classList.remove('drag-over');
+    if (!dragSource || dragSource === cell || dragSource.dataset.col !== cell.dataset.col) return;
+    // Swap text and data-id
+    const tmpText = cell.textContent;
+    const tmpId = cell.dataset.id;
+    cell.textContent = dragSource.textContent;
+    cell.dataset.id = dragSource.dataset.id;
+    dragSource.textContent = tmpText;
+    dragSource.dataset.id = tmpId;
+  });
+
+  // Touch support
+  let touchActive = false;
+  cell.addEventListener('touchstart', () => { dragSource = cell; touchActive = true; cell.classList.add('dragging'); }, { passive: true });
+  cell.addEventListener('touchmove', e => {
+    if (!touchActive) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    if (el) {
+      const target = el.closest('.match-cell[draggable]');
+      document.querySelectorAll('.match-cell').forEach(c => c.classList.remove('drag-over'));
+      if (target && target !== dragSource && target.dataset.col === dragSource.dataset.col) {
+        target.classList.add('drag-over');
+      }
+    }
+  }, { passive: false });
+  cell.addEventListener('touchend', e => {
+    if (!touchActive) return;
+    touchActive = false;
+    cell.classList.remove('dragging');
+    const t = e.changedTouches[0];
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    document.querySelectorAll('.match-cell').forEach(c => c.classList.remove('drag-over'));
+    if (el) {
+      const target = el.closest('.match-cell[draggable]');
+      if (target && target !== dragSource && target.dataset.col === dragSource.dataset.col) {
+        const tmpText = target.textContent;
+        const tmpId = target.dataset.id;
+        target.textContent = dragSource.textContent;
+        target.dataset.id = dragSource.dataset.id;
+        dragSource.textContent = tmpText;
+        dragSource.dataset.id = tmpId;
+      }
+    }
+    dragSource = null;
+  });
+}
+
+function checkMatching() {
+  const rows = document.querySelectorAll('#match-tbody tr');
+  let correct = 0;
+  const total = features.length * 2;
+
+  rows.forEach((tr, i) => {
+    const defCell = tr.querySelector('[data-col="def"]');
+    const exCell = tr.querySelector('[data-col="ex"]');
+    [defCell, exCell].forEach(c => c.classList.remove('correct','incorrect'));
+    if (parseInt(defCell.dataset.id) === features[i].id) { defCell.classList.add('correct'); correct++; }
+    else { defCell.classList.add('incorrect'); }
+    if (parseInt(exCell.dataset.id) === features[i].id) { exCell.classList.add('correct'); correct++; }
+    else { exCell.classList.add('incorrect'); }
+  });
+
+  const el = document.getElementById('match-score');
+  const pct = Math.round((correct / total) * 100);
+  el.className = 'match-score show';
+  if (pct === 100) { el.classList.add('perfect'); el.textContent = `🎉 Perfect! ${correct}/${total} — every feature matched!`; }
+  else if (pct >= 60) { el.classList.add('good'); el.textContent = `👍 Good effort! ${correct}/${total} (${pct}%). Swap the red items and try again.`; }
+  else { el.classList.add('retry'); el.textContent = `${correct}/${total} (${pct}%). Review the red items and have another go.`; }
+}
+
+function resetMatching() {
+  document.getElementById('match-score').className = 'match-score';
+  buildMatchingTable();
+}
+
+// ═══════════════════════════════════════════
+// TAB 2: TEXTS — 2 features per text, phrase-level clickables
+// Markup: {{key|phrase text}}
+// ═══════════════════════════════════════════
+const texts = [
+  {
+    id:'t1', title:"Youth Climate Speech", genre:"Speech",
+    featuresToFind:["Anaphora","Rhetorical question"],
+    featureKeys:{"Anaphora":"ana","Rhetorical question":"rq"},
+    paragraphs:[
+      "{{ana|We are running out of time.}} {{ana|We are watching our forests burn.}} {{ana|We are seeing our oceans rise.}} And still, some people ask: {{rq|is it really that bad?}}",
+      "Our planet is choking under the weight of our neglect. Innocent communities are being devastated by floods they did nothing to cause.",
+      "So I ask you — {{rq|how much longer will we wait?}} {{rq|How many more disasters do we need before we act?}} This is our fight, our future, and our responsibility."
+    ]
+  },
+  {
+    id:'t2', title:"Editorial: School Uniforms", genre:"Opinion article",
+    featuresToFind:["Antithesis","Imperative"],
+    featureKeys:{"Antithesis":"anti","Imperative":"imp"},
+    paragraphs:[
+      "School uniforms are {{anti|not about control — they are about equality.}} While {{anti|some see restriction, others see freedom:}} freedom from judgement, freedom from the pressure to wear the latest brands.",
+      "You might think this does not affect you. But consider this: 87% of teachers surveyed reported a reduction in bullying after uniforms were introduced.",
+      "{{imp|Stop clinging to outdated arguments.}} {{imp|Look at the evidence.}} {{imp|Support a policy that puts education before fashion.}}"
+    ]
+  },
+  {
+    id:'t3', title:"Charity Appeal Letter", genre:"Persuasive letter",
+    featuresToFind:["Emotive language","Tricolon"],
+    featureKeys:{"Emotive language":"emo","Tricolon":"tri"},
+    paragraphs:[
+      "Every night, thousands of children go to sleep {{emo|hungry, cold, and forgotten.}} They do not ask for luxury. They ask for survival.",
+      "Your donation could change everything. It could mean the difference between {{emo|life and death}} for a child you will never meet. {{tri|A meal. A blanket. A chance.}}",
+      "We have moved mountains before when we worked together. You have {{tri|the power, the resources, and the heart}} to make a difference today."
+    ]
+  },
+  {
+    id:'t4', title:"Formal Report: Technology in Schools", genre:"Report extract",
+    featuresToFind:["Formal register","Metaphor"],
+    featureKeys:{"Formal register":"formal","Metaphor":"meta"},
+    paragraphs:[
+      "{{formal|The integration of digital technology into the educational landscape has yielded significant measurable outcomes.}} {{formal|A comprehensive study conducted by the Department for Education}} found that 72% of institutions implementing tablet-based learning reported improved student engagement.",
+      "However, critics contend that technology is a {{meta|Trojan horse}} — welcomed into classrooms under the guise of progress, only to {{meta|erode the very foundations}} of deep, sustained learning.",
+      "The language used in this debate is itself revealing. Advocates speak of 'innovation' and 'digital literacy', while opponents warn of 'screen addiction' and 'distraction'."
+    ]
+  },
+  {
+    id:'t5', title:"Graduation Speech", genre:"Speech",
+    featuresToFind:["Simile","Inclusive pronouns"],
+    featureKeys:{"Simile":"sim","Inclusive pronouns":"inc"},
+    paragraphs:[
+      "Today, we stand at a crossroads. {{sim|Like travellers at a fork in the road,}} we must each choose our own path. But {{inc|we do not walk alone.}}",
+      "{{inc|We survived the exams.}} {{inc|We survived the early mornings.}} {{inc|We survived each other.}} And here we are — stronger, wiser, and ready.",
+      "So go forward. Be brave. Remember where you came from, and never forget the people standing beside you right now. This is {{inc|our moment.}}"
+    ]
+  }
+];
+
+// ═══════════════════════════════════════════
+// TAB 2: BUILD
+// ═══════════════════════════════════════════
+const textState = {};
+const phraseRegex = /\{\{(\w+)\|([^}]+)\}\}/g;
+
+function parseParagraph(raw) {
+  const segs = [];
+  let last = 0;
+  let m;
+  const r = new RegExp(phraseRegex.source, 'g');
+  while ((m = r.exec(raw)) !== null) {
+    if (m.index > last) segs.push({ type:'plain', text: raw.substring(last, m.index) });
+    segs.push({ type:'phrase', key: m[1], text: m[2] });
+    last = m.index + m[0].length;
+  }
+  if (last < raw.length) segs.push({ type:'plain', text: raw.substring(last) });
+  return segs;
+}
+
+function buildTextPanels() {
+  const nav = document.getElementById('text-nav');
+  const panels = document.getElementById('text-panels');
+  nav.innerHTML = ''; panels.innerHTML = '';
+
+  texts.forEach((t, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'text-nav-btn' + (idx===0?' active':'');
+    btn.textContent = `Text ${idx+1}`;
+    btn.onclick = () => switchText(t.id);
+    nav.appendChild(btn);
+
+    textState[t.id] = { selectedFeature: t.featuresToFind[0], selections: {}, checked: false };
+    t.featuresToFind.forEach(f => { textState[t.id].selections[f] = new Set(); });
+
+    const panel = document.createElement('div');
+    panel.className = 'text-panel' + (idx===0?' active':'');
+    panel.id = 'panel-' + t.id;
+
+    const card = document.createElement('div');
+    card.className = 'text-card';
+    card.innerHTML = `<div class="text-card-header"><h3>${t.title}</h3><span class="genre-tag">${t.genre}</span></div>`;
+
+    const taskBar = document.createElement('div');
+    taskBar.className = 'text-task-bar';
+    taskBar.innerHTML = `<span style="font-weight:600;">Find:</span><div class="features-to-find">${
+      t.featuresToFind.map(f => `<span class="feature-tag" id="tag-${t.id}-${f.replace(/[\s\/]+/g,'_')}">${f}</span>`).join('')
+    }</div>`;
+    card.appendChild(taskBar);
+
+    const body = document.createElement('div');
+    body.className = 'text-body';
+    body.id = 'body-' + t.id;
+    let pc = 0;
+    t.paragraphs.forEach(raw => {
+      const p = document.createElement('p');
+      parseParagraph(raw).forEach(seg => {
+        if (seg.type === 'plain') { p.appendChild(document.createTextNode(seg.text)); }
+        else {
+          const span = document.createElement('span');
+          span.className = 'phrase-unit';
+          span.textContent = seg.text;
+          span.dataset.textId = t.id;
+          span.dataset.key = seg.key;
+          span.dataset.pid = `${t.id}-${pc++}`;
+          span.onclick = () => togglePhrase(t.id, span);
+          p.appendChild(span);
+        }
+      });
+      body.appendChild(p);
+    });
+    card.appendChild(body);
+
+    const selBar = document.createElement('div');
+    selBar.className = 'selection-mode-bar';
+    selBar.innerHTML = `<label>Selecting for:</label>`;
+    const sel = document.createElement('select');
+    sel.className = 'feature-select';
+    t.featuresToFind.forEach(f => { const o = document.createElement('option'); o.value = f; o.textContent = f; sel.appendChild(o); });
+    sel.onchange = e => { textState[t.id].selectedFeature = e.target.value; updateHighlights(t.id); };
+    selBar.appendChild(sel);
+    const ctrls = document.createElement('div');
+    ctrls.className = 'text-controls';
+    ctrls.innerHTML = `<button class="btn btn-secondary" onclick="clearText('${t.id}')">Clear</button><button class="btn btn-primary" onclick="checkText('${t.id}')">Check</button>`;
+    selBar.appendChild(ctrls);
+    card.appendChild(selBar);
+    panel.appendChild(card);
+
+    const res = document.createElement('div');
+    res.className = 'text-result'; res.id = 'result-' + t.id;
+    panel.appendChild(res);
+    panels.appendChild(panel);
+  });
+}
+
+function togglePhrase(tid, span) {
+  const st = textState[tid];
+  if (st.checked) return;
+  const feat = st.selectedFeature;
+  const pid = span.dataset.pid;
+  // Remove from all features first
+  Object.values(st.selections).forEach(s => s.delete(pid));
+  // Toggle into current
+  if (!span.classList.contains('selected')) { st.selections[feat].add(pid); }
+  updateHighlights(tid);
+}
+
+function updateHighlights(tid) {
+  const st = textState[tid];
+  document.getElementById('body-' + tid).querySelectorAll('.phrase-unit').forEach(s => {
+    s.classList.remove('selected');
+    if (st.selections[st.selectedFeature].has(s.dataset.pid)) s.classList.add('selected');
+  });
+}
+
+function clearText(tid) {
+  const st = textState[tid];
+  st.checked = false;
+  Object.values(st.selections).forEach(s => s.clear());
+  document.getElementById('body-' + tid).querySelectorAll('.phrase-unit').forEach(s => {
+    s.classList.remove('selected','correct-phrase','incorrect-phrase','missed-phrase');
+  });
+  texts.find(t=>t.id===tid).featuresToFind.forEach(f => {
+    const tag = document.getElementById(`tag-${tid}-${f.replace(/[\s\/]+/g,'_')}`);
+    if (tag) tag.classList.remove('found');
+  });
+  document.getElementById('result-' + tid).className = 'text-result';
+}
+
+function checkText(tid) {
+  const text = texts.find(t=>t.id===tid);
+  const st = textState[tid];
+  st.checked = true;
+  const body = document.getElementById('body-' + tid);
+  body.querySelectorAll('.phrase-unit').forEach(s => s.classList.remove('selected','correct-phrase','incorrect-phrase','missed-phrase'));
+
+  let totalCorrect = 0, totalPhrases = 0, totalWrong = 0;
+
+  text.featuresToFind.forEach(feat => {
+    const expectedKey = text.featureKeys[feat];
+    const selected = st.selections[feat];
+    const correctSpans = body.querySelectorAll(`.phrase-unit[data-key="${expectedKey}"]`);
+    totalPhrases += correctSpans.length;
+
+    let hits = 0;
+    selected.forEach(pid => {
+      const span = body.querySelector(`[data-pid="${pid}"]`);
+      if (!span) return;
+      if (span.dataset.key === expectedKey) { span.classList.add('correct-phrase'); totalCorrect++; hits++; }
+      else { span.classList.add('incorrect-phrase'); totalWrong++; }
+    });
+
+    correctSpans.forEach(s => { if (!selected.has(s.dataset.pid)) s.classList.add('missed-phrase'); });
+
+    const tag = document.getElementById(`tag-${tid}-${feat.replace(/[\s\/]+/g,'_')}`);
+    if (tag && hits > 0) tag.classList.add('found');
+  });
+
+  const missed = totalPhrases - totalCorrect;
+  const res = document.getElementById('result-' + tid);
+  res.className = 'text-result show';
+  const pct = totalPhrases > 0 ? Math.round((totalCorrect / totalPhrases) * 100) : 0;
+
+  if (pct >= 90 && totalWrong === 0) { res.classList.add('perfect'); res.innerHTML = `🎉 Excellent! ${totalCorrect}/${totalPhrases} phrases found with no wrong selections.`; }
+  else if (pct >= 40) { res.classList.add('good'); res.innerHTML = `👍 Good work! ${totalCorrect}/${totalPhrases} correct.${totalWrong?' '+totalWrong+' incorrect.':''}${missed?' '+missed+' missed.':''}`; }
+  else { res.classList.add('retry'); res.innerHTML = `${totalCorrect}/${totalPhrases} correct.${totalWrong?' '+totalWrong+' incorrect.':''}${missed?' '+missed+' missed.':''}`; }
+
+  res.innerHTML += `<div class="legend"><div class="legend-item"><span class="legend-swatch" style="background:var(--success)"></span> Correct</div><div class="legend-item"><span class="legend-swatch" style="background:var(--error)"></span> Wrong feature</div><div class="legend-item"><span class="legend-swatch" style="background:var(--warn)"></span> Missed</div></div>`;
+}
+
+// ═══════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelector(`.tab-btn[onclick="switchTab('${id}')"]`).classList.add('active');
+}
+function switchText(id) {
+  document.querySelectorAll('.text-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.text-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  const idx = texts.findIndex(t => t.id === id);
+  document.querySelectorAll('.text-nav-btn')[idx].classList.add('active');
+}
+
+buildMatchingTable();
+buildTextPanels();
+</script>
+</body>
+</html>
