@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Key Debates — Vocabulary Practice</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f6f8;
+    color: #1a2332;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- Header / Tabs ---------- */
+  header {
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 24px 0;
+    flex-shrink: 0;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0f3a5f;
+    margin-bottom: 10px;
+  }
+  .tabs { display: flex; gap: 4px; }
+  .tab {
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tab:hover { color: #0f3a5f; }
+  .tab.active {
+    color: #0f3a5f;
+    border-bottom-color: #0f3a5f;
+  }
+
+  /* ---------- Tab content ---------- */
+  main {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  .panel {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+  }
+  .panel.active { display: flex; }
+
+  /* ---------- TAB 1: Flashcards (single centered card) ---------- */
+  #flashcards {
+    padding: 20px 24px;
+    align-items: center;
+    justify-content: center;
+  }
+  .fc-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+    width: 100%;
+    max-width: 900px;
+  }
+  .nav-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    color: #0f3a5f;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(15, 58, 95, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover {
+    background: #0f3a5f;
+    color: #fff;
+    transform: scale(1.05);
+  }
+  .nav-btn:active { transform: scale(0.95); }
+
+  .card {
+    width: 480px;
+    height: 320px;
+    perspective: 1200px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+  }
+  .card.flipped .card-inner { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(15, 58, 95, 0.18);
+  }
+  .card-front {
+    background: linear-gradient(135deg, #0f3a5f 0%, #1e5a8a 100%);
+    color: #fff;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .card-back {
+    background: #fff;
+    color: #1a2332;
+    font-size: 22px;
+    line-height: 1.5;
+    transform: rotateY(180deg);
+    border: 3px solid #0f3a5f;
+  }
+  .fc-footer {
+    margin-top: 24px;
+    text-align: center;
+    color: #64748b;
+    font-size: 13px;
+  }
+  .fc-counter {
+    font-weight: 600;
+    color: #0f3a5f;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  /* ---------- TAB 2: Drag & Drop ---------- */
+  #matching {
+    padding: 14px 20px;
+    overflow: hidden;
+  }
+  .match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+  }
+  .match-instructions {
+    font-size: 12px;
+    color: #64748b;
+  }
+  .match-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .score {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f3a5f;
+    padding: 4px 12px;
+    background: #e8f0f7;
+    border-radius: 12px;
+  }
+  .reset-btn {
+    padding: 5px 12px;
+    background: #0f3a5f;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .reset-btn:hover { background: #1e5a8a; }
+
+  .match-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
+  }
+  .terms-bank {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: 1fr;
+    gap: 4px;
+    overflow: hidden;
+  }
+  .term-chip {
+    background: #0f3a5f;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    cursor: grab;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s, box-shadow 0.1s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .term-chip:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+  .term-chip.dragging { opacity: 0.4; cursor: grabbing; }
+  .term-chip.placed { display: none; }
+
+  .definitions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 5px;
+    overflow: hidden;
+  }
+  .def-card {
+    background: #fff;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 5px;
+    padding: 5px 6px 4px;
+    display: flex;
+    flex-direction: column;
+    font-size: 9.5px;
+    line-height: 1.25;
+    position: relative;
+    overflow: hidden;
+  }
+  .def-card.drag-over {
+    border-color: #0f3a5f;
+    background: #e8f0f7;
+    border-style: solid;
+  }
+  .def-text {
+    flex: 1;
+    color: #475569;
+    overflow: hidden;
+  }
+  .drop-slot {
+    height: 18px;
+    border-radius: 3px;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: #94a3b8;
+  }
+  .def-card.correct {
+    background: #ecfdf5;
+    border-color: #10b981;
+    border-style: solid;
+  }
+  .def-card.correct .drop-slot {
+    background: #10b981;
+    color: #fff;
+  }
+  .def-card.incorrect {
+    background: #fef2f2;
+    border-color: #ef4444;
+    border-style: solid;
+    animation: shake 0.3s;
+  }
+  .def-card.incorrect .drop-slot {
+    background: #ef4444;
+    color: #fff;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Key Debates — Vocabulary Practice</h1>
+  <div class="tabs">
+    <button class="tab active" data-tab="flashcards">Flashcards</button>
+    <button class="tab" data-tab="matching">Match the Definitions</button>
+  </div>
+</header>
+
+<main>
+  <!-- TAB 1: FLASHCARDS -->
+  <section class="panel active" id="flashcards">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div class="fc-stage">
+        <button class="nav-btn" id="prev-btn" aria-label="Previous">‹</button>
+        <div class="card" id="fc-card">
+          <div class="card-inner">
+            <div class="card-face card-front" id="fc-front"></div>
+            <div class="card-face card-back" id="fc-back"></div>
+          </div>
+        </div>
+        <button class="nav-btn" id="next-btn" aria-label="Next">›</button>
+      </div>
+      <div class="fc-footer">
+        <div class="fc-counter" id="fc-counter">1 / 20</div>
+        <div>Click the card to flip it. Use the arrows to move between cards.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: MATCHING -->
+  <section class="panel" id="matching">
+    <div class="match-header">
+      <p class="match-instructions">Drag each term onto its matching definition.</p>
+      <div class="match-controls">
+        <span class="score" id="score">0 / 20</span>
+        <button class="reset-btn" id="reset">Reset</button>
+      </div>
+    </div>
+    <div class="match-grid">
+      <div class="terms-bank" id="terms-bank"></div>
+      <div class="definitions" id="definitions"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const data = [{"term":"Argument","def":"A reason or set of reasons given to support an idea or position."},{"term":"Evidence","def":"Facts or information used to prove that something is true."},{"term":"Perspective","def":"A particular way of seeing or thinking about something."},{"term":"Bias","def":"An unfair preference for or against a person, group, or idea."},{"term":"Credibility","def":"The quality of being trusted and believed in."},{"term":"Source","def":"A person, book, or document that gives you information."},{"term":"Globalisation","def":"The process by which countries become more connected through trade, culture, and technology."},{"term":"Sustainability","def":"Using resources in a way that does not damage the environment for the future."},{"term":"Safeguard","def":"To protect something or someone from harm or danger."},{"term":"Dilemma","def":"A difficult choice between two options, often where neither is ideal."},{"term":"Policy","def":"A plan or set of rules made by a government, organisation, or business."},{"term":"Advocate","def":"A person who publicly supports or argues for a cause or idea."},{"term":"Public Sphere","def":"The space in society where people meet to discuss issues and form opinions."},{"term":"Democracy","def":"A system of government in which the people choose their leaders by voting."},{"term":"Interrelated","def":"Connected to each other in a way that each affects the others."},{"term":"Paradox","def":"A statement or situation that seems to contradict itself but may still be true."},{"term":"Fraught","def":"Filled with something unpleasant, such as difficulty, danger, or tension."},{"term":"Diminished","def":"Made smaller, weaker, or less important."},{"term":"Staggering","def":"So large or surprising that it is hard to believe."},{"term":"Profound","def":"Very deep, strong, or having a powerful effect."}];
+
+// ---------- Tab switching ----------
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ---------- Flashcards (single card with navigation) ----------
+const fcCard = document.getElementById('fc-card');
+const fcFront = document.getElementById('fc-front');
+const fcBack = document.getElementById('fc-back');
+const fcCounter = document.getElementById('fc-counter');
+let fcIndex = 0;
+
+function renderCard() {
+  fcCard.classList.remove('flipped');
+  // tiny delay so the flip-back animation doesn't overlap with the text change
+  setTimeout(() => {
+    fcFront.textContent = data[fcIndex].term;
+    fcBack.textContent = data[fcIndex].def;
+    fcCounter.textContent = (fcIndex + 1) + ' / ' + data.length;
+  }, 150);
+}
+
+fcCard.addEventListener('click', () => fcCard.classList.toggle('flipped'));
+
+document.getElementById('prev-btn').addEventListener('click', () => {
+  fcIndex = (fcIndex - 1 + data.length) % data.length;
+  renderCard();
+});
+document.getElementById('next-btn').addEventListener('click', () => {
+  fcIndex = (fcIndex + 1) % data.length;
+  renderCard();
+});
+
+// keyboard arrows
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('flashcards').classList.contains('active')) return;
+  if (e.key === 'ArrowLeft') document.getElementById('prev-btn').click();
+  if (e.key === 'ArrowRight') document.getElementById('next-btn').click();
+  if (e.key === ' ') { e.preventDefault(); fcCard.classList.toggle('flipped'); }
+});
+
+// initial render
+fcFront.textContent = data[0].term;
+fcBack.textContent = data[0].def;
+
+// ---------- Matching game ----------
+const shuffle = arr => arr.map(v => [Math.random(), v]).sort((a,b) => a[0]-b[0]).map(v => v[1]);
+let score = 0;
+
+function buildMatching() {
+  const bank = document.getElementById('terms-bank');
+  const defs = document.getElementById('definitions');
+  bank.innerHTML = '';
+  defs.innerHTML = '';
+  score = 0;
+  document.getElementById('score').textContent = '0 / 20';
+
+  shuffle([...data]).forEach(item => {
+    const chip = document.createElement('div');
+    chip.className = 'term-chip';
+    chip.textContent = item.term;
+    chip.draggable = true;
+    chip.dataset.term = item.term;
+    chip.addEventListener('dragstart', e => {
+      chip.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', item.term);
+    });
+    chip.addEventListener('dragend', () => chip.classList.remove('dragging'));
+    bank.appendChild(chip);
+  });
+
+  shuffle([...data]).forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'def-card';
+    card.dataset.answer = item.term;
+    card.innerHTML = `<div class="def-text">${item.def}</div><div class="drop-slot">drop here</div>`;
+    card.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (!card.classList.contains('correct')) card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      if (card.classList.contains('correct')) return;
+      const dropped = e.dataTransfer.getData('text/plain');
+      if (dropped === item.term) {
+        card.classList.remove('incorrect');
+        card.classList.add('correct');
+        card.querySelector('.drop-slot').textContent = '✓ ' + dropped;
+        const chip = document.querySelector(`.term-chip[data-term="${dropped}"]`);
+        if (chip) chip.classList.add('placed');
+        score++;
+        document.getElementById('score').textContent = score + ' / 20';
+      } else {
+        card.classList.add('incorrect');
+        setTimeout(() => card.classList.remove('incorrect'), 600);
+      }
+    });
+    defs.appendChild(card);
+  });
+}
+
+document.getElementById('reset').addEventListener('click', buildMatching);
+buildMatching();
+</script>
+</body>
+</html>
