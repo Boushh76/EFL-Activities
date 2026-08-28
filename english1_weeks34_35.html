@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English 1 — Retrieval Practice, Weeks 34–35</title>
+<style>
+:root{
+  --paper:#E9E9E6;
+  --card:#F6F5F2;
+  --ink:#16161A;
+  --ink-soft:#4C4C52;
+  --rule:#C6C3BB;
+  --indigo:#4A4470;
+  --right:#2E6B4F;
+  --wrong:#A63232;
+  --display:"Haettenschweiler","Arial Narrow Bold","Arial Black",Impact,sans-serif;
+  --body:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.55;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:820px;margin:0 auto;padding:28px 18px 90px}
+
+/* ---- masthead ---- */
+.masthead{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:22px}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+}
+h1{
+  font-family:var(--display);
+  font-size:clamp(38px,10vw,72px);
+  line-height:.92;
+  letter-spacing:.01em;
+  text-transform:uppercase;
+  margin:6px 0 4px;
+  text-shadow:3px 3px 0 var(--paper),5px 5px 0 var(--rule);
+}
+.sub{font-size:15px;color:var(--ink-soft);max-width:52ch}
+
+/* ---- test picker ---- */
+nav{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 26px}
+.tab{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  background:transparent;
+  border:1.5px solid var(--ink);
+  color:var(--ink);
+  padding:9px 13px;
+  cursor:pointer;
+}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.tab:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid var(--indigo);outline-offset:2px}
+
+/* ---- test head ---- */
+.testhead{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.numeral{
+  font-family:var(--display);
+  font-size:clamp(52px,14vw,86px);
+  line-height:.8;
+  text-shadow:3px 3px 0 var(--paper),5px 5px 0 var(--rule);
+}
+.testhead h2{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-weight:600;
+  margin:0;
+  color:var(--ink-soft);
+}
+.testintro{border-bottom:1px solid var(--rule);padding-bottom:18px;margin-bottom:26px;font-size:15px;color:var(--ink-soft)}
+
+/* ---- questions ---- */
+.q{background:var(--card);border:1px solid var(--rule);padding:18px 18px 16px;margin-bottom:16px}
+.qtop{display:flex;gap:12px;align-items:flex-start}
+.qno{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--indigo);padding-top:3px;min-width:26px}
+.qtext{font-weight:600;margin:0 0 2px}
+.qhint{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin:2px 0 12px}
+.body{margin-left:38px}
+@media (max-width:520px){.body{margin-left:0}}
+
+ul.opts{list-style:none;margin:0;padding:0}
+ul.opts li{margin:0 0 7px}
+label.opt{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:7px 9px;border:1px solid transparent}
+label.opt:hover{border-color:var(--rule);background:#fff}
+label.opt input{margin-top:5px;flex:none}
+.opt.is-right{border-color:var(--right);background:#EAF1EC}
+.opt.is-wrong{border-color:var(--wrong);background:#F6EAEA}
+
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:9px;padding:6px 0}
+.term{font-weight:600;min-width:170px}
+.defn{flex:1 1 260px;min-width:0}
+.row select{flex:0 1 200px;min-width:0}
+.gapline{margin-bottom:11px;line-height:2.1}
+select{
+  font-family:var(--body);
+  font-size:15px;
+  padding:6px 8px;
+  border:1.5px solid var(--ink);
+  background:#fff;
+  color:var(--ink);
+  max-width:100%;
+}
+select:disabled{opacity:1;color:var(--ink-soft)}
+.mark{font-family:var(--mono);font-weight:700;margin-left:6px}
+.mark.ok{color:var(--right)}
+.mark.no{color:var(--wrong)}
+
+.seg{display:inline-block;border:1px solid var(--rule);background:#fff;padding:4px 9px;margin:0 3px 6px 0;font-weight:600}
+.segblock{margin-bottom:12px}
+
+.why{
+  margin-top:12px;
+  border-left:3px solid var(--indigo);
+  padding:9px 0 9px 13px;
+  font-size:15px;
+  color:var(--ink-soft);
+  background:transparent;
+}
+.why b{color:var(--ink)}
+.fix{font-family:var(--mono);font-size:13px;color:var(--wrong);margin-left:8px}
+
+/* ---- actions + score ---- */
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:24px}
+button.action{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  padding:14px 22px;
+  border:1.5px solid var(--ink);
+  background:var(--ink);
+  color:var(--paper);
+  cursor:pointer;
+}
+button.action.ghost{background:transparent;color:var(--ink)}
+.score{
+  margin-top:22px;
+  border-top:3px solid var(--ink);
+  padding-top:14px;
+}
+.scorenum{font-family:var(--display);font-size:clamp(40px,11vw,64px);line-height:.9;text-shadow:3px 3px 0 var(--paper),5px 5px 0 var(--rule)}
+.scoretext{font-size:15px;color:var(--ink-soft);max-width:56ch}
+.notice{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--wrong)}
+footer{margin-top:44px;border-top:1px solid var(--rule);padding-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+@media (prefers-reduced-motion:no-preference){
+  .q{transition:border-color .18s ease}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="eyebrow">English 1 · 2026/2027 · Weeks 34–35</div>
+  <h1>Check<br>Yourself</h1>
+  <p class="sub">Five short practice tests on everything we have covered so far. Nothing is recorded and nothing counts — get it wrong, read why, and go again.</p>
+</header>
+
+<nav id="tabs" role="tablist" aria-label="Choose a test"></nav>
+<main id="stage"></main>
+
+<footer>Low-stakes practice · No answers are saved · Reload the page for a fresh start</footer>
+</div>
+
+<script>
+"use strict";
+
+/* ============================== CONTENT ============================== */
+
+var LABELS = ["Independent clause","Subordinate clause","Adverb"];
+
+var TESTS = [
+{
+title:"Words, concepts, clauses, characters",
+questions:[
+
+{type:"match", q:"Match each word from ‘Biting the Wax Tadpole’ with its meaning.",
+ pairs:[
+  ["polyglot","a person who can speak several languages"],
+  ["feat","an impressive achievement that takes skill or courage"],
+  ["dismay","a feeling of unhappy surprise or discouragement"],
+  ["snoop","to look secretly into other people’s private business"],
+  ["codswallop","complete nonsense"]
+ ],
+ why:"<b>Codswallop</b> is informal British English — it is the sort of word that tells you a lot about the writer’s tone, not just the meaning."},
+
+{type:"gap", q:"Choose the word that fits each sentence.",
+ bank:["mind-boggling","learn by rote","appropriately","discard","confound"],
+ items:[
+  {t:"The number of languages spoken in the world today is ___.", a:"mind-boggling"},
+  {t:"If you only ___, you may remember the words but never understand the grammar.", a:"learn by rote"},
+  {t:"A polyglot knows how to greet people ___ in each culture.", a:"appropriately"},
+  {t:"Do not ___ your old vocabulary lists — you will need them for revision.", a:"discard"}
+ ],
+ why:"One word in the list is not used. <b>Confound</b> means to confuse or baffle someone."},
+
+{type:"mc", q:"A cookbook for people who have never cooked before uses short steps and no technical jargon. Which of the six key concepts most directly explains that choice?",
+ opts:["Audience","Genre","Structure","Language"], a:"Audience",
+ why:"Audience is <b>to whom</b> something is written. The writer has asked what the reader already knows and what they need in order to understand — so the language is kept simple."},
+
+{type:"mc", q:"You write a text arguing that the school day should start later. Which purpose verb best describes what you are doing?",
+ opts:["persuade","inform","interpret","discuss"], a:"persuade",
+ why:"Purpose is <b>why</b> something is written. You are not just presenting the facts (inform) or weighing both sides (discuss) — you want the reader to agree with you."},
+
+{type:"mc", q:"Where does a film review sit in the non-fiction genre table?",
+ opts:["A mix of expressive and objective","Purely expressive","Purely objective","It is not non-fiction"], a:"A mix of expressive and objective",
+ why:"A review gives objective facts about the film and the reviewer’s subjective judgement of it. Editorials, news articles, documentaries and feature articles sit in the same mixed column."},
+
+{type:"tag", q:"Label each part of this sentence.",
+ segs:[
+  {t:"Although she was nervous", a:"Subordinate clause"},
+  {t:"she spoke", a:"Independent clause"},
+  {t:"confidently", a:"Adverb"}
+ ],
+ why:"<b>Although she was nervous</b> cannot stand alone as a sentence — the subordinating conjunction ‘although’ makes it dependent. <b>She spoke</b> can stand alone. <b>Confidently</b> is an adverb telling us how she spoke; it belongs inside the independent clause."},
+
+{type:"mc", q:"‘The vase was broken while you were away.’ Which voice is this?",
+ opts:["Passive","Active"], a:"Passive",
+ why:"The subject (the vase) does not do the verb — it has the verb done to it. The pattern is a form of <b>to be</b> + <b>past participle</b>: was + broken."},
+
+{type:"gap", q:"Choose the correct form of the verb.",
+ hint:"One form per gap",
+ items:[
+  {t:"The letters were ___ to the school by a former student.", a:"brought", opts:["bring","brought","broughten"]},
+  {t:"The lesson had already ___ when I arrived.", a:"begun", opts:["begin","began","begun"]},
+  {t:"The tickets were ___ online.", a:"bought", opts:["buy","bought","boughten"]}
+ ],
+ why:"‘Broughten’ and ‘boughten’ do not exist — <b>bring</b> and <b>buy</b> use the same form for the past tense and the past participle. <b>Begin</b> is the one that really has three forms: begin / began / <b>begun</b>, and after ‘had’ you need the participle."},
+
+{type:"mc", q:"‘Surprisingly, she plays the piano.’ What does the adverb ‘surprisingly’ modify?",
+ opts:["The whole sentence","The verb ‘plays’","The noun ‘piano’","Nothing — it is an adjective"], a:"The whole sentence",
+ why:"A sentence adverb tells you the speaker’s stance on the whole statement. It does not tell you how she plays — that would be ‘She plays the piano surprisingly.’"},
+
+{type:"mc", q:"‘The shopkeeper is cheerful every time the hero enters. He says the same friendly line, hands over the supplies, and is never mentioned again.’ Is this character flat or round?",
+ opts:["Flat","Round"], a:"Flat",
+ why:"No interiority, no contradictions, no flaws for the story to resolve. He exists to move the plot along. Flat is not an insult — most stories need flat characters."},
+
+{type:"mc", q:"‘At the start, Maya refuses to speak in class. By the end she leads the debate team, and she can name the exact moment that changed her mind.’ Is this character static or dynamic?",
+ opts:["Dynamic","Static"], a:"Dynamic",
+ why:"She undergoes a real internal change and the story shows us where it came from. Dynamic is about <b>change</b>; flat and round are about <b>depth</b>. They are two separate questions."},
+
+{type:"mc", q:"‘Ravi was a generous man.’ Is this direct or indirect characterisation?",
+ opts:["Direct","Indirect"], a:"Direct",
+ why:"The narrator simply tells us what he is like. Indirect characterisation would <b>show</b> the generosity through what Ravi does, says, or how others react to him."},
+
+{type:"mc", q:"In a survival story, a climber fights her way down a mountain through a blizzard. Which statement is correct?",
+ opts:["The blizzard is the antagonist","The blizzard cannot be an antagonist because it is not a person","The climber is the antagonist","The story has no antagonist"], a:"The blizzard is the antagonist",
+ why:"The antagonist is whatever opposes the protagonist. It can be a person, a natural force, an institution, or the protagonist’s own fear."}
+]},
+
+{
+title:"Words, concepts, clauses, characters",
+questions:[
+
+{type:"match", q:"Match each word with its meaning.",
+ pairs:[
+  ["uppity","behaving as if you are more important than you really are"],
+  ["cortex","the outer layer of the brain"],
+  ["confound","to confuse or baffle someone completely"],
+  ["be done for","to be in serious trouble, with no chance left"],
+  ["pale in comparison","to seem much less impressive next to something else"]
+ ],
+ why:"<b>Uppity</b> carries a sneer: it is usually said by someone who thinks the other person should know their place."},
+
+{type:"gap", q:"Choose the word that fits each sentence.",
+ bank:["dismay","feat","anal-retentive","snoop","uppity"],
+ items:[
+  {t:"To his ___, the exam contained none of the words he had memorised.", a:"dismay"},
+  {t:"Learning three languages before the age of ten is a remarkable ___.", a:"feat"},
+  {t:"He is so ___ about spelling that he corrects the menu in restaurants.", a:"anal-retentive"},
+  {t:"She caught her little brother trying to ___ through her diary.", a:"snoop"}
+ ],
+ why:"One word is left over. Note that <b>feat</b> is a noun (an achievement) — not to be confused with ‘feet’."},
+
+{type:"mc", q:"According to the six key concepts, choosing your genre comes naturally as a third step, after which two?",
+ opts:["Audience and purpose","Content and structure","Spelling and punctuation","Reading and listening"], a:"Audience and purpose",
+ why:"Once you know <b>who</b> you are writing for and <b>why</b>, the form largely follows: the same argument becomes a speech, a letter to the editor, or a leaflet depending on those two answers."},
+
+{type:"mc", q:"Your teacher writes: ‘Your main ideas are clear, but you jump from one to the next with nothing joining them.’ Which concept is being criticised?",
+ opts:["Structure","Content","Language","Purpose"], a:"Structure",
+ why:"Structure covers logical sequencing and clear links between ideas. The content itself was fine — that is what makes this one worth reading twice."},
+
+{type:"mc", q:"Which of these is the most objective?",
+ opts:["A manual","A personal essay","An editorial","A film review"], a:"A manual",
+ why:"Manuals sit with dictionaries, encyclopedias and fact files in the objective column. The other three all carry a personal stance."},
+
+{type:"tag", q:"Label each part of this sentence.",
+ segs:[
+  {t:"When the results arrived", a:"Subordinate clause"},
+  {t:"the whole class cheered", a:"Independent clause"},
+  {t:"loudly", a:"Adverb"}
+ ],
+ why:"‘When’ makes the first clause subordinate: on its own it leaves you waiting for the rest. <b>Loudly</b> modifies the verb ‘cheered’."},
+
+{type:"mc", q:"Which sentence is in the passive voice?",
+ opts:["The book was read by more than a million people.","More than a million people read the book.","The book sold a million copies.","People are still reading the book."], a:"The book was read by more than a million people.",
+ why:"Only the first has <b>to be</b> + past participle (was read). ‘Are reading’ is active — the continuous form is not the same thing as the passive."},
+
+{type:"gap", q:"Choose the correct form of the verb.",
+ hint:"One form per gap",
+ items:[
+  {t:"The winner was ___ by the audience.", a:"chosen", opts:["choose","chose","chosen"]},
+  {t:"The report was ___ in one night.", a:"written", opts:["write","wrote","written"]},
+  {t:"The thief was ___ on camera.", a:"caught", opts:["catch","caught","caughten"]}
+ ],
+ why:"<b>Choose</b> and <b>write</b> have three separate forms, so the passive needs chosen and written, not chose and wrote. <b>Catch</b> has only two — ‘caughten’ is not a word."},
+
+{type:"mc", q:"‘I watch wickedly clever Friends episodes.’ What does ‘wickedly’ modify?",
+ opts:["The adjective ‘clever’","The verb ‘watch’","The noun ‘episodes’","The whole sentence"], a:"The adjective ‘clever’",
+ why:"Adverbs can modify verbs, adjectives, or a whole sentence. Here it intensifies how clever the episodes are — it says nothing about how you watch."},
+
+{type:"mc", q:"‘Detective Okonkwo wants justice, but he also wants the promotion that solving the case will bring, and he cannot tell which he wants more. He lies to his partner and then hates himself for it.’ Flat or round?",
+ opts:["Round","Flat"], a:"Round",
+ why:"Contradictory motives, a real flaw, and interiority. Round characters are relatably flawed, and the story moves because of the decisions they make."},
+
+{type:"mc", q:"‘Grandma Rose gives the same advice in chapter 1 and chapter 30. Events shake the family badly, but her beliefs and habits are exactly as they were.’ Static or dynamic?",
+ opts:["Static","Dynamic"], a:"Static",
+ why:"She does not change. Note that she could still be a <b>round</b> character — a fully developed person who simply does not budge. Depth and change are different axes."},
+
+{type:"mc", q:"‘Tom gave his lunch to the new boy and said he was not hungry anyway.’ Direct or indirect characterisation?",
+ opts:["Indirect","Direct"], a:"Indirect",
+ why:"We are shown an action and left to draw the conclusion ourselves. Nobody says the word ‘kind’."},
+
+{type:"mc", q:"Which statement about the protagonist is correct?",
+ opts:["The protagonist is the character whose story we follow most closely","The protagonist is always a good person","The protagonist must be a round character","The protagonist is whoever speaks the most"], a:"The protagonist is the character whose story we follow most closely",
+ why:"Plenty of protagonists are unpleasant, and the antagonist may well be the more interesting character. Position in the story, not moral quality, is what defines the role."}
+]},
+
+{
+title:"Words, concepts, clauses, characters",
+questions:[
+
+{type:"match", q:"Match each word with its meaning.",
+ pairs:[
+  ["discard","to throw something away because it is no longer wanted"],
+  ["learn by rote","to memorise by repeating, often without understanding"],
+  ["mind-boggling","so strange or complicated that it is hard to take in"],
+  ["appropriately","in a way that suits the situation"],
+  ["anal-retentive","obsessively concerned with small details and order"]
+ ],
+ why:"<b>Learn by rote</b> is worth remembering as a whole phrase — you cannot work the meaning out from ‘rote’ on its own."},
+
+{type:"gap", q:"Choose the word or phrase that fits each sentence.",
+ bank:["codswallop","polyglot","pales in comparison","confound","uppity"],
+ items:[
+  {t:"He dismissed the whole theory as complete ___.", a:"codswallop"},
+  {t:"A true ___ can switch between five or six languages in one conversation.", a:"polyglot"},
+  {t:"My schoolboy French ___ with her fluent Arabic.", a:"pales in comparison"},
+  {t:"The spelling rules of English ___ almost every learner.", a:"confound"}
+ ],
+ why:"One word is left over. Note that the phrase changes form to fit the sentence: <b>to pale in comparison</b> becomes ‘pales in comparison’ after a singular subject."},
+
+{type:"mc", q:"A book about trout fishing has what kind of audience?",
+ opts:["A narrow, special-interest audience","A broad, general audience","No audience","Only an audience of examiners"], a:"A narrow, special-interest audience",
+ why:"Compare it with a site like Tumblr, which has a broad general audience. Knowing which one you are writing for changes how much you have to explain."},
+
+{type:"mc", q:"Which of these belongs under LANGUAGE in the assessment criteria?",
+ opts:["A rich and precise vocabulary","Information that is logically sequenced","Main ideas supported by facts from reliable sources","Clear links between your ideas"], a:"A rich and precise vocabulary",
+ why:"The other three are structure (sequencing, links) and content (support from sources). Language covers vocabulary, varied and correct sentence structure, spelling and punctuation."},
+
+{type:"mc", q:"Which text type sits in the mixed column of the genre table?",
+ opts:["A documentary film","An encyclopedia","A fact file","A dictionary"], a:"A documentary film",
+ why:"A documentary presents facts, but it selects, orders and frames them — that is a point of view. The other three aim at pure information."},
+
+{type:"tag", q:"Label each part of this sentence.",
+ segs:[
+  {t:"Because the bus was late", a:"Subordinate clause"},
+  {t:"we missed the film", a:"Independent clause"},
+  {t:"completely", a:"Adverb"}
+ ],
+ why:"A quick test: read the part on its own and ask whether you would accept it as a full sentence. ‘Because the bus was late.’ leaves you hanging; ‘We missed the film.’ does not."},
+
+{type:"mc", q:"Why might a writer choose the passive voice?",
+ opts:["To avoid saying who did the action","Because the passive is always more polite","To make every sentence shorter","To avoid using verbs altogether"], a:"To avoid saying who did the action",
+ why:"Three reasons: you do not know who did it, you are hiding who did it, or the thing it happened to matters more. ‘Mistakes were made’ is the classic example of the second."},
+
+{type:"gap", q:"Choose the correct form of the verb.",
+ hint:"One form per gap",
+ items:[
+  {t:"The bridge was ___ in 1892.", a:"built", opts:["build","built","builten"]},
+  {t:"The window had been ___ before we arrived.", a:"broken", opts:["break","broke","broken"]},
+  {t:"English is ___ by more than a billion people.", a:"spoken", opts:["speak","spoke","spoken"]}
+ ],
+ why:"<b>Break</b> and <b>speak</b> follow the same pattern: broke and spoke are past tense, but the passive and the perfect need <b>broken</b> and <b>spoken</b>. <b>Build</b> has only two forms, so ‘builten’ is invented."},
+
+{type:"mc", q:"‘She sings beautifully.’ What does ‘beautifully’ modify?",
+ opts:["The verb ‘sings’","The subject ‘she’","The whole sentence","An adjective"], a:"The verb ‘sings’",
+ why:"It tells you <b>how</b> the action is done. Compare ‘Beautifully, she sings’ — that would be a stance on the whole sentence, and it sounds odd for exactly that reason."},
+
+{type:"mc", q:"‘The bus driver appears in one scene, grumbles about the traffic and drives off. We learn nothing else about him.’ Flat or round?",
+ opts:["Flat","Round"], a:"Flat",
+ why:"One trait, no interiority, no contradictions. He is doing a job for the plot, and that is all the story needs from him."},
+
+{type:"mc", q:"‘Hassan begins the novel certain that money will make him happy. He loses the shop, loses his friends, and in the final chapter says it again, word for word.’ Static or dynamic?",
+ opts:["Static","Dynamic"], a:"Static",
+ why:"Events happen <b>to</b> him but nothing changes <b>in</b> him. A static character in a story full of upheaval is often the writer’s point."},
+
+{type:"mc", q:"‘The narrator tells us: Mrs Patel was the most impatient woman in the village.’ Direct or indirect characterisation?",
+ opts:["Direct","Indirect"], a:"Direct",
+ why:"Stated outright by the narrator. Indirect would be Mrs Patel tapping her foot, finishing other people’s sentences, and leaving before the speeches end."},
+
+{type:"mc", q:"Which of these could be an antagonist?",
+ opts:["All of these","A rival student","A snowstorm","The main character’s own fear"], a:"All of these",
+ why:"The antagonist is a function, not a person: whatever stands between the protagonist and what they want."}
+]},
+
+{
+title:"Words, concepts, clauses, characters",
+questions:[
+
+{type:"match", q:"Match each word with its meaning.",
+ pairs:[
+  ["snoop","to secretly investigate someone else’s private business"],
+  ["codswallop","utter nonsense"],
+  ["be done for","to have no chance of surviving or succeeding"],
+  ["cortex","the outer layer of the brain"],
+  ["polyglot","someone who speaks many languages"]
+ ],
+ why:"<b>Snoop</b> works as both a verb and a noun — you can snoop, and you can be a snoop."},
+
+{type:"gap", q:"Choose the word that fits each sentence.",
+ bank:["learn by rote","uppity","dismay","mind-boggling","feat"],
+ items:[
+  {t:"Some teachers still insist that you should ___ the irregular verbs.", a:"learn by rote"},
+  {t:"The waiter thought the new customer was rather ___ and refused to be spoken to like that.", a:"uppity"},
+  {t:"To her ___, the file had not been saved.", a:"dismay"},
+  {t:"The sheer size of the universe is ___.", a:"mind-boggling"}
+ ],
+ why:"One word is left over. <b>Dismay</b> is stronger than disappointment — it carries a shock."},
+
+{type:"mc", q:"‘Why am I writing this? What effect do I hope it will have on my audience?’ These questions help you define your…",
+ opts:["Purpose","Audience","Structure","Genre"], a:"Purpose",
+ why:"Purpose is <b>why</b> something is written or said. The book notes that the exact purpose of a literary text is often much harder to pin down than that of an advert or a news report."},
+
+{type:"mc", q:"Which purpose verb best fits a text that explains what a poem might mean?",
+ opts:["interpret","inform","persuade","argue"], a:"interpret",
+ why:"To interpret is to offer a reading of something whose meaning is not fixed. If you were listing facts about the poet’s life, that would be to inform."},
+
+{type:"mc", q:"An opinion piece in a newspaper is mainly…",
+ opts:["Expressive and subjective","Purely objective","A manual","A fact file"], a:"Expressive and subjective",
+ why:"It sits with adverts and personal essays in the expressive column. A news article about the same event would sit in the mixed column instead."},
+
+{type:"tag", q:"Label each part of this sentence.",
+ segs:[
+  {t:"If you practise every day", a:"Subordinate clause"},
+  {t:"your pronunciation will improve", a:"Independent clause"},
+  {t:"quickly", a:"Adverb"}
+ ],
+ why:"‘If’ is a subordinating conjunction, so the first part depends on the second. Notice that the subordinate clause can come first or last — the label does not change."},
+
+{type:"mc", q:"Which sentence is in the active voice?",
+ opts:["The teacher marked the essays.","The essays were marked.","The essays had been marked by the teacher.","Mistakes were made."], a:"The teacher marked the essays.",
+ why:"The subject does the verb. In the other three, the subject has the verb done to it — and the last one quietly removes the person responsible altogether."},
+
+{type:"gap", q:"Choose the correct form of the verb.",
+ hint:"One form per gap",
+ items:[
+  {t:"The exam had already ___ when he ran in.", a:"begun", opts:["beginned","began","begun"]},
+  {t:"The photo was ___ from the roof.", a:"taken", opts:["take","took","taken"]},
+  {t:"The prize was ___ to the youngest team.", a:"given", opts:["give","gave","given"]}
+ ],
+ why:"‘Beginned’ is what a regular verb would look like — but <b>begin</b> is irregular: begin / began / begun. <b>Took</b> and <b>gave</b> are past tense; after ‘was’ you need <b>taken</b> and <b>given</b>."},
+
+{type:"mc", q:"‘Unfortunately, the film was cancelled.’ What does ‘unfortunately’ tell us?",
+ opts:["The speaker’s attitude to the whole sentence","How the film was cancelled","When the film was cancelled","Who cancelled the film"], a:"The speaker’s attitude to the whole sentence",
+ why:"A sentence adverb comments on the statement rather than modifying any single word in it. It is also worth noticing that the sentence is passive — nobody is named as cancelling anything."},
+
+{type:"mc", q:"‘Nadia loves her sister and resents her at the same time. She gives a speech about honesty in one chapter and lies to protect herself in the next.’ Flat or round?",
+ opts:["Round","Flat"], a:"Round",
+ why:"Contradictions, hopes and desires that pull against each other, and a flaw the story has to deal with."},
+
+{type:"mc", q:"‘Captain Ferreira begins certain that orders must always be obeyed. After the disaster at the harbour he refuses a direct command, and later says he no longer recognises the man he used to be.’ Static or dynamic?",
+ opts:["Dynamic","Static"], a:"Dynamic",
+ why:"A stated belief, an event that tests it, and a changed position afterwards. That is the shape of a dynamic character."},
+
+{type:"mc", q:"‘Whenever anyone asked Jonas for help, he suddenly remembered somewhere else he had to be.’ Direct or indirect characterisation?",
+ opts:["Indirect","Direct"], a:"Indirect",
+ why:"A pattern of behaviour is shown and you draw your own conclusion. This is usually the more effective technique, because the reader does the work."},
+
+{type:"mc", q:"Which statement is true according to the flat/round diagram?",
+ opts:["A flat character can be the antagonist","Only round characters can be the protagonist","Flat characters cannot influence events","Round characters are always dynamic"], a:"A flat character can be the antagonist",
+ why:"Both kinds can be protagonist, antagonist or supporting characters, both can influence events, and both can be static or dynamic."}
+]},
+
+{
+title:"Words, concepts, clauses, characters",
+questions:[
+
+{type:"match", q:"Match each word with its meaning.",
+ pairs:[
+  ["confound","to confuse or baffle"],
+  ["appropriately","in a way that suits the situation"],
+  ["discard","to get rid of something"],
+  ["uppity","arrogantly self-important"],
+  ["pale in comparison","to look weak or unimpressive beside something else"]
+ ],
+ why:"<b>Confound</b> has a second, older sense too: to prove someone wrong, as in ‘she confounded her critics’."},
+
+{type:"gap", q:"Choose the word or phrase that fits each sentence.",
+ bank:["done for","feat","codswallop","anal-retentive","snoop"],
+ items:[
+  {t:"If the examiner asks me about that chapter, I am ___.", a:"done for"},
+  {t:"Holding a conversation in your third language is no small ___.", a:"feat"},
+  {t:"He calls every grammar rule ___, and then wonders why he fails the tests.", a:"codswallop"},
+  {t:"She is ___ about the order of the books on her shelf.", a:"anal-retentive"}
+ ],
+ why:"One word is left over. Note the form: the phrase is <b>to be done for</b>, so the sentence already supplies ‘am’."},
+
+{type:"mc", q:"Which pair do you need to identify before you choose your genre?",
+ opts:["Audience and purpose","Content and structure","Spelling and punctuation","Genre and language"], a:"Audience and purpose",
+ why:"Genre is the third step. It gives your reader an idea of the form: what structure, language features and content to expect."},
+
+{type:"mc", q:"A text whose main ideas are supported by facts and examples from relevant, reliable sources scores well on…",
+ opts:["Content","Structure","Language","Audience"], a:"Content",
+ why:"Content covers relevance to the audience and purpose, clear and focused main ideas, and support from reliable sources. Where those ideas are placed in the text is structure."},
+
+{type:"mc", q:"Which list contains only objective text types?",
+ opts:["Dictionary, manual, encyclopedia","Advertisement, editorial, review","Personal essay, fact file, column","News article, documentary, dictionary"], a:"Dictionary, manual, encyclopedia",
+ why:"The last option is a trap: a dictionary is objective, but news articles and documentaries sit in the mixed column."},
+
+{type:"tag", q:"Label each part of this sentence.",
+ segs:[
+  {t:"While the others waited outside", a:"Subordinate clause"},
+  {t:"the head teacher spoke", a:"Independent clause"},
+  {t:"quietly", a:"Adverb"}
+ ],
+ why:"‘While’ subordinates the first clause. Careful: ‘outside’ inside that clause is also an adverb — a subordinate clause has its own internal structure."},
+
+{type:"mc", q:"‘The vase was broken.’ Why might a speaker choose this instead of ‘I broke the vase’?",
+ opts:["To avoid saying who did it","Because the passive is more correct English","Because the passive is shorter","Because ‘break’ has no active form"], a:"To avoid saying who did it",
+ why:"The passive lets the agent disappear. That is useful when nobody knows who did it — and convenient when somebody would rather not say."},
+
+{type:"gap", q:"Choose the correct form of the verb.",
+ hint:"One form per gap",
+ items:[
+  {t:"The house was ___ by my grandfather.", a:"built", opts:["build","builded","built"]},
+  {t:"The tickets had been ___ months in advance.", a:"bought", opts:["buy","bought","boughten"]},
+  {t:"The whole novel was ___ in six weeks.", a:"written", opts:["write","wrote","written"]}
+ ],
+ why:"Two of these verbs have only two forms — build / built / built and buy / bought / bought — so ‘builded’ and ‘boughten’ are inventions. <b>Write</b> is the one with three: write / wrote / <b>written</b>."},
+
+{type:"mc", q:"‘She quickly finished her incredibly difficult homework.’ Which word is an adverb modifying an adjective?",
+ opts:["incredibly","quickly","difficult","finished"], a:"incredibly",
+ why:"Both ‘quickly’ and ‘incredibly’ are adverbs, but ‘quickly’ modifies the verb ‘finished’ while ‘incredibly’ modifies the adjective ‘difficult’."},
+
+{type:"mc", q:"‘The palace guard has one line: “You may not pass.” He repeats it three times, and we never learn his name or his thoughts.’ Flat or round?",
+ opts:["Flat","Round"], a:"Flat",
+ why:"He is an obstacle, not a person. His decisions serve to push the plot towards a particular conclusion — which is exactly what flat characters are for."},
+
+{type:"mc", q:"‘Ms Adeyemi is warm, funny, contradictory and fiercely proud. Across thirty chapters she stays exactly that — nothing shakes her and nothing changes her.’ Static or dynamic?",
+ opts:["Static","Dynamic"], a:"Static",
+ why:"This is the case worth getting straight: she is clearly <b>round</b> (complex and contradictory) but also <b>static</b> (unchanged). Depth and change are separate questions."},
+
+{type:"mc", q:"‘Lena was fearless,’ the narrator says in the opening line. Direct or indirect characterisation?",
+ opts:["Direct","Indirect"], a:"Direct",
+ why:"Stated, not shown. Writers often open with a direct statement and then spend the rest of the book complicating it."},
+
+{type:"mc", q:"Indirect characterisation shows what a character is like through…",
+ opts:["Their actions, speech and effect on other people","The narrator stating it plainly","How many pages they appear on","Whether they are the protagonist"], a:"Their actions, speech and effect on other people",
+ why:"Look at what a character does, what they say and how others react to them — then draw your conclusion. That is what goes in the evidence column of your character tracker."}
+]}
+];
+
+/* ============================== ENGINE ============================== */
+
+var state = {test:0, submitted:[false,false,false,false,false]};
+
+function shuffle(list){
+  var a = list.slice();
+  for (var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function el(tag, cls, text){
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+function pick(name, choices){
+  var s = document.createElement("select");
+  s.name = name;
+  var blank = document.createElement("option");
+  blank.value = ""; blank.textContent = "— choose —";
+  s.appendChild(blank);
+  choices.forEach(function(c){
+    var o = document.createElement("option");
+    o.value = c; o.textContent = c;
+    s.appendChild(o);
+  });
+  return s;
+}
+function markSpan(ok){
+  var m = el("span", "mark " + (ok ? "ok" : "no"), ok ? "correct" : "not yet");
+  return m;
+}
+
+/* ---- tabs ---- */
+function buildTabs(){
+  var nav = document.getElementById("tabs");
+  nav.innerHTML = "";
+  TESTS.forEach(function(t, i){
+    var b = el("button", "tab", "Test " + (i + 1));
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", i === state.test ? "true" : "false");
+    b.addEventListener("click", function(){
+      state.test = i;
+      state.submitted[i] = false;
+      render();
+      window.scrollTo(0, 0);
+    });
+    nav.appendChild(b);
+  });
+}
+
+/* ---- question renderers: each returns {node, check} ---- */
+
+function renderMC(q, idx){
+  var box = el("div", "body");
+  var opts = shuffle(q.opts);
+  var inputs = [];
+  var ul = el("ul", "opts");
+  opts.forEach(function(text, k){
+    var li = document.createElement("li");
+    var lab = el("label", "opt");
+    var inp = document.createElement("input");
+    inp.type = "radio";
+    inp.name = "q" + idx;
+    inp.value = text;
+    lab.appendChild(inp);
+    lab.appendChild(el("span", null, text));
+    li.appendChild(lab);
+    ul.appendChild(li);
+    inputs.push({inp:inp, lab:lab, text:text});
+  });
+  box.appendChild(ul);
+  return {
+    node: box,
+    answered: function(){
+      return inputs.some(function(o){ return o.inp.checked; });
+    },
+    check: function(){
+      var got = 0;
+      inputs.forEach(function(o){
+        o.inp.disabled = true;
+        if (o.inp.checked && o.text === q.a){ o.lab.classList.add("is-right"); got = 1; }
+        else if (o.inp.checked){ o.lab.classList.add("is-wrong"); }
+        else if (o.text === q.a){ o.lab.classList.add("is-right"); }
+      });
+      return {got:got, max:1};
+    }
+  };
+}
+
+function renderMatch(q, idx){
+  var box = el("div", "body");
+  var terms = shuffle(q.pairs.map(function(p){ return p[0]; }));
+  var rows = shuffle(q.pairs);
+  var checks = [];
+  rows.forEach(function(p, k){
+    var row = el("div", "row");
+    var lbl = el("label", "defn", p[1]);
+    var s = pick("q" + idx + "_" + k, terms);
+    var id = "m" + idx + "_" + k;
+    s.id = id; lbl.htmlFor = id;
+    row.appendChild(lbl);
+    row.appendChild(s);
+    box.appendChild(row);
+    checks.push({s:s, a:p[0], row:row});
+  });
+  rows = checks;
+  return {
+    node: box,
+    answered: function(){ return rows.some(function(r){ return r.s.value !== ""; }); },
+    check: function(){
+      var got = 0;
+      rows.forEach(function(r){
+        r.s.disabled = true;
+        var ok = r.s.value === r.a;
+        if (ok) got++;
+        r.row.appendChild(markSpan(ok));
+        if (!ok){
+          r.row.appendChild(el("span", "fix", "→ " + r.a));
+        }
+      });
+      return {got:got, max:rows.length};
+    }
+  };
+}
+
+function renderGap(q, idx){
+  var box = el("div", "body");
+  var bank = q.bank ? shuffle(q.bank) : [];
+  var rows = [];
+  q.items.forEach(function(it, k){
+    var line = el("div", "gapline");
+    var parts = it.t.split("___");
+    line.appendChild(document.createTextNode(parts[0]));
+    var s = pick("q" + idx + "_" + k, it.opts ? shuffle(it.opts) : bank);
+    line.appendChild(s);
+    line.appendChild(document.createTextNode(parts[1] || ""));
+    box.appendChild(line);
+    rows.push({s:s, a:it.a, line:line});
+  });
+  return {
+    node: box,
+    answered: function(){ return rows.some(function(r){ return r.s.value !== ""; }); },
+    check: function(){
+      var got = 0;
+      rows.forEach(function(r){
+        r.s.disabled = true;
+        var ok = r.s.value === r.a;
+        if (ok) got++;
+        r.line.appendChild(markSpan(ok));
+        if (!ok) r.line.appendChild(el("span", "fix", "→ " + r.a));
+      });
+      return {got:got, max:rows.length};
+    }
+  };
+}
+
+function renderTag(q, idx){
+  var box = el("div", "body");
+  var sentence = el("div", "segblock");
+  q.segs.forEach(function(sg){
+    sentence.appendChild(el("span", "seg", sg.t));
+  });
+  box.appendChild(sentence);
+  var rows = [];
+  q.segs.forEach(function(sg, k){
+    var row = el("div", "row");
+    var lbl = el("label", "term", sg.t);
+    var s = pick("q" + idx + "_" + k, LABELS);
+    var id = "t" + idx + "_" + k;
+    s.id = id; lbl.htmlFor = id;
+    row.appendChild(lbl);
+    row.appendChild(s);
+    box.appendChild(row);
+    rows.push({s:s, a:sg.a, row:row});
+  });
+  return {
+    node: box,
+    answered: function(){ return rows.some(function(r){ return r.s.value !== ""; }); },
+    check: function(){
+      var got = 0;
+      rows.forEach(function(r){
+        r.s.disabled = true;
+        var ok = r.s.value === r.a;
+        if (ok) got++;
+        r.row.appendChild(markSpan(ok));
+        if (!ok) r.row.appendChild(el("span", "fix", "→ " + r.a));
+      });
+      return {got:got, max:rows.length};
+    }
+  };
+}
+
+var HINTS = {
+  mc: "Choose one",
+  match: "Match each one",
+  gap: "One word per gap · one is left over",
+  tag: "Label every part"
+};
+
+function render(){
+  buildTabs();
+  var test = TESTS[state.test];
+  var stage = document.getElementById("stage");
+  stage.innerHTML = "";
+
+  var head = el("div", "testhead");
+  head.appendChild(el("div", "numeral", String(state.test + 1)));
+  head.appendChild(el("h2", null, test.title));
+  stage.appendChild(head);
+
+  var intro = el("p", "testintro", "Answer everything, then check. Every question comes from weeks 34 and 35: vocabulary, the six key concepts, non-fiction genre, sentence structure, voice, and characterisation.");
+  stage.appendChild(intro);
+
+  var handlers = [];
+
+  test.questions.forEach(function(q, idx){
+    var card = el("div", "q");
+    var top = el("div", "qtop");
+    top.appendChild(el("div", "qno", String(idx + 1)));
+    var head2 = document.createElement("div");
+    head2.appendChild(el("p", "qtext", q.q));
+    head2.appendChild(el("p", "qhint", q.hint || HINTS[q.type]));
+    top.appendChild(head2);
+    card.appendChild(top);
+
+    var h;
+    if (q.type === "mc") h = renderMC(q, idx);
+    else if (q.type === "match") h = renderMatch(q, idx);
+    else if (q.type === "gap") h = renderGap(q, idx);
+    else h = renderTag(q, idx);
+
+    card.appendChild(h.node);
+    h.card = card;
+    h.why = q.why;
+    handlers.push(h);
+    stage.appendChild(card);
+  });
+
+  var actions = el("div", "actions");
+  var checkBtn = el("button", "action", "Check answers");
+  var resetBtn = el("button", "action ghost", "Try again");
+  var notice = el("span", "notice", "");
+  notice.setAttribute("role", "status");
+  actions.appendChild(checkBtn);
+  actions.appendChild(resetBtn);
+  actions.appendChild(notice);
+  stage.appendChild(actions);
+
+  var scoreBox = el("div", "score");
+  scoreBox.style.display = "none";
+  scoreBox.setAttribute("role", "status");
+  stage.appendChild(scoreBox);
+
+  resetBtn.addEventListener("click", function(){ render(); window.scrollTo(0, 0); });
+
+  checkBtn.addEventListener("click", function(){
+    var unanswered = handlers.filter(function(h){ return !h.answered(); }).length;
+    if (unanswered > 0 && !checkBtn.dataset.warned){
+      notice.textContent = unanswered + " question" + (unanswered > 1 ? "s" : "") + " still blank — press check again to see the answers anyway";
+      checkBtn.dataset.warned = "1";
+      return;
+    }
+    notice.textContent = "";
+    var got = 0, max = 0;
+    handlers.forEach(function(h){
+      var r = h.check();
+      got += r.got; max += r.max;
+      var w = el("div", "why");
+      w.innerHTML = h.why;
+      h.card.appendChild(w);
+    });
+    checkBtn.disabled = true;
+    checkBtn.style.opacity = ".4";
+
+    scoreBox.innerHTML = "";
+    scoreBox.appendChild(el("div", "scorenum", got + " / " + max));
+    var pct = max ? got / max : 0;
+    var line;
+    if (pct === 1) line = "Everything right. Try another test — or come back to this one tomorrow, when it will be harder and therefore more useful.";
+    else if (pct >= 0.75) line = "Solid. Read the explanations under the ones you missed, then press Try again — the options come back in a different order.";
+    else if (pct >= 0.4) line = "A reasonable start. Work through the explanations, then run the same test again before moving on.";
+    else line = "Worth going back to the two sets of slides and the character pages before you try this again. Read the explanations first — most of them answer more than one question.";
+    scoreBox.appendChild(el("p", "scoretext", line));
+    scoreBox.style.display = "block";
+    scoreBox.scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
+}
+
+render();
+</script>
+</body>
+</html>
