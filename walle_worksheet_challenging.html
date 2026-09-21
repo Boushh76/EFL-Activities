@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WALL-E – Film Worksheet (B2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --night:#2c2a5e; --dusk:#6a4e8e; --rust:#b35d26; --yellow:#e6ac3c;
+  --leaf:#4f8f36; --leaf-soft:#e3f0dc; --bad:#b23a3a; --bad-soft:#f7e1e1;
+  --ink:#23233a; --muted:#5c5f78; --page:#eef0f6; --paper:#ffffff; --line:#d4d7e4; --chip:#f3eee4;
+  /* parts of speech */
+  --n:#3f5bb5; --n-soft:#dfe5f7;
+  --v:#b35d26; --v-soft:#f6e3d6;
+  --adj:#4f8f36; --adj-soft:#e3f0dc;
+  --adv:#a8780f; --adv-soft:#fbefcf;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:"Atkinson Hyperlegible",Verdana,Arial,sans-serif;font-size:18px;line-height:1.55}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+header{background:linear-gradient(160deg,var(--night) 0%,var(--dusk) 100%);color:#fff;padding:28px 20px 0}
+.wrap{max-width:860px;margin:0 auto}
+h1{margin:0;font-size:2.3rem;line-height:1.1;letter-spacing:-.01em}
+.sub{margin:6px 0 18px;opacity:.85}
+.who{display:flex;gap:12px;flex-wrap:wrap;padding-bottom:20px}
+.who label{display:flex;flex-direction:column;font-size:.85rem;gap:4px;flex:1 1 200px}
+.who input{border:0;border-radius:6px;padding:9px 11px;background:#fff;color:var(--ink)}
+.stripe{height:14px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 18px,var(--night) 18px 36px)}
+nav{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.tabs{display:flex;overflow-x:auto;gap:2px}
+.tab{background:none;border:0;border-bottom:4px solid transparent;padding:13px 14px;cursor:pointer;white-space:nowrap;color:var(--muted)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--rust);font-weight:700}
+.tab .done{color:var(--leaf);font-weight:700}
+main{padding:24px 20px 60px}
+.panel{display:none}.panel.active{display:block}
+h2{font-size:1.6rem;margin:0 0 4px}
+h2.part{font-size:1.3rem;margin:34px 0 4px}
+.intro{color:var(--muted);margin:0 0 22px}
+.q{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:18px}
+.q h3{margin:0 0 10px;font-size:1.1rem}
+.n{display:inline-block;min-width:1.7em;height:1.7em;line-height:1.7em;text-align:center;border-radius:50%;background:var(--night);color:#fff;font-size:.85rem;margin-right:8px;font-weight:700}
+textarea{width:100%;min-height:150px;border:2px solid var(--line);border-radius:8px;padding:10px;resize:vertical;background:#fbfbfd}
+textarea:focus{border-color:var(--dusk);outline:none}
+.count{display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--muted);margin-top:6px}
+.meter{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden;max-width:180px}
+.meter i{display:block;height:100%;width:0;background:var(--yellow);transition:width .2s}
+.meter i.full{background:var(--leaf)}
+.meter i.over{background:var(--rust)}
+.btn{border:0;border-radius:8px;padding:9px 16px;cursor:pointer;background:var(--night);color:#fff}
+.btn.ghost{background:transparent;color:var(--night);border:2px solid var(--night)}
+.btn.big{background:var(--rust);font-size:1.15rem;padding:14px 26px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.fb{font-weight:700}.fb.ok{color:var(--leaf)}.fb.no{color:var(--bad)}
+.score{font-size:1.2rem;font-weight:700;margin-left:6px}
+.small{font-size:.9rem;color:var(--muted)}
+
+/* rule boxes */
+.rule{background:var(--paper);border-left:8px solid var(--yellow);border-radius:10px;padding:18px 20px;margin-bottom:22px}
+.rule h3{margin:0 0 8px}
+.rule p{margin:6px 0}
+.conj-table{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:10px 0}
+.conj-table b{color:var(--night)}
+
+/* conjunction items */
+.sent{font-size:1.1rem;line-height:2.2}
+.slot{display:inline-block;min-width:5.5em;text-align:center;border-bottom:3px solid var(--night);background:#f7f8fc;padding:0 8px;border-radius:4px 4px 0 0;font-weight:700;color:var(--night)}
+.slot.empty{color:var(--muted);font-weight:400}
+.slot.ok{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf)}
+.slot.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.choices{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.choice{background:var(--paper);border:2px solid var(--night);border-radius:6px;padding:4px 12px;cursor:pointer}
+.choice[aria-pressed="true"]{background:var(--night);color:#fff}
+.orig{color:var(--muted);font-size:.95rem;margin:0 0 6px}
+
+/* parts of speech */
+.pos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+.pos-card{border-radius:8px;padding:10px 14px;border-left:6px solid}
+.pos-card b{display:block;font-size:1.1rem}
+.pos-card.N{background:var(--n-soft);border-color:var(--n)}
+.pos-card.V{background:var(--v-soft);border-color:var(--v)}
+.pos-card.Adj{background:var(--adj-soft);border-color:var(--adj)}
+.pos-card.Adv{background:var(--adv-soft);border-color:var(--adv)}
+.trap{margin:14px 0 0;padding:10px 14px;background:#fff7e3;border-radius:8px}
+.pens{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.pen{border:2px solid;border-radius:999px;padding:4px 14px;cursor:pointer;background:var(--paper);font-weight:700}
+.pen.N{border-color:var(--n);color:var(--n)} .pen.V{border-color:var(--v);color:var(--v)}
+.pen.Adj{border-color:var(--adj);color:var(--adj)} .pen.Adv{border-color:var(--adv);color:var(--adv)}
+.pen.active.N{background:var(--n);color:#fff}.pen.active.V{background:var(--v);color:#fff}
+.pen.active.Adj{background:var(--adj);color:#fff}.pen.active.Adv{background:var(--adv);color:#fff}
+.pen .mark{margin-left:4px}
+.words{display:flex;flex-wrap:wrap;gap:6px 4px;font-size:1.15rem}
+.w{border:2px solid transparent;background:none;border-radius:6px;padding:2px 6px 16px;cursor:pointer;position:relative;line-height:1.3}
+.w:hover{border-color:var(--line)}
+.w[data-tag]::after{content:attr(data-tag);position:absolute;left:0;right:0;bottom:1px;font-size:.65rem;font-weight:700;text-align:center}
+.w[data-tag="N"]{background:var(--n-soft);border-color:var(--n)}.w[data-tag="N"]::after{color:var(--n)}
+.w[data-tag="V"]{background:var(--v-soft);border-color:var(--v)}.w[data-tag="V"]::after{color:var(--v)}
+.w[data-tag="Adj"]{background:var(--adj-soft);border-color:var(--adj)}.w[data-tag="Adj"]::after{color:var(--adj)}
+.w[data-tag="Adv"]{background:var(--adv-soft);border-color:var(--adv)}.w[data-tag="Adv"]::after{color:var(--adv)}
+.w.no{box-shadow:0 0 0 3px var(--bad)}
+.hint{font-size:.85rem;color:var(--muted);margin-top:6px}
+
+/* quiz */
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer}
+.opt input{margin-top:6px;accent-color:var(--night)}
+.opt.ok{border-color:var(--leaf);background:var(--leaf-soft)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+/* hand in */
+.check-list{list-style:none;padding:0}
+.check-list li{padding:8px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px}
+.st-ok{color:var(--leaf);font-weight:700}.st-no{color:var(--rust);font-weight:700}
+.warn{color:var(--bad);font-weight:700;min-height:1.5em}
+@media (max-width:620px){body{font-size:17px}h1{font-size:1.8rem}.pos-grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{nav,.btn,.row,.count,.choices,.pens{display:none!important}.panel{display:block!important}#p-hand{display:none!important}header{background:none;color:#000}.stripe{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>WALL-E</h1>
+    <p class="sub">Film worksheet – answer, practise, and hand in as a PDF</p>
+    <div class="who">
+      <label>Your name<input id="sname" autocomplete="name"></label>
+      <label>Class<input id="sclass"></label>
+    </div>
+  </div>
+  <div class="stripe"></div>
+</header>
+<nav><div class="wrap tabs" role="tablist" id="tabs"></div></nav>
+
+<main class="wrap">
+  <section class="panel" id="p-film" role="tabpanel">
+    <h2>About the film</h2>
+    <p class="intro">Answer each question in 60–80 words. Use examples from the film to support what you say.</p>
+    <div id="film-qs"></div>
+  </section>
+
+  <section class="panel" id="p-reflect" role="tabpanel">
+    <h2>Think about it</h2>
+    <p class="intro">There is no single right answer. Take a position, explain your reasons and give examples. Aim for 60–80 words.</p>
+    <div id="reflect-qs"></div>
+  </section>
+
+  <section class="panel" id="p-build" role="tabpanel">
+    <h2>Building sentences</h2>
+    <p class="intro">Part A: join two sentences into one with the right conjunction. Part B: make one idea depend on the other.</p>
+
+    <h2 class="part">Part A – Compound sentences</h2>
+    <div class="rule">
+      <h3>Two equal ideas</h3>
+      <p>A compound sentence joins two complete sentences. Both parts are equally important, and each part could stand alone.</p>
+      <div class="conj-table">
+        <b>and</b><span>adds another idea</span>
+        <b>but</b><span>shows a contrast</span>
+        <b>yet</b><span>shows a contrast that is surprising</span>
+        <b>or</b><span>gives a choice</span>
+        <b>so</b><span>shows a result</span>
+      </div>
+      <p>The order of the two parts is fixed. Choose the conjunction that shows the connection most clearly.</p>
+    </div>
+    <div id="partA"></div>
+    <div class="row"><button class="btn" id="aCheck">Check Part A</button><span class="score" id="aScore"></span></div>
+
+    <h2 class="part">Part B – Complex sentences</h2>
+    <div class="rule">
+      <h3>One idea depends on the other</h3>
+      <p>A complex sentence has a <b>main clause</b> that can stand alone, and a <b>dependent clause</b> that cannot. The dependent clause starts with a word like <i>because, although, when, until, unless, after</i>.</p>
+      <p>Compare: <i>WALL-E was scared, so he hid.</i> (compound – the order is fixed)<br>
+      <i>WALL-E hid because he was scared.</i> → <i>Because he was scared, WALL-E hid.</i> (complex – the dependent clause can move)</p>
+      <p><b>Relative clauses</b> give extra information about a noun: <i>who</i> for people, <i>which</i> for things, <i>where</i> for places, <i>whose</i> for belonging. These clauses stay next to the noun and cannot move.</p>
+    </div>
+    <div id="partB"></div>
+    <div class="row"><button class="btn" id="bCheck">Check Part B</button><span class="score" id="bScore"></span></div>
+  </section>
+
+  <section class="panel" id="p-grammar" role="tabpanel">
+    <h2>Parts of speech</h2>
+    <p class="intro">In each sentence, find one noun, one verb, one adjective and one adverb.</p>
+    <div class="rule">
+      <h3>The four word classes</h3>
+      <div class="pos-grid">
+        <div class="pos-card N"><b>Noun</b>A person, place, thing or idea.<br><i>EVE, Earth, plant, hope</i></div>
+        <div class="pos-card V"><b>Verb</b>An action or a state.<br><i>clean, fly, is, seem, have</i></div>
+        <div class="pos-card Adj"><b>Adjective</b>Describes a noun.<br><i>a <u>rusty</u> robot, the plant is <u>green</u></i></div>
+        <div class="pos-card Adv"><b>Adverb</b>Describes a verb, an adjective or another adverb.<br><i>moved <u>slowly</u>, <u>very</u> old, <u>very</u> carefully</i></div>
+      </div>
+      <p class="trap"><b>Watch out:</b> not every word ending in <i>-ly</i> is an adverb. <i>Lonely, friendly</i> and <i>lovely</i> describe nouns, so they are adjectives. And some adverbs have no <i>-ly</i> at all: <i>fast, hard, well, never, always, very</i>.<br>
+      <b>Ask:</b> What is this word describing? A noun → adjective. A verb, adjective or adverb → adverb.</p>
+    </div>
+    <p class="small">How to do it: choose a colour, then tap a word. Tap the word again to remove the colour.</p>
+    <div id="pos"></div>
+    <div class="row"><button class="btn" id="posCheck">Check my answers</button><span class="score" id="posScore"></span></div>
+  </section>
+
+  <section class="panel" id="p-quiz" role="tabpanel">
+    <h2>Quiz</h2>
+    <p class="intro">Choose one answer for each question. Then check.</p>
+    <div id="quiz"></div>
+    <div class="row"><button class="btn" id="quizCheck">Check my answers</button><span class="score" id="quizScore"></span></div>
+  </section>
+
+  <section class="panel" id="p-hand" role="tabpanel">
+    <h2>Hand in</h2>
+    <p class="intro">Check that you are finished. Then download your PDF and hand it in.</p>
+    <div class="q">
+      <ul class="check-list" id="status"></ul>
+      <p class="warn" id="warn"></p>
+      <button class="btn big" id="pdfBtn">Download my PDF</button>
+      <p class="small">Your work is saved in this browser while you work. If the download does not work, press <b>Ctrl + P</b> and choose «Save as PDF».</p>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ---------- CONTENT ---------- */
+const FILM = [
+  "Describe WALL-E's life on Earth before EVE arrives. What do his daily routine and his collection tell us about his personality?",
+  "Why is the plant so important to the story – both for EVE's mission and for the people on the Axiom?",
+  "How does EVE change during the film? Use at least one example.",
+  "What is AUTO's secret order, and why does he keep following it even when the captain tells him to stop?",
+  "How does the film end, and what do the end credits suggest about the future of humans and robots?"
+];
+const REFLECT = [
+  "How did technology and AI impact the people on the Axiom? Are the humans victims of the technology, or are they also responsible?",
+  "What was wrong with the captain's understanding of farming? What does this show about what happens when people lose contact with where things come from?",
+  "Why do you think the filmmakers put the plant in an old boot, and not in a flower pot? What could the boot symbolise?",
+  "Buy n Large ran everything, on Earth and on the Axiom. What is the film saying about consumerism and powerful companies? Do you see anything similar in the world today?"
+];
+const MIN=60, MAX=80;
+
+const CONJ = ["and","but","yet","or","so"];
+const PART_A = [
+  {a:"WALL-E was scared,", b:"he hid behind the tyres.", ok:["so"]},
+  {a:"WALL-E found a Rubik's cube,", b:"he put it in his collection.", ok:["and"]},
+  {a:"The humans had legs,", b:"they never used them.", ok:["but","yet"]},
+  {a:"Should the spork go with the spoons,", b:"should it go with the forks?", ok:["or"]},
+  {a:"AUTO had a secret order,", b:"he refused to turn the ship around.", ok:["so"]},
+  {a:"EVE was powerful and dangerous,", b:"she cared deeply about WALL-E.", ok:["yet","but"]},
+  {a:"The passengers could stay on the Axiom,", b:"they could return to Earth.", ok:["or"]},
+  {a:"The humans drank their meals from cups,", b:"they watched screens all day.", ok:["and"]}
+];
+
+/* type "sub": dependent clause can move. m1 = main clause at start of sentence, m2 = main clause after a comma */
+const PART_B = [
+  {type:"sub", orig:"WALL-E hid behind the tyres. He was scared.", m1:"WALL-E hid behind the tyres", m2:"WALL-E hid behind the tyres", d:"he was scared", opts:["because","although","until","if"], ok:["because"]},
+  {type:"sub", orig:"EVE cared deeply about WALL-E. She was powerful and dangerous.", m1:"EVE cared deeply about WALL-E", m2:"EVE cared deeply about WALL-E", d:"she was powerful and dangerous", opts:["because","although","when","unless"], ok:["although"]},
+  {type:"sub", orig:"The captain could not take the ship home. Then he turned off AUTO.", m1:"The captain could not take the ship home", m2:"the captain could not take the ship home", d:"he turned off AUTO", opts:["until","because","although","while"], ok:["until"]},
+  {type:"sub", orig:"WALL-E fell in love with EVE. He first saw her.", m1:"WALL-E fell in love with EVE", m2:"WALL-E fell in love with EVE", d:"he first saw her", opts:["when","although","unless","until"], ok:["when"]},
+  {type:"sub", orig:"The humans will never go home. Someone must find a plant on Earth first.", m1:"The humans will never go home", m2:"the humans will never go home", d:"someone finds a plant on Earth", opts:["unless","because","when","although"], ok:["unless"]},
+  {type:"sub", orig:"WALL-E watched his favourite film every night. He finished work first.", m1:"WALL-E watched his favourite film every night", m2:"WALL-E watched his favourite film every night", d:"he finished work", opts:["after","although","unless","because"], ok:["after"]},
+  {type:"rel", orig:"EVE is a robot. She was sent to find plant life.", pre:"EVE is a robot", post:"was sent to find plant life.", opts:["who","which","where","whose"], ok:["who"]},
+  {type:"rel", orig:"The Axiom is a spaceship. It carries thousands of people.", pre:"The Axiom is a spaceship", post:"carries thousands of people.", opts:["who","which","where","whose"], ok:["which"]},
+  {type:"rel", orig:"Earth is a place. Nothing grows there anymore.", pre:"Earth is a place", post:"nothing grows anymore.", opts:["who","which","where","whose"], ok:["where"]},
+  {type:"rel", orig:"The captain is a man. His whole life has been controlled by AUTO.", pre:"The captain is a man", post:"whole life has been controlled by AUTO.", opts:["who","which","where","whose"], ok:["whose"]}
+];
+
+const POS = [
+  {s:"The lonely robot carefully placed the small plant in an old boot.", N:["robot","plant","boot"], V:["placed"], Adj:["lonely","small","old"], Adv:["carefully"]},
+  {s:"The white robot moved fast, and WALL-E followed her nervously.", N:["robot","wall-e"], V:["moved","followed"], Adj:["white"], Adv:["fast","nervously"]},
+  {s:"The friendly cockroach always followed WALL-E.", N:["cockroach","wall-e"], V:["followed"], Adj:["friendly"], Adv:["always"]},
+  {s:"The captain was very curious about the strange plant.", N:["captain","plant"], V:["was"], Adj:["curious","strange"], Adv:["very"]},
+  {s:"AUTO spoke coldly and never changed the terrible order.", N:["auto","order"], V:["spoke","changed"], Adj:["terrible"], Adv:["coldly","never"]},
+  {s:"WALL-E worked hard on the dirty streets of Earth.", N:["wall-e","streets","earth"], V:["worked"], Adj:["dirty"], Adv:["hard"]},
+  {s:"The tired passengers slowly left their chairs.", N:["passengers","chairs"], V:["left"], Adj:["tired"], Adv:["slowly"]},
+  {s:"The lovely old film made WALL-E dance happily.", N:["film","wall-e"], V:["made","dance"], Adj:["lovely","old"], Adv:["happily"]}
+];
+const CATS=[["N","Noun"],["V","Verb"],["Adj","Adjective"],["Adv","Adverb"]];
+
+const QUIZ = [
+  {q:"What does WALL-E's name stand for?", o:["Waste Allocation Load Lifter: Earth-Class","World Automated Litter Loader: Electric","Waste And Landfill Lifter: Earth","Worker Assigned to Lift Litter: Engine"], a:0},
+  {q:"Which company controlled life on Earth and on the Axiom?", o:["Axiom Corp","Buy n Large","EarthCo","Galactic Retail"], a:1},
+  {q:"What happens to EVE after WALL-E shows her the plant?", o:["She destroys it","She gives it back to WALL-E","She stores it and shuts down to wait for her ship","She plants it in the ground"], a:2},
+  {q:"What is AUTO's secret order (directive A113)?", o:["To protect the plant","Never to return to Earth","To make the captain stronger","To find WALL-E"], a:1},
+  {q:"Which old film does WALL-E watch again and again?", o:["The Sound of Music","Singin' in the Rain","Hello, Dolly!","Mary Poppins"], a:2},
+  {q:"Why do John and Mary start noticing the world around them?", o:["The captain tells them to","WALL-E accidentally switches off their screens","Their chairs break","They see the plant"], a:1},
+  {q:"What does the captain do when he learns about Earth?", o:["He ignores it","He asks the computer to explain words like 'farm', 'dance' and 'ocean'","He tells AUTO to destroy the plant","He leaves the ship alone"], a:1},
+  {q:"How does WALL-E get his memory back?", o:["EVE holds his hand and the spark between them brings him back","He watches his favourite film","M-O cleans him","The captain repairs him"], a:0},
+  {q:"What does the plant mainly symbolise?", o:["Money","Danger","Hope that Earth and people can recover","The power of AUTO"], a:2},
+  {q:"Which statement best describes a main message of the film?", o:["Robots will always destroy humans","Space is a better home than Earth","Consumerism and handing everything over to technology can harm both the planet and people","People should stop using computers"], a:2}
+];
+
+/* ---------- STATE ---------- */
+const KEY="walle-worksheet-b2-v1";
+let S={name:"",cls:"",film:[],reflect:[],A:[],B:[],pos:[],quiz:[]};
+try{const raw=localStorage.getItem(KEY); if(raw) S=Object.assign(S,JSON.parse(raw));}catch(e){}
+PART_B.forEach((_,i)=>{ if(!S.B[i]) S.B[i]={c:null,first:false}; });
+POS.forEach((_,i)=>{ if(!S.pos[i]) S.pos[i]={N:null,V:null,Adj:null,Adv:null}; });
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){} refreshTabs();}
+
+const $=s=>document.querySelector(s);
+const el=(tag,attrs={},html="")=>{const e=document.createElement(tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(html)e.innerHTML=html;return e;};
+const wc=t=>(t.trim().match(/\S+/g)||[]).length;
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const bare=w=>w.replace(/[.,!?;:]/g,"").toLowerCase();
+
+/* ---------- TABS ---------- */
+const TABS=[["p-film","1. The film"],["p-reflect","2. Think"],["p-build","3. Build sentences"],["p-grammar","4. Parts of speech"],["p-quiz","5. Quiz"],["p-hand","6. Hand in"]];
+const aOk=i=>PART_A[i].ok.includes(S.A[i]);
+const bOk=i=>PART_B[i].ok.includes(S.B[i].c);
+function posOk(i,cat){const idx=S.pos[i][cat]; if(idx==null) return null; return POS[i][cat].includes(bare(POS[i].s.split(" ")[idx]));}
+function doneFor(id){
+  if(id==="p-film") return FILM.every((_,i)=>wc(S.film[i]||"")>=40);
+  if(id==="p-reflect") return REFLECT.every((_,i)=>wc(S.reflect[i]||"")>=40);
+  if(id==="p-build") return PART_A.every((_,i)=>S.A[i]) && PART_B.every((_,i)=>S.B[i].c);
+  if(id==="p-grammar") return POS.every((_,i)=>CATS.every(([c])=>S.pos[i][c]!=null));
+  if(id==="p-quiz") return QUIZ.every((_,i)=>S.quiz[i]!=null);
+  return false;
+}
+function buildTabs(){const t=$("#tabs");TABS.forEach(([id])=>{const b=el("button",{class:"tab",role:"tab","aria-controls":id,id:"t-"+id});b.onclick=()=>show(id);t.appendChild(b);});refreshTabs();}
+function refreshTabs(){TABS.forEach(([id,label])=>{const b=document.getElementById("t-"+id);if(b)b.innerHTML=label+(doneFor(id)?' <span class="done">✓</span>':"");});}
+function show(id){document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.getAttribute("aria-controls")===id));if(id==="p-hand")renderStatus();window.scrollTo({top:0});}
+
+/* ---------- WRITING ---------- */
+function renderWriting(container,list,store){
+  list.forEach((q,i)=>{
+    const box=el("div",{class:"q"});
+    box.appendChild(el("h3",{},`<span class="n">${i+1}</span>${q}`));
+    const ta=el("textarea",{"aria-label":q,spellcheck:"true"}); ta.value=S[store][i]||"";
+    const cnt=el("div",{class:"count"}),lab=el("span"),meter=el("div",{class:"meter"},"<i></i>");
+    cnt.append(lab,meter);
+    const upd=()=>{const n=wc(ta.value),bar=meter.firstChild;
+      bar.style.width=Math.min(100,n/MAX*100)+"%";
+      bar.className=n>MAX?"over":n>=MIN?"full":"";
+      lab.textContent= n>MAX?`${n} words – over ${MAX}. Can you cut anything?`:`${n} words (aim for ${MIN}–${MAX})`;};
+    ta.addEventListener("input",()=>{S[store][i]=ta.value;upd();save();});
+    upd(); box.append(ta,cnt); container.appendChild(box);
+  });
+}
+
+/* ---------- PART A ---------- */
+function renderA(){
+  const c=$("#partA");
+  PART_A.forEach((it,i)=>{
+    const box=el("div",{class:"q"});
+    const sent=el("p",{class:"sent"});
+    const slot=el("span",{class:"slot"});
+    sent.append(el("span",{class:"n"},String(i+1)),document.createTextNode(it.a+" "),slot,document.createTextNode(" "+it.b));
+    const ch=el("div",{class:"choices"});
+    const draw=()=>{slot.textContent=S.A[i]||"?";slot.className="slot"+(S.A[i]?"":" empty");
+      ch.querySelectorAll(".choice").forEach(b=>b.setAttribute("aria-pressed",b.textContent===S.A[i]));};
+    CONJ.forEach(w=>{const b=el("button",{class:"choice",type:"button"});b.textContent=w;b.onclick=()=>{S.A[i]=w;draw();save();};ch.appendChild(b);});
+    box.append(sent,ch); c.appendChild(box); draw();
+    box._check=()=>{if(!S.A[i])return 0;const ok=aOk(i);slot.classList.add(ok?"ok":"no");return ok?1:0;};
+  });
+  $("#aCheck").onclick=()=>{let n=0;[...c.children].forEach(b=>n+=b._check());$("#aScore").textContent=`${n} / ${PART_A.length}`;};
+}
+
+/* ---------- PART B ---------- */
+function bSentence(it,st,slotHTML){
+  const c=st.c||"?";
+  if(it.type==="rel") return `${it.pre} ${slotHTML(c)} ${it.post}`;
+  return st.first ? `${slotHTML(cap(c))} ${it.d}, ${it.m2}.` : `${it.m1} ${slotHTML(c)} ${it.d}.`;
+}
+function renderB(){
+  const c=$("#partB");
+  PART_B.forEach((it,i)=>{
+    const box=el("div",{class:"q"});
+    box.appendChild(el("p",{class:"orig"},`<span class="n">${i+1}</span>${it.orig}`));
+    const sent=el("p",{class:"sent"});
+    const ch=el("div",{class:"choices"});
+    let mark="";
+    const draw=()=>{const st=S.B[i];
+      sent.innerHTML=bSentence(it,st,w=>`<span class="slot${st.c?"":" empty"}${mark}">${w}</span>`);
+      ch.querySelectorAll(".choice").forEach(b=>b.setAttribute("aria-pressed",b.textContent===st.c));};
+    it.opts.forEach(w=>{const b=el("button",{class:"choice",type:"button"});b.textContent=w;b.onclick=()=>{S.B[i].c=w;mark="";draw();save();};ch.appendChild(b);});
+    box.append(sent,ch);
+    if(it.type==="sub"){
+      const row=el("div",{class:"row"});
+      const mv=el("button",{class:"btn ghost",type:"button"},"Move the dependent clause");
+      mv.onclick=()=>{S.B[i].first=!S.B[i].first;draw();save();};
+      row.append(mv,el("span",{class:"small"},"Try both orders. Both are correct – notice what happens to the comma."));
+      box.appendChild(row);
+    }
+    c.appendChild(box); draw();
+    box._check=()=>{if(!S.B[i].c)return 0;const ok=bOk(i);mark=ok?" ok":" no";draw();return ok?1:0;};
+  });
+  $("#bCheck").onclick=()=>{let n=0;[...c.children].forEach(b=>n+=b._check());$("#bScore").textContent=`${n} / ${PART_B.length}`;};
+}
+
+/* ---------- PARTS OF SPEECH ---------- */
+function renderPOS(){
+  const c=$("#pos");
+  POS.forEach((it,i)=>{
+    const box=el("div",{class:"q"});
+    box.appendChild(el("h3",{},`<span class="n">${i+1}</span>Find one of each`));
+    const pens=el("div",{class:"pens"});
+    const words=el("div",{class:"words"});
+    let pen="N", checked=false;
+    const toks=it.s.split(" ");
+    const draw=()=>{
+      pens.querySelectorAll(".pen").forEach(p=>{const cat=p.dataset.cat;p.classList.toggle("active",cat===pen);
+        const r=checked?posOk(i,cat):null; p.querySelector(".mark").textContent=r===true?"✓":r===false?"✗":"";});
+      words.querySelectorAll(".w").forEach((w,k)=>{
+        const tag=CATS.map(x=>x[0]).find(cat=>S.pos[i][cat]===k);
+        if(tag) w.dataset.tag=tag; else delete w.dataset.tag;
+        w.classList.toggle("no",!!(checked&&tag&&posOk(i,tag)===false));
+      });
+    };
+    CATS.forEach(([cat,label])=>{const p=el("button",{class:"pen "+cat,type:"button","data-cat":cat},`${label}<span class="mark"></span>`);
+      p.onclick=()=>{pen=cat;draw();};pens.appendChild(p);});
+    toks.forEach((t,k)=>{const w=el("button",{class:"w",type:"button"});w.textContent=t;
+      w.onclick=()=>{const st=S.pos[i];
+        if(st[pen]===k){st[pen]=null;}
+        else{CATS.forEach(([cat])=>{if(st[cat]===k)st[cat]=null;});st[pen]=k;}
+        checked=false;draw();save();};
+      words.appendChild(w);});
+    box.append(pens,words); c.appendChild(box); draw();
+    box._check=()=>{checked=true;draw();return CATS.filter(([cat])=>posOk(i,cat)===true).length;};
+  });
+  $("#posCheck").onclick=()=>{let n=0;[...c.children].forEach(b=>n+=b._check());$("#posScore").textContent=`${n} / ${POS.length*4}`;};
+}
+
+/* ---------- QUIZ ---------- */
+function renderQuiz(){
+  const c=$("#quiz");
+  QUIZ.forEach((item,i)=>{
+    const box=el("div",{class:"q"});
+    box.appendChild(el("h3",{},`<span class="n">${i+1}</span>${item.q}`));
+    const opts=el("div",{class:"opts"});
+    item.o.forEach((o,k)=>{const lab=el("label",{class:"opt"}),r=el("input",{type:"radio",name:"q"+i,value:k});
+      if(S.quiz[i]===k)r.checked=true;
+      r.onchange=()=>{S.quiz[i]=k;opts.querySelectorAll(".opt").forEach(x=>x.classList.remove("ok","no"));save();};
+      lab.append(r,el("span",{},o));opts.appendChild(lab);});
+    box.appendChild(opts);c.appendChild(box);
+  });
+  $("#quizCheck").onclick=()=>{let n=0;QUIZ.forEach((item,i)=>{const rs=document.querySelectorAll(`input[name="q${i}"]`);
+    rs.forEach(r=>r.parentElement.classList.remove("ok","no"));if(S.quiz[i]==null)return;
+    const lab=rs[S.quiz[i]].parentElement;if(S.quiz[i]===item.a){n++;lab.classList.add("ok");}else lab.classList.add("no");});
+    $("#quizScore").textContent=`${n} / ${QUIZ.length}`;};
+}
+
+/* ---------- HAND IN ---------- */
+function renderStatus(){
+  const ul=$("#status");ul.innerHTML="";
+  [["Name and class",!!(S.name.trim()&&S.cls.trim())],["1. The film",doneFor("p-film")],["2. Think",doneFor("p-reflect")],
+   ["3. Build sentences (all answered)",doneFor("p-build")],["4. Parts of speech (all four in every sentence)",doneFor("p-grammar")],["5. Quiz (all answered)",doneFor("p-quiz")]]
+  .forEach(([t,ok])=>ul.appendChild(el("li",{},`<span>${t}</span><span class="${ok?"st-ok":"st-no"}">${ok?"Done":"Not finished"}</span>`)));
+}
+function clean(t){return String(t||"").replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,"-").replace(/…/g,"...").replace(/[^\x09\x0A\x0D\x20-\x7E\u00A0-\u00FF]/g,"");}
+
+function makePDF(){
+  if(!S.name.trim()){$("#warn").textContent="Write your name at the top of the page first.";$("#sname").focus();window.scrollTo({top:0});return;}
+  $("#warn").textContent="";
+  if(!window.jspdf){$("#warn").textContent="The PDF tool did not load. Press Ctrl + P and choose «Save as PDF».";return;}
+  const {jsPDF}=window.jspdf, doc=new jsPDF({unit:"mm",format:"a4"});
+  const W=210,M=18,TW=W-2*M,BOTTOM=280; let y=M;
+  const need=h=>{if(y+h>BOTTOM){doc.addPage();y=M;}};
+  const RED=[178,58,58],GREEN=[79,143,54],INK=[35,35,58],GREY=[120,120,140];
+  const text=(t,{size=11,bold=false,color=INK,gap=1.5}={})=>{doc.setFont("helvetica",bold?"bold":"normal");doc.setFontSize(size);doc.setTextColor(...color);
+    const lines=doc.splitTextToSize(clean(t),TW),lh=size*0.42;lines.forEach(l=>{need(lh);doc.text(l,M,y+lh*0.8);y+=lh;});y+=gap;};
+  const heading=t=>{need(16);y+=3;doc.setFillColor(44,42,94);doc.rect(M,y,TW,9,"F");doc.setFont("helvetica","bold");doc.setFontSize(13);doc.setTextColor(255,255,255);doc.text(clean(t),M+3,y+6.3);y+=13;};
+  const mark=ok=>ok?"(correct)":"(wrong)";
+
+  doc.setFillColor(230,172,60);doc.rect(0,0,W,4,"F");y=14;
+  text("WALL-E - Film worksheet (B2)",{size:20,bold:true,gap:2});
+  text(`Name: ${S.name}     Class: ${S.cls||"-"}     Date: ${new Date().toLocaleDateString("nb-NO")}`,{color:[92,95,120],gap:4});
+
+  const writing=(title,list,store)=>{heading(title);list.forEach((q,i)=>{text(`${i+1}. ${q}`,{bold:true,gap:1});const a=(S[store][i]||"").trim();
+    text(a||"(no answer)",{color:a?INK:RED,gap:1});text(`${wc(a)} words`,{size:8,color:GREY,gap:4});});};
+  writing("1. About the film",FILM,"film");
+  writing("2. Think about it",REFLECT,"reflect");
+
+  heading("3A. Compound sentences");
+  let aN=0;PART_A.forEach((it,i)=>{const ok=aOk(i);if(ok)aN++;text(`${i+1}. ${it.a} [${S.A[i]||"____"}] ${it.b}   ${S.A[i]?mark(ok):""}`,{color:ok?INK:RED,gap:1});});
+  text(`Score: ${aN} / ${PART_A.length}`,{bold:true,gap:3});
+
+  heading("3B. Complex sentences");
+  let bN=0;PART_B.forEach((it,i)=>{const st=S.B[i],ok=bOk(i);if(ok)bN++;
+    text(`${i+1}. ${bSentence(it,st,w=>"["+(st.c?w:"____")+"]")}   ${st.c?mark(ok):""}`,{color:ok?INK:RED,gap:1});});
+  text(`Score: ${bN} / ${PART_B.length}`,{bold:true,gap:3});
+
+  heading("4. Parts of speech");
+  let pN=0;POS.forEach((it,i)=>{const toks=it.s.split(" ");
+    const line=toks.map((t,k)=>{const tag=CATS.map(x=>x[0]).find(cat=>S.pos[i][cat]===k);return tag?`${t}[${tag}]`:t;}).join(" ");
+    text(`${i+1}. ${line}`,{gap:0.5});
+    const res=CATS.map(([cat,label])=>{const r=posOk(i,cat);if(r)pN++;return `${label}: ${r===null?"-":r?"correct":"wrong"}`;}).join("   ");
+    text(res,{size:9,color:GREY,gap:2.5});});
+  text(`Score: ${pN} / ${POS.length*4}`,{bold:true,gap:3});
+
+  heading("5. Quiz");
+  let qN=0;QUIZ.forEach((q,i)=>{const c=S.quiz[i],ok=c===q.a;if(ok)qN++;
+    text(`${i+1}. ${q.q}`,{bold:true,gap:0.5});text(`Answer: ${c==null?"(no answer)":q.o[c]}   ${c==null?"":mark(ok)}`,{color:ok?GREEN:RED,gap:2.5});});
+  text(`Score: ${qN} / ${QUIZ.length}`,{bold:true,gap:3});
+
+  const pages=doc.getNumberOfPages();
+  for(let p=1;p<=pages;p++){doc.setPage(p);doc.setFont("helvetica","normal");doc.setFontSize(8);doc.setTextColor(...GREY);doc.text(clean(`${S.name} - WALL-E worksheet (B2) - page ${p} of ${pages}`),M,290);}
+  const safe=clean(S.name).replace(/[^A-Za-z0-9\u00C0-\u00FF]+/g,"_").replace(/^_|_$/g,"")||"student";
+  doc.save(`WALL-E_B2_${safe}.pdf`);
+}
+
+/* ---------- INIT ---------- */
+$("#sname").value=S.name;$("#sclass").value=S.cls;
+$("#sname").addEventListener("input",e=>{S.name=e.target.value;save();});
+$("#sclass").addEventListener("input",e=>{S.cls=e.target.value;save();});
+renderWriting($("#film-qs"),FILM,"film");
+renderWriting($("#reflect-qs"),REFLECT,"reflect");
+renderA();renderB();renderPOS();renderQuiz();buildTabs();
+$("#pdfBtn").onclick=makePDF;
+show("p-film");save();
+</script>
+</body>
+</html>
