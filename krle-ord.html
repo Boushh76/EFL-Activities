@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="KRLE-ord">
+<meta name="theme-color" content="#4f46e5">
+<title>KRLE-ord</title>
+<style>
+:root{
+  --bg:#f5f6fb;--card:#fff;--ink:#1f2330;--muted:#6b7280;--brand:#4f46e5;--brand2:#eef0ff;
+  --ok:#16a34a;--okbg:#dcfce7;--bad:#dc2626;--badbg:#fee2e2;--line:#e3e6f0;--amber:#fff4d6;--amberline:#f3d58a;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#12141c;--card:#1d2030;--ink:#eceef7;--muted:#9aa1b5;--brand:#8b85ff;--brand2:#262a45;
+  --ok:#4ade80;--okbg:#14351f;--bad:#f87171;--badbg:#3b1717;--line:#2e3347;--amber:#3a3217;--amberline:#6b5a22;}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;touch-action:manipulation}
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+header{padding:calc(env(safe-area-inset-top) + 12px) 16px 8px;text-align:center}
+header h1{margin:0;font-size:20px}
+header p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:8px 16px 20px;max-width:560px;width:100%;margin:0 auto}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;background:none;padding:10px 4px 9px;font-size:12px;color:var(--muted);font-weight:600}
+nav button span{display:block;font-size:22px;margin-bottom:2px}
+nav button.on{color:var(--brand)}
+.panel{display:none}.panel.on{display:block}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0 14px}
+.bar i{display:block;height:100%;background:var(--brand);transition:width .3s}
+.meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.q{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;font-size:18px;line-height:1.45;margin-bottom:14px}
+.q small{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.blank{display:inline-block;min-width:80px;border-bottom:3px solid var(--brand);text-align:center;font-weight:700;color:var(--brand)}
+.blank.ok{color:var(--ok);border-color:var(--ok)}
+.opt{display:block;width:100%;text-align:left;font-size:17px;padding:15px 16px;margin-bottom:10px;
+  background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:14px;font-family:inherit}
+.opt:active{transform:scale(.99)}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}
+.opt.bad{background:var(--badbg);border-color:var(--bad)}
+.opt:disabled{opacity:1}
+.fb{margin:6px 0 12px;padding:12px 14px;border-radius:12px;font-size:15px;line-height:1.4}
+.fb.ok{background:var(--okbg)}.fb.bad{background:var(--badbg)}
+.go{display:block;width:100%;padding:15px;font-size:17px;font-weight:700;border:0;border-radius:14px;background:var(--brand);color:#fff;font-family:inherit;margin-top:6px}
+.done{text-align:center;padding:30px 10px}
+.done .big{font-size:56px}
+.done h2{margin:8px 0 4px}
+.done p{color:var(--muted);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.card{min-height:98px;border-radius:12px;border:2px solid var(--line);background:var(--brand);color:#fff;
+  font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:6px;font-family:inherit;
+  text-align:center;line-height:1.2;transition:transform .15s}
+.card .tx{display:none}
+.card.up{font-size:13px;font-weight:600;color:var(--ink)}
+.card.up .q0{display:none}.card.up .tx{display:block}
+.card.up.t{background:var(--brand2);border-color:var(--brand)}
+.card.up.d{background:var(--amber);border-color:var(--amberline);font-size:11.5px;font-weight:500}
+.card.done{background:var(--okbg);border-color:var(--ok);opacity:.65}
+.card.done .q0{display:none}.card.done .tx{display:block}
+.card.done{font-size:11.5px;color:var(--ink)}
+.hint{font-size:13px;color:var(--muted);margin:4px 0 8px}
+.intro{background:var(--brand2);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.45;margin:4px 0 12px}
+.w{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.w b{display:block;font-size:17px;color:var(--brand);margin-bottom:3px}
+.w span{font-size:15px;line-height:1.4}
+</style>
+</head>
+<body>
+<div id="app">
+  <header><h1>📚 KRLE-ord</h1><p id="sub">Øv litt hver dag – det er nok med 5 minutter!</p></header>
+  <main>
+    <div class="panel on" id="p3"></div>
+    <div class="panel" id="p0"></div>
+    <div class="panel" id="p1"></div>
+    <div class="panel" id="p2"></div>
+  </main>
+  <nav>
+    <button class="on" data-t="3"><span>📖</span>Lær</button>
+    <button data-t="0"><span>✅</span>Flervalg</button>
+    <button data-t="1"><span>🃏</span>Memory</button>
+    <button data-t="2"><span>✏️</span>Fyll inn</button>
+  </nav>
+</div>
+
+<script>
+const W=[
+{t:"Kritisk tenkning",d:"Å vurdere påstander nøye i stedet for å tro på alt man hører eller leser.",s:"Å bruke ___ betyr å stille spørsmål ved det man leser, i stedet for å tro på alt.",g:"think"},
+{t:"Kildekritikk",d:"Å vurdere om en kilde er troverdig: hvem har laget den, og hvorfor?",s:"Før hun brukte nettsiden i oppgaven, drev hun med ___ og sjekket hvem som sto bak.",g:"think"},
+{t:"Svart-hvitt-tenkning",d:"Å se alt som enten helt riktig eller helt galt, uten noe imellom.",s:"Å mene at alle er enten helt gode eller helt slemme, er ___.",g:"shade"},
+{t:"Polarisert samfunn",d:"Et samfunn der meningene er delt i to leire og få står i midten.",s:"I et ___ er det vanskelig å snakke sammen fordi folk står i to steile leire.",g:"shade"},
+{t:"Faktagrunnlag",d:"De kjente og sjekkbare fakta en påstand eller diskusjon bygger på.",s:"Debatten ble god fordi alle hadde et solid ___ å argumentere ut fra.",g:"fact"},
+{t:"Motforestillinger",d:"Innvendinger eller argumenter mot et standpunkt.",s:"Hun hørte på klassekameratens ___ før hun bestemte seg.",g:"shade"},
+{t:"Perspektiv",d:"Ståsted: måten man ser en sak på ut fra sin egen situasjon.",s:"Elever og lærere ser ofte skoledagen fra hvert sitt ___.",g:"shade"},
+{t:"Nyanser",d:"Små forskjeller og mellomtoner – ting er sjelden bare svart eller hvitt.",s:"Et godt svar viser at saken har mange ___, ikke bare to sider.",g:"shade"},
+{t:"Spilleregler for debatt",d:"Felles regler for samtalen, f.eks. vente på tur og ikke avbryte.",s:"Å rekke opp hånda og ikke avbryte er en del av ___.",f:"spilleregler for debatt",g:"deb"},
+{t:"Debattklima",d:"Stemningen og tonen i en debatt: respektfull eller hard.",s:"Tonen i klasserommet var så hard at ___ ble dårlig, og ingen turte å si noe.",g:"deb"},
+{t:"Argumentasjon",d:"Å fremme et standpunkt ved å gi gode grunner for det.",s:"God ___ betyr at du ikke bare mener noe, men også forklarer hvorfor.",g:"deb"},
+{t:"Saklighet / Saklig debatt",d:"Å holde seg til saken og bruke fakta, uten personangrep.",s:"Hun holdt seg til ___ og diskuterte saken, ikke personen.",f:"saklighet",g:"deb"},
+{t:"Fordomsfulle ytringer",d:"Uttalelser basert på forutinntatte meninger om en gruppe.",s:"Å si at alle fra en bestemt by er dumme, er et eksempel på ___.",f:"fordomsfulle ytringer",g:"bias"},
+{t:"Udokumenterte påstander",d:"Påstander det ikke finnes bevis eller kilder for.",s:"«Alle vet at …» uten noen kilde er et eksempel på ___.",f:"udokumenterte påstander",g:"fact"},
+{t:"Mangfold",d:"At det finnes mange ulike mennesker, kulturer og meninger i et samfunn.",s:"Klassen vår har stort ___: vi snakker mange språk og har ulike bakgrunner.",g:"div"},
+{t:"Livssyn",d:"Grunnleggende tanker om hva som er viktig i livet – religiøse eller ikke-religiøse.",s:"Kristendom, islam og humanisme er eksempler på ulike ___.",g:"div"},
+{t:"Samtalekunst",d:"Å kunne lytte, stille gode spørsmål og la andre komme til orde.",s:"Å lytte godt og la andre snakke ut er en del av god ___.",g:"deb"},
+{t:"Trippelfiltertesten",d:"Sokrates’ test: Er det sant? Er det godt? Er det nyttig?",s:"Før hun delte ryktet spurte hun seg: «Er det sant, godt og nyttig?» Det kalles ___.",g:"deb"},
+{t:"Dømmekraft",d:"Evnen til å vurdere en situasjon og ta kloke valg.",s:"Det krever god ___ å skjønne når et rykte kanskje ikke er sant.",g:"think"},
+{t:"Stereotypier",d:"Forenklede, fastlåste bilder av hvordan en gruppe mennesker er.",s:"«Gutter liker bare fotball, jenter liker bare sminke» er eksempler på ___.",g:"bias"},
+{t:"Generalisering",d:"Å trekke en slutning om alle ut fra bare ett eller noen få tilfeller.",s:"Hun møtte én uhøflig turist og sa at alle turister er uhøflige. Det er en ___.",g:"bias"},
+{t:"Propaganda",d:"Ensidig eller misvisende påvirkning for å få folk til å mene noe bestemt.",s:"Plakater som bare viser én side av saken for å påvirke folk, kalles ___.",g:"fact"},
+{t:"Meningsmotstander",d:"Den som mener noe annet enn deg i en sak.",s:"I en debatt skal man vise respekt også for ___.",g:"deb"},
+{t:"Debattkultur",d:"Vanene og normene vi har for hvordan vi diskuterer sammen.",s:"At vi lar folk være uenige uten å bli sinte er en del av norsk ___.",g:"deb"},
+{t:"Religionsfrihet",d:"Retten til å velge, bytte eller ikke ha noen religion.",s:"Ingen kan tvinge deg til å tro på noe. Det er ___.",g:"rights"},
+{t:"Ytringsfrihet",d:"Retten til å si og skrive det man mener, innenfor lovens grenser.",s:"Retten til å si hva man mener og skrive i avisen kalles ___.",g:"rights"},
+{t:"Religionskritikk",d:"Å stille kritiske spørsmål ved eller være uenig i en religions lære.",s:"En kronikk som argumenterer saklig mot en religions lære er ___.",g:"rights"},
+{t:"Hatefulle ytringer",d:"Uttalelser som truer eller forakter folk, f.eks. pga. religion – kan være straffbare.",s:"Å true eller latterliggjøre noen på grunn av religionen deres kalles ___ og kan være ulovlig.",f:"hatefulle ytringer",g:"rights"},
+{t:"Toleranse",d:"Å godta at andre tror og lever annerledes, selv om man er uenig.",s:"Å respektere at andre har en annen tro enn deg, selv om du er uenig, kalles ___.",g:"rights"}
+];
+
+const $=(s,r=document)=>r.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const lab=it=>it.f||it.t.toLowerCase();
+let weak={};
+try{weak=JSON.parse(localStorage.getItem('krle_weak')||'{}')}catch(e){}
+const saveWeak=()=>{try{localStorage.setItem('krle_weak',JSON.stringify(weak))}catch(e){}};
+const mark=(it,ok)=>{weak[it.t]=Math.max(0,(weak[it.t]||0)+(ok?-1:2));saveWeak()};
+// words she gets wrong show up more often
+const pick=n=>W.map(w=>[w,Math.random()-(weak[w.t]||0)*0.35]).sort((a,b)=>a[1]-b[1]).slice(0,n).map(x=>x[0]);
+
+function finish(el,score,total,again){
+  const pct=score/total;
+  const emoji=pct===1?'🏆':pct>=.7?'🎉':pct>=.4?'👍':'💪';
+  const msg=pct===1?'Perfekt!':pct>=.7?'Veldig bra!':pct>=.4?'Bra jobbet – prøv igjen så sitter det!':'Fortsett å øve, du blir bedre for hver runde.';
+  el.innerHTML=`<div class="done"><div class="big">${emoji}</div><h2>${score} av ${total} riktige</h2><p>${msg}</p><button class="go" id="again">Ny runde</button></div>`;
+  $('#again',el).onclick=again;
+}
+
+/* ---------- 1: Flervalg ---------- */
+function mc(){
+  const el=$('#p0'),q=pick(10);let i=0,score=0;
+  function show(){
+    if(i>=q.length)return finish(el,score,q.length,mc);
+    const it=q[i];
+    const opts=shuffle([it,...shuffle(W.filter(x=>x!==it)).slice(0,3)]);
+    el.innerHTML=`<div class="meta"><span>Spørsmål ${i+1} av ${q.length}</span><span>⭐ ${score}</span></div>
+    <div class="bar"><i style="width:${i/q.length*100}%"></i></div>
+    <div class="q"><small>Hvilket ord passer?</small>${it.d}</div>
+    <div id="o">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${o.t}</button>`).join('')}</div>
+    <div id="fb"></div>`;
+    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const o=opts[+b.dataset.k],ok=o===it;
+      el.querySelectorAll('.opt').forEach((x,k)=>{x.disabled=true;if(opts[k]===it)x.classList.add('ok')});
+      if(!ok)b.classList.add('bad');
+      if(ok)score++;mark(it,ok);
+      $('#fb',el).innerHTML=`<div class="fb ${ok?'ok':'bad'}">${ok?'✅ Riktig!':'❌ Riktig svar: <b>'+it.t+'</b>'}</div><button class="go" id="nx">${i+1<q.length?'Neste':'Se resultat'}</button>`;
+      $('#nx',el).onclick=()=>{i++;show();main.scrollTop=0};
+    });
+  }
+  show();
+}
+
+/* ---------- 2: Memory ---------- */
+function mem(){
+  const el=$('#p1'),items=pick(6);
+  const cards=shuffle(items.flatMap(it=>[{id:it.t,k:'t',x:it.t},{id:it.t,k:'d',x:it.d}]));
+  let open=[],moves=0,matched=0,lock=false;
+  el.innerHTML=`<div class="meta"><span>Finn ordet og forklaringen</span><span id="mv">Forsøk: 0</span></div>
+  <p class="hint">Trykk på to kort. Blå = ord, gul = forklaring.</p>
+  <div class="grid">${cards.map((c,i)=>`<button class="card" data-i="${i}"><span class="q0">?</span><span class="tx">${c.x}</span></button>`).join('')}</div>`;
+  const btns=[...el.querySelectorAll('.card')];
+  btns.forEach((b,i)=>b.onclick=()=>{
+    if(lock||b.classList.contains('done')||open.includes(i))return;
+    b.classList.add('up',cards[i].k);open.push(i);
+    if(open.length===2){
+      moves++;$('#mv',el).textContent='Forsøk: '+moves;
+      const [a,c]=open;
+      if(cards[a].id===cards[c].id){
+        [a,c].forEach(n=>{btns[n].classList.remove('up');btns[n].classList.add('done')});
+        open=[];matched++;
+        const it=W.find(w=>w.t===cards[a].id);mark(it,true);
+        if(matched===items.length)setTimeout(()=>finish(el,items.length,moves,mem),700);
+      }else{
+        lock=true;
+        setTimeout(()=>{[a,c].forEach(n=>btns[n].classList.remove('up','t','d'));open=[];lock=false},1100);
+      }
+    }
+  });
+}
+// the memory result screen shows pairs/attempts; reword it
+const _finish=finish;
+finish=function(el,score,total,again){
+  if(again===mem){
+    const msg=total<=score+2?'Fantastisk hukommelse!':total<=score*2?'Bra jobbet!':'Prøv igjen – det går fortere neste gang.';
+    el.innerHTML=`<div class="done"><div class="big">🎉</div><h2>Alle ${score} par funnet!</h2><p>Du brukte ${total} forsøk. ${msg}</p><button class="go" id="again">Ny runde</button></div>`;
+    $('#again',el).onclick=again;
+  }else _finish(el,score,total,again);
+};
+
+/* ---------- 3: Fyll inn ---------- */
+function fill(){
+  const el=$('#p2'),q=pick(10);let i=0,score=0;
+  function show(){
+    if(i>=q.length)return finish(el,score,q.length,fill);
+    const it=q[i];
+    let pool=W.filter(x=>x!==it&&x.g!==it.g);
+    if(pool.length<3)pool=W.filter(x=>x!==it);
+    const opts=shuffle([it,...shuffle(pool).slice(0,3)]);
+    let sent=it.s;
+    const blank='<span class="blank" id="bl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+    el.innerHTML=`<div class="meta"><span>Setning ${i+1} av ${q.length}</span><span>⭐ ${score}</span></div>
+    <div class="bar"><i style="width:${i/q.length*100}%"></i></div>
+    <div class="q"><small>Velg ordet som passer i setningen</small>${sent.replace('___',blank)}</div>
+    <div>${opts.map((o,k)=>`<button class="opt" data-k="${k}">${lab(o)}</button>`).join('')}</div>
+    <div id="fb"></div>`;
+    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const o=opts[+b.dataset.k],ok=o===it;
+      el.querySelectorAll('.opt').forEach((x,k)=>{x.disabled=true;if(opts[k]===it)x.classList.add('ok')});
+      if(!ok)b.classList.add('bad');
+      let word=lab(it);
+      if(sent.startsWith('___'))word=word[0].toUpperCase()+word.slice(1);
+      const bl=$('#bl',el);bl.textContent=word;bl.classList.add('ok');
+      if(ok)score++;mark(it,ok);
+      $('#fb',el).innerHTML=`<div class="fb ${ok?'ok':'bad'}">${ok?'✅ Riktig!':'❌ Riktig svar: <b>'+lab(it)+'</b>'}<br><span style="color:var(--muted)">${it.t}: ${it.d}</span></div><button class="go" id="nx">${i+1<q.length?'Neste':'Se resultat'}</button>`;
+      $('#nx',el).onclick=()=>{i++;show();main.scrollTop=0};
+    });
+  }
+  show();
+}
+
+/* ---------- tabs ---------- */
+function learn(){
+  const el=$('#p3');
+  el.innerHTML=`<div class="intro"><b>Les gjennom ordene først</b><br>Det er ${W.length} ord. Når du har lest dem, kan du øve i de andre fanene.</div>
+  ${W.map(w=>`<div class="w"><b>${w.t}</b><span>${w.d}</span></div>`).join('')}
+  <button class="go" id="goPlay" style="margin-top:12px">Start øving ✅</button>`;
+  $('#goPlay',el).onclick=()=>tab(0);
+}
+const main=$('main'),started=[0,0,0,0],starters=[mc,mem,fill,learn];
+function tab(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='p'+n));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',+b.dataset.t===n));
+  if(!started[n]){started[n]=1;starters[n]()}
+  main.scrollTop=0;
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>tab(+b.dataset.t));
+tab(3);
+</script>
+</body>
+</html>
