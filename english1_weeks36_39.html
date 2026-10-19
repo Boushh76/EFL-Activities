@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English 1 — Retrieval Practice, Weeks 36–39</title>
+<style>
+:root{
+  --paper:#E9E9E6;
+  --card:#F6F5F2;
+  --ink:#16161A;
+  --ink-soft:#4C4C52;
+  --rule:#C6C3BB;
+  --indigo:#4A4470;
+  --right:#2E6B4F;
+  --wrong:#A63232;
+  --display:"Haettenschweiler","Arial Narrow Bold","Arial Black",Impact,sans-serif;
+  --body:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.55;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:820px;margin:0 auto;padding:28px 18px 90px}
+
+/* ---- masthead ---- */
+.masthead{border-bottom:3px solid var(--ink);padding-bottom:14px;margin-bottom:22px}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+}
+h1{
+  font-family:var(--display);
+  font-size:clamp(38px,10vw,72px);
+  line-height:.92;
+  letter-spacing:.01em;
+  text-transform:uppercase;
+  margin:6px 0 4px;
+  text-shadow:3px 3px 0 var(--paper),5px 5px 0 var(--rule);
+}
+.sub{font-size:15px;color:var(--ink-soft);max-width:52ch}
+
+/* ---- primer ---- */
+details.primer{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--indigo);margin:0 0 6px}
+details.primer summary{
+  cursor:pointer;
+  list-style:none;
+  padding:14px 16px;
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  font-weight:600;
+  display:flex;justify-content:space-between;gap:12px;align-items:center;
+}
+details.primer summary::-webkit-details-marker{display:none}
+details.primer summary::after{content:"+";font-size:18px;line-height:1;color:var(--indigo)}
+details.primer[open] summary::after{content:"–"}
+details.primer summary:focus-visible{outline:3px solid var(--indigo);outline-offset:2px}
+.primer-body{padding:0 18px 16px;font-size:15px}
+.primer-body p{margin:0 0 10px}
+.primer-body ul{margin:0 0 12px;padding-left:20px}
+.primer-body li{margin-bottom:4px}
+.primer-body .small{font-size:13px;color:var(--ink-soft)}
+.primer-body b{color:var(--ink)}
+
+/* ---- test picker ---- */
+nav{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 26px}
+.tab{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  background:transparent;
+  border:1.5px solid var(--ink);
+  color:var(--ink);
+  padding:9px 13px;
+  cursor:pointer;
+}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.tab:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid var(--indigo);outline-offset:2px}
+
+/* ---- test head ---- */
+.testhead{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.numeral{
+  font-family:var(--display);
+  font-size:clamp(52px,14vw,86px);
+  line-height:.8;
+  text-shadow:3px 3px 0 var(--paper),5px 5px 0 var(--rule);
+}
+.testhead h2{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-weight:600;
+  margin:0;
+  color:var(--ink-soft);
+}
+.testintro{border-bottom:1px solid var(--rule);padding-bottom:18px;margin-bottom:26px;font-size:15px;color:var(--ink-soft)}
+
+/* ---- questions ---- */
+.q{background:var(--card);border:1px solid var(--rule);padding:18px 18px 16px;margin-bottom:16px}
+.qtop{display:flex;gap:12px;align-items:flex-start}
+.qno{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--indigo);padding-top:3px;min-width:26px}
+.qtext{font-weight:600;margin:0 0 2px}
+.qhint{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin:2px 0 12px}
+.body{margin-left:38px}
+@media (max-width:520px){.body{margin-left:0}}
+
+ul.opts{list-style:none;margin:0;padding:0}
+ul.opts li{margin:0 0 7px}
+label.opt{display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:7px 9px;border:1px solid transparent}
+label.opt:hover{border-color:var(--rule);background:#fff}
+label.opt input{margin-top:5px;flex:none}
+.opt.is-right{border-color:var(--right);background:#EAF1EC}
+.opt.is-wrong{border-color:var(--wrong);background:#F6EAEA}
+
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:9px;padding:6px 0}
+.row + .row{border-top:1px dashed var(--rule);padding-top:12px}
+.term{font-weight:600;min-width:170px}
+.defn{flex:1 1 260px;min-width:0}
+.row select{flex:0 1 230px;min-width:0}
+.gapline{margin-bottom:11px;line-height:2.1}
+select{
+  font-family:var(--body);
+  font-size:15px;
+  padding:6px 8px;
+  border:1.5px solid var(--ink);
+  background:#fff;
+  color:var(--ink);
+  max-width:100%;
+}
+select:disabled{opacity:1;color:var(--ink-soft)}
+.mark{font-family:var(--mono);font-weight:700;margin-left:6px}
+.mark.ok{color:var(--right)}
+.mark.no{color:var(--wrong)}
+
+.seg{display:inline-block;border:1px solid var(--rule);background:#fff;padding:4px 9px;margin:0 3px 6px 0;font-weight:600}
+.segblock{margin-bottom:12px}
+
+.why{
+  margin-top:12px;
+  border-left:3px solid var(--indigo);
+  padding:9px 0 9px 13px;
+  font-size:15px;
+  color:var(--ink-soft);
+  background:transparent;
+}
+.why b{color:var(--ink)}
+.fix{font-family:var(--mono);font-size:13px;color:var(--wrong);margin-left:8px}
+
+/* ---- actions + score ---- */
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:24px}
+button.action{
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  padding:14px 22px;
+  border:1.5px solid var(--ink);
+  background:var(--ink);
+  color:var(--paper);
+  cursor:pointer;
+}
+button.action.ghost{background:transparent;color:var(--ink)}
+.score{
+  margin-top:22px;
+  border-top:3px solid var(--ink);
+  padding-top:14px;
+}
+.scorenum{font-family:var(--display);font-size:clamp(40px,11vw,64px);line-height:.9;text-shadow:3px 3px 0 var(--paper),5px 5px 0 var(--rule)}
+.scoretext{font-size:15px;color:var(--ink-soft);max-width:56ch}
+.notice{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--wrong)}
+footer{margin-top:44px;border-top:1px solid var(--rule);padding-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+@media (prefers-reduced-motion:no-preference){
+  .q{transition:border-color .18s ease}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="eyebrow">English 1 · 2026/2027 · Weeks 36–39</div>
+  <h1>Check<br>Yourself</h1>
+  <p class="sub">Five short practice tests on weeks 36 to 39. Nothing is recorded and nothing counts — get it wrong, read why, and go again.</p>
+</header>
+
+<details class="primer">
+  <summary>Code-switching — read this first</summary>
+  <div class="primer-body">
+    <p><b>Code-switching</b> means moving between languages, dialects or styles of speaking depending on who you are talking to, where you are, and what you want to achieve.</p>
+    <ul>
+      <li><b>Between languages:</b> “Det var helt random, men lowkey ganske bra.”</li>
+      <li><b>Between a dialect and a standard variety:</b> Jamaican Patois with your cousins, standard English in a job interview.</li>
+      <li><b>Between styles:</b> a text to your friend versus an email to your teacher.</li>
+    </ul>
+    <p><b>Why people do it:</b> to be understood, to fit in, to match a formal situation, to show who they are and where they come from — or because the other language simply has the better word.</p>
+    <p><b>Not the same as a borrowed word.</b> <i>Ski</i>, <i>fjord</i> and <i>hygge</i> came from Scandinavian languages, but they are now ordinary English words. An English speaker who uses them is not switching anything.</p>
+    <p><b>A question worth keeping:</b> who is expected to switch — and who never has to?</p>
+    <p class="small">Some linguists use the term only for switching between two languages. In this class we use the broad meaning.</p>
+  </div>
+</details>
+
+<nav id="tabs" role="tablist" aria-label="Choose a test"></nav>
+<main id="stage"></main>
+
+<footer>Low-stakes practice · No answers are saved · Reload the page for a fresh start</footer>
+</div>
+
+<script>
+"use strict";
+
+/* ============================== CONTENT ============================== */
+
+var LABELS = ["Independent clause","Subordinate clause","Adverb"];
+
+var CS3 = ["Code-switching","Borrowed word","No switch"];
+var INTRO = ["Step 1: Capture interest","Step 2: Present the topic","Step 3: Thesis"];
+var CONCL = ["Step 1: Restate the thesis","Step 2: Sum up","Step 3: Closing sentence"];
+
+var TESTS = [
+/* ============================== TEST 1 ============================== */
+{
+title:"Englishes, stories, nature, rap",
+questions:[
+
+{type:"match", q:"Match each word from the four visions of nature with its meaning.",
+ pairs:[
+  ["solitude","being pleasantly alone"],
+  ["glade","a small open space in a wood"],
+  ["longing","a strong wish for something far away"],
+  ["misery","great suffering"],
+  ["to revert","to go back to a previous state"]
+ ],
+ why:"<b>Solitude</b> is not the same as loneliness: solitude is chosen and pleasant. That difference is the whole mood of Yeats’s poem."},
+
+{type:"gap", q:"Choose the word that fits each sentence.",
+ bank:["drought","arrogance","harmony","self-correcting","linnet"],
+ items:[
+  {t:"After three months of ___, the farmers’ fields had turned to dust.", a:"drought"},
+  {t:"Carlin argues that believing we can destroy the planet is a kind of ___.", a:"arrogance"},
+  {t:"Herzog sees no ___ in the jungle — only struggle and decay.", a:"harmony"},
+  {t:"A ___ system can fix itself without outside help.", a:"self-correcting"}
+ ],
+ why:"One word is left over. A <b>linnet</b> is a small bird — it sings in Yeats’s poem, which is worth comparing with Herzog’s birds, who only ‘screech in pain’."},
+
+{type:"mc", q:"In the three-circle model of English, which circle is Norway in?",
+ opts:["The Expanding Circle","The Inner Circle","The Outer Circle","None of the circles"], a:"The Expanding Circle",
+ why:"The Expanding Circle is where English is learned as a foreign language and has no official status. The table says these speakers often mix British and American spelling and pronunciation. Some people argue Norwegian English is now so strong it is drifting towards the Outer Circle — a good thing to argue about, but the model puts Norway here."},
+
+{type:"mc", q:"A speaker pronounces the ‘r’ in <i>car</i> and <i>hard</i>. Their accent is…",
+ opts:["Rhotic","Non-rhotic","Fronted","Unaspirated"], a:"Rhotic",
+ why:"<b>Rhoticity</b> means pronouncing the ‘r’ wherever it appears. Indian English and most American accents are rhotic. Australian and South African English are non-rhotic, as is the standard southern British accent."},
+
+{type:"sort", q:"Code-switching, a borrowed word, or no switch at all?",
+ labels:CS3,
+ items:[
+  {t:"Jonas tells his friends: “Det var helt random, men lowkey ganske bra.”", a:"Code-switching"},
+  {t:"An English tourist says: “We went skiing and saw a fjord.”", a:"Borrowed word"},
+  {t:"A manager in Mumbai tells a colleague, in English: “The meeting is at three, yaar, don’t be late.”", a:"Code-switching"},
+  {t:"A newsreader reads the whole bulletin in standard British English.", a:"No switch"}
+ ],
+ why:"<b>Ski</b> and <b>fjord</b> came from Norwegian, but they are ordinary English words now — the tourist is not switching. Code-switching is something a speaker <b>does</b>, in the moment, moving between two codes they both know. <i>Yaar</i> is a Hindi word for ‘friend’, dropped into English — exactly what the textbook means when it says code switching is common in Indian English."},
+
+{type:"mc", q:"Which is the best broad definition of code-switching?",
+ opts:["Moving between languages, dialects or styles depending on who you are with and the situation","Making mistakes because you do not know a language well enough","Translating a text from one language into another","Using slang that only teenagers understand"], a:"Moving between languages, dialects or styles depending on who you are with and the situation",
+ why:"Code-switching is a choice, not a mistake. Some linguists keep the term for switching between two languages only; we use the broad meaning, which also covers dialect-to-standard and casual-to-formal."},
+
+{type:"mc", q:"In the detective story from week 36, the detective says “I know who did it” — then goes home, eats dinner, falls asleep, and the book ends. What is missing?",
+ opts:["The resolution","The rising action","The climax","A protagonist"], a:"The resolution",
+ why:"The climax arrives — the detective realises who the murderer is — but nothing is resolved. We bring expectations to every story, even when we do not know what will happen. Break the pattern and the reader feels adrift."},
+
+{type:"mc", q:"A novel follows a boy’s journey away from home. It is narrated by his younger sister, who stays behind and says “I” throughout. Which point of view is this?",
+ opts:["First person, minor participant","First person, major participant","Third person limited","Third person omniscient"], a:"First person, minor participant",
+ why:"First person because the narrator says <b>I</b>. Minor participant because she is telling someone else’s story — she is not the main character. If the boy told his own story, it would be first person, major participant."},
+
+{type:"mc", q:"Which speaker sees nature as a refuge — a quiet, almost sacred place to escape from the noise and grey pavements of the city?",
+ opts:["Yeats","Herzog","Carlin","Sterling"], a:"Yeats",
+ why:"“The Lake Isle of Innisfree” (1889). The slide asked a good follow-up question: he hears the lake “in the deep heart’s core” while standing in the city. Is Innisfree a real place, or a feeling he carries with him?"},
+
+{type:"sort", q:"Is each figure of speech a trope or a scheme?",
+ labels:["Trope (meaning)","Scheme (structure)"],
+ items:[
+  {t:"metaphor", a:"Trope (meaning)"},
+  {t:"alliteration", a:"Scheme (structure)"},
+  {t:"simile", a:"Trope (meaning)"},
+  {t:"assonance", a:"Scheme (structure)"},
+  {t:"pun", a:"Trope (meaning)"}
+ ],
+ why:"Both change the ordinary use of language. A <b>trope</b> changes the <b>meaning</b> — every trope is non-literal. A <b>scheme</b> changes the <b>structure</b>: repeated sounds, words or patterns."},
+
+{type:"mc", q:"“She ain’t call me back.” Which of the three categories on the rap language slide does this belong to?",
+ opts:["Grammar","Vocabulary","Spelling and pronunciation","Taboo or offensive words"], a:"Grammar",
+ why:"<b>Ain’t</b> + the base form of the verb is a grammar pattern in African American English (standard English: <i>She didn’t call me back</i>). It is not a random mistake — it follows its own consistent rules."},
+
+{type:"mc", q:"Why might a rapper repeat the same phrase at the start of several lines?",
+ opts:["To build rhythm and emotional force, and fix the idea in the listener’s mind","Because there is nothing else to say","To make the song shorter","To hide what the song means"], a:"To build rhythm and emotional force, and fix the idea in the listener’s mind",
+ why:"This is <b>anaphora</b>. The textbook says it adds rhythm and is often used to evoke emotion — it is just as common in political speeches as in songs."},
+
+{type:"sort", q:"Here is the opening of a presentation. Which step from page 318 is each sentence doing?",
+ labels:INTRO,
+ items:[
+  {t:"“No worries, mate — she’ll be right.” If that sentence puzzles you, you have just met Australian English.", a:"Step 1: Capture interest"},
+  {t:"Spoken by more than 25 million people, it grew out of the English of British settlers and has developed its own sounds and vocabulary.", a:"Step 2: Present the topic"},
+  {t:"In this presentation I will argue that Australian English is shaped as much by attitude as by words.", a:"Step 3: Thesis"}
+ ],
+ why:"Step 1 opens with a <b>quotation</b>, one of nine options on page 318. Step 2 gives context but no discussion — save that for the main part. Step 3 is the <b>thesis statement</b>: the rest of the text has to deliver on it."}
+]},
+
+/* ============================== TEST 2 ============================== */
+{
+title:"Englishes, stories, nature, rap",
+questions:[
+
+{type:"match", q:"Match each word from the four visions of nature with its meaning.",
+ pairs:[
+  ["obscenity","something offensive or repulsive"],
+  ["conceit","excessive pride in yourself"],
+  ["narrow self-interest","caring only about your own benefit"],
+  ["next nature","a new nature produced by human impact"],
+  ["reimagination","rethinking something in a new way"]
+ ],
+ why:"<b>Conceit</b> and <b>arrogance</b> are close. Carlin’s point is that “saving the planet” can be conceit dressed up as concern."},
+
+{type:"gap", q:"Choose the word that fits each sentence.",
+ bank:["revert","solitude","longing","misery","glade"],
+ items:[
+  {t:"After the wildfire, Sterling says the forest will not ___ to what it was before.", a:"revert"},
+  {t:"Yeats dreams of a small cabin where he can live in ___.", a:"solitude"},
+  {t:"Standing on a grey London pavement, he feels a deep ___ for the lake.", a:"longing"},
+  {t:"Herzog says the birds of the jungle are in ___.", a:"misery"}
+ ],
+ why:"One word is left over. A <b>glade</b> is a small open space in a wood — Yeats’s poem has a “bee-loud glade”."},
+
+{type:"mc", q:"“He’s left.” — “Is it?” In which variety is <i>Is it?</i> used as an all-purpose response like this?",
+ opts:["South African English","Australian English","Indian English","Malaysian/Singaporean English"], a:"South African English",
+ why:"The p. 27 table also notes that South African sentences often begin with a non-negative “no”: “No, sure, we’ll send it this afternoon.”"},
+
+{type:"mc", q:"Which language gave South African English <i>veld</i>, <i>dorp</i> and <i>trek</i>?",
+ opts:["Afrikaans","Hindi","Norwegian","Malay"], a:"Afrikaans",
+ why:"Afrikaans has Dutch roots. South African English borrows from it extensively. Compare Australian English, which the table says borrowed surprisingly little from Aboriginal languages."},
+
+{type:"sort", q:"Why is each speaker code-switching? Choose the main reason.",
+ labels:["To be understood","To match a formal situation","To show identity and belonging"],
+ items:[
+  {t:"A Singaporean taxi driver chats in Singlish with local passengers, then switches to more standard English when a tourist who is struggling to follow gets in.", a:"To be understood"},
+  {t:"A Jamaican student speaks Patois with her cousins but standard English in a job interview.", a:"To match a formal situation"},
+  {t:"A British comedian with Nigerian parents drops Yoruba phrases into his stand-up, and the Nigerian fans in the crowd cheer.", a:"To show identity and belonging"}
+ ],
+ why:"Real speakers often have more than one reason at the same time. The comedian is also entertaining, and the student may be protecting herself from being judged. The labels are the <b>main</b> reason, not the only one."},
+
+{type:"mc", q:"Which statement about code-switching is best supported?",
+ opts:["It usually shows skill: you need to know both codes and when to use each","It shows you cannot speak either language properly","Only immigrants do it","It only happens in speech, never in writing"], a:"It usually shows skill: you need to know both codes and when to use each",
+ why:"Switching well means knowing two systems and the unwritten rules of when each one fits. And everyone does it — every time you write a text to a friend and then an email to a teacher."},
+
+{type:"mc", q:"According to the week 36 slides, what does a setting do besides tell us where and when?",
+ opts:["It imposes constraints that limit what the characters can do","It decides who the protagonist is","It replaces the need for a plot","Nothing — setting is only background"], a:"It imposes constraints that limit what the characters can do",
+ why:"Setting limits the possibilities. What a character needs and wants, inside those limits, gives you the possible actions — and the possible plots."},
+
+{type:"mc", q:"A narrator reports only what the characters say and do — never what they think or feel. Which point of view is this?",
+ opts:["Third person objective","Third person limited","Third person omniscient","First person, major participant"], a:"Third person objective",
+ why:"Follow the flow chart: third person (he, she, they) → do you know what any of the characters are thinking? <b>No</b> → objective. The narrator is an outside observer, like a camera."},
+
+{type:"mc", q:"“I don’t think they sing; they just screech in pain.” Who says this about birds — and still claims to love the place they live in?",
+ opts:["Herzog","Yeats","Carlin","Sterling"], a:"Herzog",
+ why:"Werner Herzog, in the film <i>Burden of Dreams</i> (1982). The slide asked how something can be both loved and “obscene”. One answer is love without illusions — he refuses to pretend the jungle is gentle."},
+
+{type:"match", q:"Match each literary technique with its definition.",
+ pairs:[
+  ["anaphora","the repetition of a word or phrase"],
+  ["antithesis","two contrasting words or phrases put together"],
+  ["hyperbole","an exaggeration not meant to be taken literally"],
+  ["meiosis","an understatement"],
+  ["euphemism","a mild word that replaces an unpleasant or offensive one"]
+ ],
+ why:"<b>Hyperbole</b> and <b>meiosis</b> are opposites: one blows things up, the other shrinks them. Both are often used for comic effect."},
+
+{type:"mc", q:"<i>wanna</i>, <i>tryna</i>, <i>somethin’</i> — which category from the rap language slide?",
+ opts:["Spelling and pronunciation","Grammar","Vocabulary","Taboo or offensive words"], a:"Spelling and pronunciation",
+ why:"The spelling shows how the words are actually said: <i>want to</i> → <i>wanna</i>, <i>trying to</i> → <i>tryna</i>, and the dropped ‘g’ in <i>somethin’</i>."},
+
+{type:"mc", q:"A song moves back and forth between “I” (the rapper) and “you” (someone he accuses). How does this contrast work as a structuring device?",
+ opts:["It sets up two sides, so the song can move between them like an argument","It shows the song has two writers","It is a spelling feature","It has no real effect"], a:"It sets up two sides, so the song can move between them like an argument",
+ why:"The I/you contrast gives the song a shape: accusation and defence, speaker and target. When you find two places where it happens, ask what changes between them."},
+
+{type:"sort", q:"Here is the conclusion from the Jamaican English slide. Which step from page 324 is each sentence doing?",
+ labels:CONCL,
+ items:[
+  {t:"Jamaican English is a prime example of how English has been adopted and adapted by many different cultures as it spread around the world.", a:"Step 1: Restate the thesis"},
+  {t:"With its unique grammar and vocabulary, it has made its mark on reggae music, TV shows and sport.", a:"Step 2: Sum up"},
+  {t:"There is no such thing as “perfect English” — only a language flexible enough to let its speakers keep their own identity.", a:"Step 3: Closing sentence"}
+ ],
+ why:"The closing sentence here is a <b>reflection</b>, one of eight types the book suggests. Notice what is not there: no new ideas or arguments."}
+]},
+
+/* ============================== TEST 3 ============================== */
+{
+title:"Englishes, stories, nature, rap",
+questions:[
+
+{type:"match", q:"Match each Australian English word from the p. 27 table with its meaning.",
+ pairs:[
+  ["sheila","girl"],
+  ["tucker","food"],
+  ["drongo","idiot"],
+  ["yacker","work"],
+  ["rellie","relative"]
+ ],
+ why:"<b>Rellie</b> shows a typical Australian pattern: the <b>-y/-ie</b> suffix makes a familiar form of a common word, as in <i>cardie</i> (cardigan) and <i>lippy</i> (lipstick)."},
+
+{type:"gap", q:"Choose the word or phrase that fits each sentence.",
+ bank:["next nature","self-correcting","obscenity","solitude","reimagination"],
+ items:[
+  {t:"Sterling calls what grows back after the wildfire ___.", a:"next nature"},
+  {t:"Carlin describes the planet as a ___ system that does not need our help.", a:"self-correcting"},
+  {t:"Herzog calls the endless growth and decay of the jungle an ___.", a:"obscenity"},
+  {t:"Yeats goes to the island to find ___.", a:"solitude"}
+ ],
+ why:"One is left over. Sterling’s whole talk is a <b>reimagination</b> of what “nature” even means once humans have changed it."},
+
+{type:"mc", q:"“I am having two brothers.” Which feature of Indian English does this show?",
+ opts:["A more extensive use of the progressive (-ing) form","Non-rhotic pronunciation","Borrowing from Afrikaans","Short vowels"], a:"A more extensive use of the progressive (-ing) form",
+ why:"Standard British English would say “I have two brothers”. The table also lists prepositions after verbs: “fill up a vacancy”, “start with the lesson”."},
+
+{type:"mc", q:"Which of these English words came from Norwegian?",
+ opts:["slalom","bungalow","kindergarten","tsunami"], a:"slalom",
+ why:"<b>Slalom</b> comes from Norwegian <i>slalåm</i>, a ‘sloping track’. <b>Bungalow</b> is from Hindi, <b>kindergarten</b> from German and <b>tsunami</b> from Japanese. Etymonline.com will show you the route each word took."},
+
+{type:"sort", q:"Code-switching, a borrowed word, or no switch at all?",
+ labels:CS3,
+ items:[
+  {t:"Amir speaks Arabic with his grandmother and switches to Norwegian when his friends arrive.", a:"Code-switching"},
+  {t:"An American says she had a croissant at a café.", a:"Borrowed word"},
+  {t:"A rapper writes his lyrics in African American English and gives a university lecture in standard American English.", a:"Code-switching"},
+  {t:"Mia writes her whole essay in standard English.", a:"No switch"}
+ ],
+ why:"<b>Croissant</b> and <b>café</b> are French in origin but are now part of English. The rapper is switching between two varieties of English — the broad meaning of code-switching includes that."},
+
+{type:"mc", q:"In week 35 we asked: “Do you treat people differently based on the way they speak?” How does that question connect to code-switching?",
+ opts:["Speakers of less respected varieties often feel they must switch to be taken seriously","It doesn’t — code-switching is only about vocabulary","Only people with ‘bad’ English code-switch","Code-switching makes accents disappear"], a:"Speakers of less respected varieties often feel they must switch to be taken seriously",
+ why:"The pressure is not equal. A speaker of a high-status standard variety may never need to switch at all; a speaker of Patois or African American English may have to do it every day. That makes code-switching both a skill <b>and</b> a cost."},
+
+{type:"mc", q:"A story opens: “The door exploded inward and Mina was already running.” No background, no introduction. This is…",
+ opts:["In medias res","A resolution","An exposition","A climax"], a:"In medias res",
+ why:"Latin for ‘into the middle of things’. The plot starts without an exposition or introduction. The textbook says this creates immediate tension or mystery."},
+
+{type:"mc", q:"In <i>The Road</i>, the man and the boy say they are “carrying the fire”. What does the fire most likely symbolise?",
+ opts:["Hope, goodness, and what is left of civilisation","The wildfires that destroyed the world","The man’s illness","Their campfire — nothing more"], a:"Hope, goodness, and what is left of civilisation",
+ why:"A <b>symbol</b> is a person, place or thing that stands for an abstract idea. The slide listed leadership and protection, hope, and civilisation — being “the good guys”. Reading it as just a campfire misses the point of a symbol."},
+
+{type:"mc", q:"Whose view is this (paraphrased): <i>The planet is fine and will outlast us — it is the people who are in trouble.</i>",
+ opts:["Carlin","Sterling","Yeats","Herzog"], a:"Carlin",
+ why:"George Carlin, “Saving the Planet” (1992). His real target is human self-importance. He is a comedian, so the claim comes wrapped in jokes — but it is still a claim you can agree or disagree with."},
+
+{type:"sort", q:"Which of the textbook’s three groups does each literary technique belong to?",
+ labels:["Figure of speech","Narrative technique","Poetic technique"],
+ items:[
+  {t:"stream of consciousness", a:"Narrative technique"},
+  {t:"metre", a:"Poetic technique"},
+  {t:"simile", a:"Figure of speech"},
+  {t:"free verse", a:"Poetic technique"},
+  {t:"indirect speech", a:"Narrative technique"},
+  {t:"alliteration", a:"Figure of speech"}
+ ],
+ why:"<b>Figures of speech</b> are used mainly for effect (tropes and schemes). <b>Narrative techniques</b> are how an author presents the plot and the characters’ thoughts. <b>Poetic techniques</b> are only used in poetry."},
+
+{type:"mc", q:"<i>homie</i>, <i>y’all</i>, <i>beef</i> — which category from the rap language slide?",
+ opts:["Vocabulary","Grammar","Spelling and pronunciation","None — they are standard English"], a:"Vocabulary",
+ why:"These are slang words. <b>Beef</b> here means a quarrel or feud, not meat — the same word with a different meaning in a different variety."},
+
+{type:"mc", q:"Carlin mocks people who believe they can “save the planet”. He uses humour, irony and exaggeration to expose what he sees as foolish self-importance. Which technique is this?",
+ opts:["Satire","Euphemism","Meiosis","Alliteration"], a:"Satire",
+ why:"The textbook defines <b>satire</b> as using humour, irony and exaggeration to expose and ridicule dishonesty and folly. With the six key concepts: his <b>purpose</b> is to persuade and entertain at the same time."},
+
+{type:"sort", q:"Here is the opening of a presentation. Which step from page 318 is each sentence doing?",
+ labels:INTRO,
+ items:[
+  {t:"Have you ever been told your English was “wrong” when it was simply different?", a:"Step 1: Capture interest"},
+  {t:"In Singapore, English is an official language, and many speakers move between standard English and Singlish, a local variety shaped by Malay, Chinese languages and Tamil.", a:"Step 2: Present the topic"},
+  {t:"This presentation asks: is Singlish a problem to be fixed, or a variety to be proud of?", a:"Step 3: Thesis"}
+ ],
+ why:"Step 1 uses a <b>question</b>. Step 3 is a <b>thesis question</b> rather than a thesis statement — both are allowed, as long as the rest of the text answers it."}
+]},
+
+/* ============================== TEST 4 ============================== */
+{
+title:"Englishes, stories, nature, rap",
+questions:[
+
+{type:"match", q:"Match each literary technique with its definition.",
+ pairs:[
+  ["personification","giving an object or idea the qualities of a living being"],
+  ["pun","a play on words"],
+  ["satire","humour, irony and exaggeration used to expose folly"],
+  ["irony","words that imply the opposite of what is actually said"],
+  ["allusion","an indirect reference to a person, place, thing or idea"]
+ ],
+ why:"<b>Irony</b> and <b>satire</b> are related: satire uses irony as one of its tools. A pun is usually for comic effect, even when the subject is dark."},
+
+{type:"gap", q:"Which technique is each example?",
+ bank:["hyperbole","euphemism","meiosis","simile","anaphora"],
+ items:[
+  {t:"“I’ve told you a million times!” is an example of ___.", a:"hyperbole"},
+  {t:"Saying someone has “passed away” instead of “died” is a ___.", a:"euphemism"},
+  {t:"After a storm flattened his barn, the farmer said, “We’ve had a bit of wind.” That is ___.", a:"meiosis"},
+  {t:"“She ran like the wind” is a ___.", a:"simile"}
+ ],
+ why:"One is left over. <b>Anaphora</b> is repeating a word or phrase — “We shall fight on the beaches, we shall fight on the landing grounds…”"},
+
+{type:"mc", q:"“She’s jake” meaning “It’s fine” — which variety?",
+ opts:["Australian English","South African English","Indian English","Malaysian/Singaporean English"], a:"Australian English",
+ why:"The p. 27 table lists the use of <b>she</b> as a general pronoun as a distinctive feature of Australian grammar."},
+
+{type:"mc", q:"In Malaysian/Singaporean English, <i>effect</i> may be pronounced [ɪfek]. Which feature is this?",
+ opts:["A reduced set of final consonants","Rhoticity","Fronting of vowels","Unaspirated /p, t, k/"], a:"A reduced set of final consonants",
+ why:"The final ‘t’ is dropped. The table’s other example is <i>think</i> pronounced [θɪŋ]."},
+
+{type:"sort", q:"Why is each speaker code-switching? Choose the main reason.",
+ labels:["To fit in with the group","To match a formal situation","No good word in the other language"],
+ items:[
+  {t:"Sofie has just moved from Bergen to Oslo and starts using the words her new classmates use.", a:"To fit in with the group"},
+  {t:"Emma texts her friend “u coming?? 😂” and then emails her teacher “Dear Ms Berg, I am writing to ask whether…”", a:"To match a formal situation"},
+  {t:"A software developer speaking Norwegian says “deploye” and “debugge” because there are no everyday Norwegian words for them.", a:"No good word in the other language"}
+ ],
+ why:"Sofie is switching between two <b>dialects</b>, and Emma between two <b>styles</b> of the same language. Neither involves two languages — but both count in the broad meaning of code-switching."},
+
+{type:"mc", q:"Which example shows code-switching between styles rather than between languages?",
+ opts:["Talking casually with friends and formally in a job interview, in the same language","Mixing Hindi words into an English sentence","A Norwegian sentence with English slang in it","Arabic at home, Norwegian at school"], a:"Talking casually with friends and formally in a job interview, in the same language",
+ why:"The other three all move between two languages. Switching styles within one language is the version everybody does, whether they speak one language or five."},
+
+{type:"mc", q:"Bedazzle McSpellface is a fire wizard who works as a suburban postman and leads the fight against a Big Tech data centre. Why does this feel strange?",
+ opts:["We expect a fire wizard in a fantasy setting, so he clashes with a realistic suburban plot","A postman cannot be a protagonist","Stories about data centres cannot have an antagonist","Fantasy characters are not allowed to have names"], a:"We expect a fire wizard in a fantasy setting, so he clashes with a realistic suburban plot",
+ why:"Character, setting and plot have to work together. When they do not, the reader notices. A writer can use that clash on purpose — for comedy, or to make the familiar strange."},
+
+{type:"mc", q:"We are given the thoughts and feelings of one central character only. Everyone else is seen from the outside. Which point of view is this — the one the slides use for <i>The Road</i>?",
+ opts:["Third person limited","Third person omniscient","Third person objective","First person, minor participant"], a:"Third person limited",
+ why:"In <i>The Road</i> we stay close to the man. We see the boy from the outside and have to read him through what he says and does. Ask yourself: how would the story change if the boy told it?"},
+
+{type:"mc", q:"Sterling’s claim is stronger than “nature always changes”. What exactly is it?",
+ opts:["Human impact is creating a new nature that will never go back to the old one","Nature is a quiet refuge from the city","The planet will heal itself and outlast us","Nature is obscene and has no harmony"], a:"Human impact is creating a new nature that will never go back to the old one",
+ why:"“It will not revert to nature. It will revert to Next Nature.” Compare Carlin, who thinks the planet will look after itself — Sterling thinks there is no ‘itself’ to go back to."},
+
+{type:"sort", q:"Which technique does each example use?",
+ labels:["Alliteration","Assonance","Anaphora","Antithesis"],
+ items:[
+  {t:"Seven sleepy sailors sang softly.", a:"Alliteration"},
+  {t:"Go slow over the road.", a:"Assonance"},
+  {t:"We will not stop. We will not give in. We will not go home.", a:"Anaphora"},
+  {t:"Easy to start, hard to finish.", a:"Antithesis"}
+ ],
+ why:"<b>Alliteration</b> repeats the first consonant sound; <b>assonance</b> repeats a vowel sound (the ‘o’ in <i>go, slow, over, road</i>). <b>Anaphora</b> repeats a word or phrase, and <b>antithesis</b> puts opposites side by side."},
+
+{type:"mc", q:"In some varieties of English, “He gone call you later” means “He is going to call you later.” What is the best way to describe this?",
+ opts:["A consistent grammar pattern of that variety, not a random mistake","A spelling error","Slang vocabulary","Proof the speaker does not know English"], a:"A consistent grammar pattern of that variety, not a random mistake",
+ why:"It goes under <b>grammar</b> in your analysis table. Every variety has rules; they are just not always the rules of the standard."},
+
+{type:"mc", q:"In 2018, Kendrick Lamar became the first musician outside classical music and jazz to win which prize?",
+ opts:["The Pulitzer Prize for Music","The Nobel Prize in Literature","The Booker Prize","An Academy Award (Oscar)"], a:"The Pulitzer Prize for Music",
+ why:"It was for the album <i>DAMN.</i> Bob Dylan won the Nobel Prize in Literature in 2016 — a different prize, but part of the same argument: song lyrics can be literature."},
+
+{type:"sort", q:"Here is the end of a presentation. Which step from page 324 is each sentence doing?",
+ labels:CONCL,
+ items:[
+  {t:"As this presentation has shown, Indian English is not “broken” British English but a variety with its own rules.", a:"Step 1: Restate the thesis"},
+  {t:"Its grammar, its borrowing from local languages, and the way speakers move between English and Hindi all show how English has been made Indian.", a:"Step 2: Sum up"},
+  {t:"So next time you hear “I am knowing the answer”, ask yourself: is it wrong — or just different?", a:"Step 3: Closing sentence"}
+ ],
+ why:"This closing sentence is a <b>question</b>, meant to make the audience reflect. Step 2 synthesises the main points instead of repeating them one by one."}
+]},
+
+/* ============================== TEST 5 ============================== */
+{
+title:"Englishes, stories, nature, rap",
+questions:[
+
+{type:"match", q:"Match each point of view with its description.",
+ pairs:[
+  ["first person, major participant","the main character tells their own story"],
+  ["first person, minor participant","a side character tells someone else’s story"],
+  ["third person objective","we only hear what the characters say and do"],
+  ["third person limited","we get the thoughts and feelings of one central character"],
+  ["third person omniscient","we get every character’s thoughts — the “God perspective”"]
+ ],
+ why:"Start with one question: does the narrator say <b>I</b>? Then: whose thoughts can we see — nobody’s, one person’s, or everybody’s?"},
+
+{type:"gap", q:"Choose the term that fits each sentence.",
+ bank:["inciting incident","rising action","climax","resolution","theme"],
+ items:[
+  {t:"The ___ is the event that starts the main conflict.", a:"inciting incident"},
+  {t:"Clues pile up and the danger grows during the ___.", a:"rising action"},
+  {t:"The detective realises who the murderer is: this is the ___.", a:"climax"},
+  {t:"The heroes walk away as the ambulance lights flash — the ___.", a:"resolution"}
+ ],
+ why:"One is left over. The <b>theme</b> is the central topic of a work, in one word or a short phrase: <i>betrayal</i>, <i>coming of age</i>, <i>change versus tradition</i>."},
+
+{type:"mc", q:"Which pair of countries belongs to the Outer Circle?",
+ opts:["India and Singapore","Australia and South Africa","Norway and China","The UK and the USA"], a:"India and Singapore",
+ why:"Outer Circle countries are mostly former colonies where English has an official role alongside other languages. Australia, South Africa, the UK and the USA are in the Inner Circle; Norway and China are in the Expanding Circle."},
+
+{type:"mc", q:"Which of these varieties does the p. 27 table describe as rhotic?",
+ opts:["Indian English","Australian English","South African English","None of them"], a:"Indian English",
+ why:"Rhotic means pronouncing the ‘r’ wherever it appears. Australian and South African English are both non-rhotic."},
+
+{type:"sort", q:"Code-switching, a borrowed word, or no switch at all?",
+ labels:CS3,
+ items:[
+  {t:"An English magazine writes about “the Danish art of hygge” — the word is now in English dictionaries.", a:"Borrowed word"},
+  {t:"A Norwegian student writes to an English friend: “We had such a koselig evening — I can’t translate it.”", a:"Code-switching"},
+  {t:"A South African says, “We drove for hours through the veld.”", a:"Borrowed word"},
+  {t:"A Jamaican musician sings in Patois and gives interviews in standard English.", a:"Code-switching"}
+ ],
+ why:"<b>Hygge</b> has made the jump into English; <b>koselig</b> has not (yet). The student even admits she is switching: “I can’t translate it.” That is one of the most common reasons to switch — the other language has the better word."},
+
+{type:"mc", q:"The p. 27 table puts code switching in the Lexicon column for Indian English. Why does that make sense?",
+ opts:["Many Indian speakers know several languages and mix their words into English","Indian English has no vocabulary of its own","Indian English is non-rhotic","Code-switching only happens in India"], a:"Many Indian speakers know several languages and mix their words into English",
+ why:"India has hundreds of languages, and English is often a second or third one. Switching between them is everyday behaviour, not an exception. (Indian English is <b>rhotic</b>, by the way.)"},
+
+{type:"mc", q:"In a post-apocalyptic story, what kind of ending do readers usually expect?",
+ opts:["The protagonist reaches safety and finds a new normal, even though the world is not fixed","The world goes back to exactly how it was","No ending of any kind","The antagonist wins and the story starts again"], a:"The protagonist reaches safety and finds a new normal, even though the world is not fixed",
+ why:"Not every story has a neat ending, but we still expect some kind of resolution. Compare Sterling: after the disaster, the world does not revert — it becomes something new."},
+
+{type:"mc", q:"Which of these is a theme rather than a plot event?",
+ opts:["Betrayal","The detective finds the critical clue","Carlos interviews the staff","The man and the boy reach the coast"], a:"Betrayal",
+ why:"A theme can be stated in a word or a short phrase. A plot event is something that <b>happens</b>. Novels usually deal with more than one theme."},
+
+{type:"sort", q:"Which sentence frame from “Building your position” is each student using?",
+ labels:["Agree, with limits","Disagree, with reason","Combine two views","Defend against a counter"],
+ items:[
+  {t:"I largely agree with Yeats that nature is a place of rest; however, I don’t think it cares about us.", a:"Agree, with limits"},
+  {t:"Unlike Carlin, I don’t think the planet is fine on its own, because extinct species do not come back.", a:"Disagree, with reason"},
+  {t:"Herzog and Sterling actually agree that nature is no gentle refuge, even though they sound opposite.", a:"Combine two views"},
+  {t:"The strongest evidence for my view is the wildfire example, but someone could object that forests always grow back. Still, Sterling shows that what grows back is different.", a:"Defend against a counter"}
+ ],
+ why:"Each frame does a different job. There is no correct answer on the worksheet — only a defensible one, and these frames are how you defend it."},
+
+{type:"mc", q:"“The wind whispered through the empty streets.” Which technique is this?",
+ opts:["Personification","Simile","Hyperbole","Euphemism"], a:"Personification",
+ why:"Wind cannot whisper — only living beings can. There is no <i>like</i> or <i>as</i>, so it is not a simile."},
+
+{type:"mc", q:"According to the textbook, what is the function of an unreliable narrator?",
+ opts:["To show the gap between appearance and reality","To make the plot easier to follow","To give the reader every character’s thoughts","To create rhyme and rhythm"], a:"To show the gap between appearance and reality",
+ why:"An unreliable narrator shows how reality can be twisted and concealed. The reader has to work out what really happened from what the narrator lets slip."},
+
+{type:"mc", q:"Your learning destination asks you to make a table for your own variety of English. Which three headings did the rap language slide use?",
+ opts:["Vocabulary, grammar, spelling and pronunciation","Audience, purpose, genre","Plot, setting, character","Tropes, schemes, metre"], a:"Vocabulary, grammar, spelling and pronunciation",
+ why:"Every other option is a real set of terms from this course — just from a different part of it."},
+
+{type:"mc", q:"Which of these does page 324 tell you <b>not</b> to do in a conclusion?",
+ opts:["Bring up new ideas or arguments","Rephrase your thesis","Sum up your main points","End with a call to action"], a:"Bring up new ideas or arguments",
+ why:"A conclusion gives your audience a sense of closure. A new argument in the last paragraph opens a door you never close."}
+]}
+];
+
+/* ============================== ENGINE ============================== */
+
+var state = {test:0};
+
+function shuffle(list){
+  var a = list.slice();
+  for (var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function el(tag, cls, text){
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+function html(tag, cls, markup){
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  n.innerHTML = markup;
+  return n;
+}
+function pick(name, choices){
+  var s = document.createElement("select");
+  s.name = name;
+  var blank = document.createElement("option");
+  blank.value = ""; blank.textContent = "— choose —";
+  s.appendChild(blank);
+  choices.forEach(function(c){
+    var o = document.createElement("option");
+    o.value = c; o.textContent = c;
+    s.appendChild(o);
+  });
+  return s;
+}
+function markSpan(ok){
+  return el("span", "mark " + (ok ? "ok" : "no"), ok ? "correct" : "not yet");
+}
+function selectHandler(box, rows){
+  return {
+    node: box,
+    answered: function(){ return rows.some(function(r){ return r.s.value !== ""; }); },
+    check: function(){
+      var got = 0;
+      rows.forEach(function(r){
+        r.s.disabled = true;
+        var ok = r.s.value === r.a;
+        if (ok) got++;
+        r.row.appendChild(markSpan(ok));
+        if (!ok) r.row.appendChild(el("span", "fix", "→ " + r.a));
+      });
+      return {got:got, max:rows.length};
+    }
+  };
+}
+
+/* ---- tabs ---- */
+function buildTabs(){
+  var nav = document.getElementById("tabs");
+  nav.innerHTML = "";
+  TESTS.forEach(function(t, i){
+    var b = el("button", "tab", "Test " + (i + 1));
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", i === state.test ? "true" : "false");
+    b.addEventListener("click", function(){
+      state.test = i;
+      render();
+      window.scrollTo(0, 0);
+    });
+    nav.appendChild(b);
+  });
+}
+
+/* ---- question renderers: each returns {node, answered, check} ---- */
+
+function renderMC(q, idx){
+  var box = el("div", "body");
+  var inputs = [];
+  var ul = el("ul", "opts");
+  shuffle(q.opts).forEach(function(text){
+    var li = document.createElement("li");
+    var lab = el("label", "opt");
+    var inp = document.createElement("input");
+    inp.type = "radio";
+    inp.name = "q" + idx;
+    inp.value = text;
+    lab.appendChild(inp);
+    lab.appendChild(el("span", null, text));
+    li.appendChild(lab);
+    ul.appendChild(li);
+    inputs.push({inp:inp, lab:lab, text:text});
+  });
+  box.appendChild(ul);
+  return {
+    node: box,
+    answered: function(){ return inputs.some(function(o){ return o.inp.checked; }); },
+    check: function(){
+      var got = 0;
+      inputs.forEach(function(o){
+        o.inp.disabled = true;
+        if (o.inp.checked && o.text === q.a){ o.lab.classList.add("is-right"); got = 1; }
+        else if (o.inp.checked){ o.lab.classList.add("is-wrong"); }
+        else if (o.text === q.a){ o.lab.classList.add("is-right"); }
+      });
+      return {got:got, max:1};
+    }
+  };
+}
+
+function renderMatch(q, idx){
+  var box = el("div", "body");
+  var terms = shuffle(q.pairs.map(function(p){ return p[0]; }));
+  var rows = [];
+  shuffle(q.pairs).forEach(function(p, k){
+    var row = el("div", "row");
+    var lbl = el("label", "defn", p[1]);
+    var s = pick("q" + idx + "_" + k, terms);
+    s.id = "m" + idx + "_" + k; lbl.htmlFor = s.id;
+    row.appendChild(lbl);
+    row.appendChild(s);
+    box.appendChild(row);
+    rows.push({s:s, a:p[0], row:row});
+  });
+  return selectHandler(box, rows);
+}
+
+function renderGap(q, idx){
+  var box = el("div", "body");
+  var bank = q.bank ? shuffle(q.bank) : [];
+  var rows = [];
+  q.items.forEach(function(it, k){
+    var line = el("div", "gapline");
+    var parts = it.t.split("___");
+    line.appendChild(document.createTextNode(parts[0]));
+    var s = pick("q" + idx + "_" + k, it.opts ? shuffle(it.opts) : bank);
+    line.appendChild(s);
+    line.appendChild(document.createTextNode(parts[1] || ""));
+    box.appendChild(line);
+    rows.push({s:s, a:it.a, row:line});
+  });
+  return selectHandler(box, rows);
+}
+
+/* sort: each item gets a label from a fixed set (labels stay in their logical order) */
+function renderSort(q, idx){
+  var box = el("div", "body");
+  var rows = [];
+  shuffle(q.items).forEach(function(it, k){
+    var row = el("div", "row");
+    var lbl = el("label", "defn", it.t);
+    var s = pick("q" + idx + "_" + k, q.labels);
+    s.id = "s" + idx + "_" + k; lbl.htmlFor = s.id;
+    row.appendChild(lbl);
+    row.appendChild(s);
+    box.appendChild(row);
+    rows.push({s:s, a:it.a, row:row});
+  });
+  return selectHandler(box, rows);
+}
+
+function renderTag(q, idx){
+  var box = el("div", "body");
+  var sentence = el("div", "segblock");
+  q.segs.forEach(function(sg){ sentence.appendChild(el("span", "seg", sg.t)); });
+  box.appendChild(sentence);
+  var rows = [];
+  q.segs.forEach(function(sg, k){
+    var row = el("div", "row");
+    var lbl = el("label", "term", sg.t);
+    var s = pick("q" + idx + "_" + k, q.labels || LABELS);
+    s.id = "t" + idx + "_" + k; lbl.htmlFor = s.id;
+    row.appendChild(lbl);
+    row.appendChild(s);
+    box.appendChild(row);
+    rows.push({s:s, a:sg.a, row:row});
+  });
+  return selectHandler(box, rows);
+}
+
+var HINTS = {
+  mc: "Choose one",
+  match: "Match each one",
+  gap: "One per gap · one is left over",
+  tag: "Label every part",
+  sort: "Sort each one"
+};
+
+function render(){
+  buildTabs();
+  var test = TESTS[state.test];
+  var stage = document.getElementById("stage");
+  stage.innerHTML = "";
+
+  var head = el("div", "testhead");
+  head.appendChild(el("div", "numeral", String(state.test + 1)));
+  head.appendChild(el("h2", null, test.title));
+  stage.appendChild(head);
+
+  stage.appendChild(el("p", "testintro", "Answer everything, then check. Every question comes from weeks 36–39: varieties of English and code-switching, plot, setting and point of view, the four visions of nature, rap as storytelling, literary techniques, and introductions and conclusions."));
+
+  var handlers = [];
+
+  test.questions.forEach(function(q, idx){
+    var card = el("div", "q");
+    var top = el("div", "qtop");
+    top.appendChild(el("div", "qno", String(idx + 1)));
+    var head2 = document.createElement("div");
+    head2.appendChild(html("p", "qtext", q.q));
+    head2.appendChild(el("p", "qhint", q.hint || HINTS[q.type]));
+    top.appendChild(head2);
+    card.appendChild(top);
+
+    var h;
+    if (q.type === "mc") h = renderMC(q, idx);
+    else if (q.type === "match") h = renderMatch(q, idx);
+    else if (q.type === "gap") h = renderGap(q, idx);
+    else if (q.type === "sort") h = renderSort(q, idx);
+    else h = renderTag(q, idx);
+
+    card.appendChild(h.node);
+    h.card = card;
+    h.why = q.why;
+    handlers.push(h);
+    stage.appendChild(card);
+  });
+
+  var actions = el("div", "actions");
+  var checkBtn = el("button", "action", "Check answers");
+  var resetBtn = el("button", "action ghost", "Try again");
+  var notice = el("span", "notice", "");
+  notice.setAttribute("role", "status");
+  actions.appendChild(checkBtn);
+  actions.appendChild(resetBtn);
+  actions.appendChild(notice);
+  stage.appendChild(actions);
+
+  var scoreBox = el("div", "score");
+  scoreBox.style.display = "none";
+  scoreBox.setAttribute("role", "status");
+  stage.appendChild(scoreBox);
+
+  resetBtn.addEventListener("click", function(){ render(); window.scrollTo(0, 0); });
+
+  checkBtn.addEventListener("click", function(){
+    var unanswered = handlers.filter(function(h){ return !h.answered(); }).length;
+    if (unanswered > 0 && !checkBtn.dataset.warned){
+      notice.textContent = unanswered + " question" + (unanswered > 1 ? "s" : "") + " still blank — press check again to see the answers anyway";
+      checkBtn.dataset.warned = "1";
+      return;
+    }
+    notice.textContent = "";
+    var got = 0, max = 0;
+    handlers.forEach(function(h){
+      var r = h.check();
+      got += r.got; max += r.max;
+      h.card.appendChild(html("div", "why", h.why));
+    });
+    checkBtn.disabled = true;
+    checkBtn.style.opacity = ".4";
+
+    scoreBox.innerHTML = "";
+    scoreBox.appendChild(el("div", "scorenum", got + " / " + max));
+    var pct = max ? got / max : 0;
+    var line;
+    if (pct === 1) line = "Everything right. Try another test — or come back to this one tomorrow, when it will be harder and therefore more useful.";
+    else if (pct >= 0.75) line = "Solid. Read the explanations under the ones you missed, then press Try again — the options come back in a different order.";
+    else if (pct >= 0.4) line = "A reasonable start. Work through the explanations, then run the same test again before moving on.";
+    else line = "Worth going back to the slides for weeks 36–39, the varieties table on p. 27 and the literary techniques on pp. 343–346 before you try again. Read the explanations first — most of them answer more than one question.";
+    scoreBox.appendChild(el("p", "scoretext", line));
+    scoreBox.style.display = "block";
+    scoreBox.scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
+}
+
+render();
+</script>
+</body>
+</html>
